@@ -183,7 +183,6 @@ class Tribe__Events__Importer__File_Importer_Events extends Tribe__Events__Impor
 		}
 
 		return $event;
-
 	}
 
 	private function find_matching_organizer_id( $record ) {
@@ -248,14 +247,14 @@ class Tribe__Events__Importer__File_Importer_Events extends Tribe__Events__Impor
 
 	/**
 	 * Parses a timezone string candidate and returns a TEC supported timezone string.
-	 * 
+	 *
 	 * @param string $timezone_candidate
 	 *
 	 * @return bool|string Either the timezone string or `false` if the timezone candidate is invalid.
 	 */
 	private function get_timezone( $timezone_candidate ) {
 		if ( Tribe__Timezones::is_utc_offset( $timezone_candidate ) ) {
-			return $timezone_candidate;
+			return tribe_normalize_manual_utc_offset( $timezone_candidate );
 		}
 
 		return Tribe__Timezones::get_timezone( $timezone_candidate, false ) ? $timezone_candidate : false;
@@ -263,13 +262,13 @@ class Tribe__Events__Importer__File_Importer_Events extends Tribe__Events__Impor
 
 	/**
 	 * Returns the `post_excerpt` to use.
-	 * 
+	 *
 	 * Will return the existing one if present.
-	 * 
+	 *
 	 * @param int $event_id
 	 * @param string $import_excerpt
 	 *
-	 * @return string 
+	 * @return string
 	 */
 	private function get_post_excerpt( $event_id, $import_excerpt ) {
 		if ( $event_id ) {

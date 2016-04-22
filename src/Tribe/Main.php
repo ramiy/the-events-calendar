@@ -403,6 +403,7 @@
 			 * @return void
 			 */
 			public function init() {
+				Tribe__Events__Pro__Shortcodes__Tribe_Events::instance();
 				Tribe__Events__Pro__Mini_Calendar::instance();
 				Tribe__Events__Pro__This_Week::instance();
 				Tribe__Events__Pro__Custom_Meta::init();

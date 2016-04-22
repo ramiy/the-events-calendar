@@ -208,18 +208,10 @@ abstract class Tribe__Events__Importer__File_Importer {
 				return $name;
 			}
 		}
-		
-		$query_args = array(
-			'post_type'   => $post_type,
-			'post_status' => 'publish',
-			'post_title'  => $name,
-			'fields'      => 'ids',
-		);
-		add_filter( 'posts_search', array( $this, 'filter_query_for_title_search' ), 10, 2 );
-		$ids = get_posts( $query_args );
-		remove_filter( 'posts_search', array( $this, 'filter_query_for_title_search' ), 10, 2 );
 
-		return empty( $ids ) ? 0 : reset( $ids );
+		$found = get_page_by_title( $name, OBJECT, $post_type );
+
+		return empty( $found ) ? 0 : $found->ID;
 	}
 
 	public function filter_query_for_title_search( $search, WP_Query $wp_query ) {

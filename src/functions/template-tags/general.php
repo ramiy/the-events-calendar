@@ -864,3 +864,20 @@ if ( class_exists( 'Tribe__Events__Pro__Main' ) ) {
 	}
 
 }
+
+if ( ! function_exists( 'tribe_get_mobile_default_view' ) ) {
+	/**
+	 * Allow users to fetch default view For Mobile
+	 *
+	 * @category Events
+	 *
+	 * @return int
+	 */
+	function tribe_get_mobile_default_view() {
+		// If there isn't a default mobile set, it will get the default from the normal settings
+		$default_view = tribe_get_option( 'mobile_default_view', Tribe__Events__Main::instance()->default_view() );
+
+		return apply_filters( 'tribe_events_mobile_default_view', $default_view );
+	}
+}//end if
+

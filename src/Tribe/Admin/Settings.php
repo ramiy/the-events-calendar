@@ -33,7 +33,7 @@ class Tribe__Events__Pro__Admin__Settings {
 
 		add_filter( 'tribe_settings_tab_fields', array( $myself, 'inject_mobile_fields' ), 10, 2 );
 
-		add_filter( 'tribe_events_header_attributes', array( $myself, 'include_mobile_default_view' ), 10, 2 );
+		add_filter( 'tribe_events_header_attributes', array( $myself, 'include_mobile_default_view' ) );
 	}
 
 	/**
@@ -56,7 +56,13 @@ class Tribe__Events__Pro__Admin__Settings {
 		return $settings;
 	}
 
-	public function include_mobile_default_view( $attrs, $current_view ) {
+	/**
+	 * Include the Headers to make Default Mobile view works
+	 *
+	 * @param  array  $attrs       The original Attributes
+	 * @return array
+	 */
+	public function include_mobile_default_view( $attrs ) {
 		$attrs['data-default-mobile-view'] = tribe_get_mobile_default_view();
 		$attrs['data-default-view'] = Tribe__Events__Main::instance()->default_view();
 

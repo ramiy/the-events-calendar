@@ -13,28 +13,28 @@
  */
 $views = apply_filters( 'tribe-events-bar-views', array(), false );
 
-$views_options = array();
+$views_options = array(
+	'default' => esc_html__( 'Use Default View', 'tribe-events-calendar-pro' ),
+);
+
 foreach ( $views as $view ) {
 	$views_options[ $view['displaying'] ] = $view['anchor'];
 }
 
-$display_tab_fields = Tribe__Main::array_insert_before_key(
-	'tribeEventsAdvancedSettingsTitle',
-	$display_tab_fields,
+$settings = Tribe__Main::array_insert_after_key(
+	'viewOption',
+	$settings,
 	array(
-		'_block_mobile_title'   => array(
-			'type' => 'html',
-			'html' => '<h3>' . esc_html__( 'Basic Mobile Settings', 'tribe-events-calendar-pro' ) . '</h3>',
-		),
 		'mobile_default_view'                => array(
 			'type'            => 'dropdown_select2',
-			'label'           => esc_html__( 'Default view', 'tribe-events-calendar-pro' ),
+			'label'           => esc_html__( 'Default mobile view', 'tribe-events-calendar-pro' ),
+			'tooltip'         => esc_html__( 'Change the default view for Mobile users.', 'tribe-events-calendar-pro' ),
 			'validation_type' => 'options',
 			'size'            => 'large',
-			'default'         => 'month',
+			'default'         => 'default',
 			'options'         => $views_options,
 		),
 	)
 );
 
-add_filter( 'tribe_settings_tab_fields', array( $this, 'inject_settings' ), 10, 2 );
+return $settings;

@@ -194,6 +194,8 @@
 
 				add_filter( 'oembed_discovery_links', array( $this, 'oembed_discovery_links_for_recurring_events' ) );
 				add_filter( 'oembed_request_post_id', array( $this, 'oembed_request_post_id_for_recurring_events' ), 10, 2 );
+
+				add_action( 'plugins_loaded', array( 'Tribe__Events__Pro__Admin__Settings', 'hook' ) );
 			}
 
 			/**

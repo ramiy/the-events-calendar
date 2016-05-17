@@ -874,8 +874,14 @@ if ( ! function_exists( 'tribe_get_mobile_default_view' ) ) {
 	 * @return int
 	 */
 	function tribe_get_mobile_default_view() {
+		$default = Tribe__Events__Main::instance()->default_view();
+
 		// If there isn't a default mobile set, it will get the default from the normal settings
-		$default_view = tribe_get_option( 'mobile_default_view', Tribe__Events__Main::instance()->default_view() );
+		$default_view = tribe_get_option( 'mobile_default_view', 'default' );
+
+		if ( 'default' === $default_view ) {
+			$default_view = $default;
+		}
 
 		return apply_filters( 'tribe_events_mobile_default_view', $default_view );
 	}

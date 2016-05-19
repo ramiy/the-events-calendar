@@ -56,6 +56,15 @@ class Tribe__Events__Pro__Recurrence__Instance {
 			update_post_meta( $this->post_id, '_EventEndDate',      $this->db_formatted_end_date() );
 			update_post_meta( $this->post_id, '_EventEndDateUTC',   $this->db_formatted_end_date_utc() );
 			update_post_meta( $this->post_id, '_EventDuration',     $this->duration );
+
+			/**
+			 * Triggers when a recurring event instance is updated due to the whole series being edited.  
+			 * This action will not fire if a recurring event instance is broken out of the series (e.g. using the "Edit Single" link).
+			 * 
+			 * @param int $post_id The updated recurring event instance post ID.
+			 * @param int $parent_id The updated recurring event instance `post_parent` post ID.
+			 */
+			do_action('tribe_events_pro_recurring_event_instance_updated', $this->post_id, $this->parent_id);
 		} else { // add a new post
 			$post_to_save['guid'] = esc_url( add_query_arg( array( 'eventDate' => $this->start_date->format( 'Y-m-d' ) ), $parent->guid ) );
 			$this->post_id        = wp_insert_post( $post_to_save );
@@ -65,10 +74,27 @@ class Tribe__Events__Pro__Recurrence__Instance {
 			add_post_meta( $this->post_id, '_EventEndDate',      $this->db_formatted_end_date() );
 			add_post_meta( $this->post_id, '_EventEndDateUTC',   $this->db_formatted_end_date_utc() );
 			add_post_meta( $this->post_id, '_EventDuration',     $this->duration );
+
+			/**
+			 * Triggers when a recurring event instance is inserted due to the whole series being created.
+			 *
+			 * @param int $post_id The updated recurring event instance post ID.
+			 * @param int $parent_id The updated recurring event instance `post_parent` post ID.
+			 */
+			do_action('tribe_events_pro_recurring_event_instance_inserted', $this->post_id, $this->parent_id);
 		}
 
 		$this->copy_meta(); // everything else
 		$this->set_terms();
+
+		/**
+		 * Triggers when a recurring event instance is inserted due to the whole series being created or updated.
+		 * This action will not fire if a recurring event instance is broken out of the series (e.g. using the "Edit Single" link).
+		 *
+		 * @param int $post_id The updated recurring event instance post ID.
+		 * @param int $parent_id The updated recurring event instance `post_parent` post ID.
+		 */
+		do_action('tribe_events_pro_recurring_event_save_after', $this->post_id, $this->parent_id);
 	}
 
 	public function get_id() {

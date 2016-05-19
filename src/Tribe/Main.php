@@ -197,7 +197,9 @@
 
 				// WPML support
 				if ( class_exists( 'SitePress' ) ) {
-					add_action( 'tribe_events_pro_recurring_event_instance_updated', array( Tribe__Events__Pro__WPML__Event_Listener::instance(), 'handle_event_creation' ), 10, 1 );
+					add_action( 'tribe_events_pro_recurring_event_instance_updated', 
+						array( Tribe__Events__Pro__WPML__Event_Listener::instance(), 'handle_recurring_event_creation' ),
+						10, 1 );
 				}
 			}
 

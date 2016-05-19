@@ -194,6 +194,11 @@
 
 				add_filter( 'oembed_discovery_links', array( $this, 'oembed_discovery_links_for_recurring_events' ) );
 				add_filter( 'oembed_request_post_id', array( $this, 'oembed_request_post_id_for_recurring_events' ), 10, 2 );
+
+				// WPML support
+				if ( class_exists( 'SitePress' ) ) {
+					add_action( 'tribe_events_pro_recurring_event_instance_updated', array( Tribe__Events__Pro__WPML__Event_Listener::instance(), 'handle_event_creation' ), 10, 1 );
+				}
 			}
 
 			/**

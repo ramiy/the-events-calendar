@@ -25,7 +25,7 @@ class Tribe__Events__Pro__WPML__Recurring_Event_Creation_Handler implements Trib
 			return - 1;
 		}
 
-		return array( $language_code => wpml_add_translatable_content( 'post_' . Tribe__Events__Main::POSTTYPE, $event_id, $language_code ) );
+		return $this->insert_event_translation_for_language_code( $event_id, $language_code );
 	}
 
 	/**
@@ -71,5 +71,16 @@ class Tribe__Events__Pro__WPML__Recurring_Event_Creation_Handler implements Trib
 
 			return $language_code;
 		}
+	}
+
+	/**
+	 * @param $event_id
+	 * @param $language_code
+	 *
+	 * @return array
+	 */
+	private function insert_event_translation_for_language_code( $event_id, $language_code ) {
+		// @todo: set the trid to the trid of other recurrence instances
+		return array( $language_code => wpml_add_translatable_content( 'post_' . Tribe__Events__Main::POSTTYPE, $event_id, $language_code ) );
 	}
 }

@@ -1,18 +1,28 @@
 <?php
 namespace Tribe\Events\Pro\WPML;
 
+use Prophecy\Argument;
 use Tribe__Events__Main as Main;
 use Tribe__Events__Pro__WPML__Event_Listener as Event_Listener;
 
 class Event_ListenerTest extends \Codeception\TestCase\WPTestCase {
 
-	protected $handlers_map = null;
+	/**
+	 * @var array
+	 */
+	protected $handlers_map;
+
+	/**
+	 * @var \Tribe__Log__Logger
+	 */
+	protected $logger;
 
 	public function setUp() {
 		// before
 		parent::setUp();
 
 		// your set up methods here
+		$this->logger = $this->prophesize( 'Tribe__Log__Logger' );
 	}
 
 	public function tearDown() {
@@ -128,7 +138,6 @@ class Event_ListenerTest extends \Codeception\TestCase\WPTestCase {
 	 * it should dispatch creation to handler
 	 */
 	public function it_should_dispatch_creation_to_handler() {
-
 		$parent_event_id = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE ] );
 		$event_id        = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE, 'post_parent' => $parent_event_id ] );
 
@@ -141,7 +150,25 @@ class Event_ListenerTest extends \Codeception\TestCase\WPTestCase {
 		$sut->handle_recurring_event_creation( $event_id, $parent_event_id );
 	}
 
+	/**
+	 * @test
+	 * it should log handler exit status
+	 */
+	public function it_should_log_handler_exit_status() {
+		$parent_event_id = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE ] );
+		$event_id        = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE, 'post_parent' => $parent_event_id ] );
+
+		$handler = $this->prophesize( 'Tribe__Events__Pro__WPML__Handler_Interface' );
+		$handler->handle( $event_id, $parent_event_id )->willReturn( 'an exit status' );
+		$this->logger->log( Argument::type( 'string' ), Argument::type( 'string' ), Argument::type( 'string' ) )->shouldBeCalled();
+		$this->handlers_map = [ 'event.recurring.created' => $handler->reveal() ];
+
+		$sut = $this->make_instance();
+
+		$sut->handle_recurring_event_creation( $event_id, $parent_event_id );
+	}
+
 	private function make_instance() {
-		return new Event_Listener( $this->handlers_map );
+		return new Event_Listener( $this->handlers_map, $this->logger->reveal() );
 	}
 }

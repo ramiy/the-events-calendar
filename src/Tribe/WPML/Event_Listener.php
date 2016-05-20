@@ -18,6 +18,10 @@ class Tribe__Events__Pro__WPML__Event_Listener {
 	 * @var array
 	 */
 	private $handlers_map;
+	/**
+	 * @var Tribe__Logger_Interface
+	 */
+	private $logger;
 
 	/**
 	 * The class singleton constructor.
@@ -35,10 +39,12 @@ class Tribe__Events__Pro__WPML__Event_Listener {
 	/**
 	 * Tribe__Events__Pro__WPML__Event_Listener constructor.
 	 *
-	 * @param array|null $handlers_map An associative array of event type to handling class instances.
+	 * @param array|null         $handlers_map An associative array of event type to handling class instances.
+	 * @param Tribe__Log__Logger $logger
 	 */
-	public function __construct( array $handlers_map = null ) {
+	public function __construct( array $handlers_map = null, Tribe__Log__Logger $logger = null ) {
 		$this->handlers_map = $handlers_map ? $handlers_map : $this->get_handlers_map();
+		$this->logger       = $logger;
 	}
 
 	/**
@@ -52,8 +58,12 @@ class Tribe__Events__Pro__WPML__Event_Listener {
 
 		if ( $this->has_handler_for_event( 'event.recurring.created' ) ) {
 			/** @var Tribe__Events__Pro__WPML__Handler_Interface $handler */
-			$handler = $this->get_handler_for_event( 'event.recurring.created' );
-			$handler->handle( $post_id, $post_parent_id );
+			$handler       = $this->get_handler_for_event( 'event.recurring.created' );
+			$handling_exit = $handler->handle( $post_id, $post_parent_id );
+
+			// @todo: hope this is how it's meant to be used
+			$message = $this->get_log_line_header() . 'handled recurring event instance creation [ID ' . $post_id . '; Parent ID ' . $post_parent_id . '] with exit status "' . $handling_exit . '"';
+			$this->logger->log( $message, Tribe__Log::DEBUG, __CLASS__ );
 		}
 	}
 
@@ -103,5 +113,12 @@ class Tribe__Events__Pro__WPML__Event_Listener {
 		if ( get_post( $post_id )->post_parent !== $post_parent_id ) {
 			throw new InvalidArgumentException( 'Event with ID [' . $post_parent_id . '] is not parent of event with ID [' . $post_id . ']' );
 		}
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function get_log_line_header() {
+		return 'PRO - WPML Event Listener: ';
 	}
 }

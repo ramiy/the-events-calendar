@@ -1,6 +1,7 @@
 <?php
 namespace Tribe\Events\Pro\WPML;
 
+use tad\FunctionMocker\FunctionMocker;
 use Tribe__Events__Pro__WPML__Recurring_Event_Creation_Handler as Handler;
 
 class Recurring_Event_Creation_HandlerTest extends \Codeception\TestCase\WPTestCase {
@@ -12,11 +13,13 @@ class Recurring_Event_Creation_HandlerTest extends \Codeception\TestCase\WPTestC
 		parent::setUp();
 
 		// your set up methods here
+		FunctionMocker::setUp();
 		$this->listener = $this->prophesize( 'Tribe__Events__Pro__WPML__Event_Listener' );
 	}
 
 	public function tearDown() {
 		// your tear down methods here
+		FunctionMocker::tearDown();
 
 		// then
 		parent::tearDown();
@@ -32,6 +35,7 @@ class Recurring_Event_Creation_HandlerTest extends \Codeception\TestCase\WPTestC
 		$this->assertInstanceOf( 'Tribe__Events__Pro__WPML__Recurring_Event_Creation_Handler', $sut );
 	}
 
+	
 	private function make_instance() {
 		return new Handler( $this->listener->reveal() );
 	}

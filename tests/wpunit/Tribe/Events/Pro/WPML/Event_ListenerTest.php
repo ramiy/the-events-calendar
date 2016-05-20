@@ -168,6 +168,34 @@ class Event_ListenerTest extends \Codeception\TestCase\WPTestCase {
 		$sut->handle_recurring_event_creation( $event_id, $parent_event_id );
 	}
 
+	public function exit_stati_and_expected_log_entries() {
+		return [
+			[ 'foo', 'foo' ],
+			[ 'foo bar', 'foo bar' ],
+			[ [ 'foo' => 'bar' ], json_encode( [ 'foo' => 'bar' ] ) ],
+			[ [ 'foo' => 'bar', 'baz' => 23 ], json_encode( [ 'foo' => 'bar', 'baz' => 23 ] ) ],
+		];
+	}
+
+	/**
+	 * @test
+	 * it should stringify non string exit stati
+	 * @dataProvider exit_stati_and_expected_log_entries
+	 */
+	public function it_should_stringify_non_string_exit_stati( $exit_status, $expected_log_entry ) {
+		$parent_event_id = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE ] );
+		$event_id        = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE, 'post_parent' => $parent_event_id ] );
+
+		$handler = $this->prophesize( 'Tribe__Events__Pro__WPML__Handler_Interface' );
+		$handler->handle( $event_id, $parent_event_id )->willReturn( $exit_status );
+		$this->logger->log( Argument::containingString( $expected_log_entry ), Argument::type( 'string' ), Argument::type( 'string' ) )->shouldBeCalled();
+		$this->handlers_map = [ 'event.recurring.created' => $handler->reveal() ];
+
+		$sut = $this->make_instance();
+
+		$sut->handle_recurring_event_creation( $event_id, $parent_event_id );
+	}
+
 	private function make_instance() {
 		return new Event_Listener( $this->handlers_map, $this->logger->reveal() );
 	}

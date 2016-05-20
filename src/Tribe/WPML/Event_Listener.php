@@ -44,7 +44,7 @@ class Tribe__Events__Pro__WPML__Event_Listener {
 	 */
 	public function __construct( array $handlers_map = null, Tribe__Log__Logger $logger = null ) {
 		$this->handlers_map = $handlers_map ? $handlers_map : $this->get_handlers_map();
-		$this->logger       = $logger;
+		$this->logger       = $logger ? $logger : Tribe__Main::instance()->log()->get_current_logger();
 	}
 
 	/**
@@ -61,9 +61,12 @@ class Tribe__Events__Pro__WPML__Event_Listener {
 			$handler       = $this->get_handler_for_event( 'event.recurring.created' );
 			$handling_exit = $handler->handle( $post_id, $post_parent_id );
 
-			// @todo: hope this is how it's meant to be used
-			$message = $this->get_log_line_header() . 'handled recurring event instance creation [ID ' . $post_id . '; Parent ID ' . $post_parent_id . '] with exit status "' . $handling_exit . '"';
-			$this->logger->log( $message, Tribe__Log::DEBUG, __CLASS__ );
+			$handling_exit = $this->format_exit_status( $handling_exit );
+
+			if ( null !== $this->logger ) {
+				$message = $this->get_log_line_header() . 'handled recurring event instance creation [ID ' . $post_id . '; Parent ID ' . $post_parent_id . '] with exit status "' . $handling_exit . '"';
+				$this->logger->log( $message, Tribe__Log::DEBUG, __CLASS__ );
+			}
 		}
 	}
 
@@ -120,5 +123,20 @@ class Tribe__Events__Pro__WPML__Event_Listener {
 	 */
 	protected function get_log_line_header() {
 		return 'PRO - WPML Event Listener: ';
+	}
+
+	/**
+	 * @param $handling_exit
+	 *
+	 * @return mixed|string|void
+	 */
+	private function format_exit_status( $handling_exit ) {
+		if ( is_array( $handling_exit ) ) {
+			$handling_exit = json_encode( $handling_exit );
+
+			return $handling_exit;
+		}
+
+		return $handling_exit;
 	}
 }

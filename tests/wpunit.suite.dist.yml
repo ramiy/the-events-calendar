@@ -5,3 +5,21 @@
 class_name: WpunitTester
 modules:
     enabled: [WPLoader, \Helper\Wpunit]
+env:
+    wpml:
+        modules:
+            config:
+                WPLoader:
+                    plugins:
+                        - sitepress-multilingual-cms/sitepress.php
+                        - wpml-translation-management/plugin.php
+                        - wpml-string-translation/plugin.php
+                        - the-events-calendar/the-events-calendar.php
+                        - events-pro/events-calendar-pro.php
+                    activatePlugins:
+                        - sitepress-multilingual-cms/sitepress.php
+                        - wpml-translation-management/plugin.php
+                        - wpml-string-translation/plugin.php
+                        - the-events-calendar/the-events-calendar.php
+                        - events-pro/events-calendar-pro.php
+

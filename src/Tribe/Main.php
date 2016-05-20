@@ -195,12 +195,7 @@
 				add_filter( 'oembed_discovery_links', array( $this, 'oembed_discovery_links_for_recurring_events' ) );
 				add_filter( 'oembed_request_post_id', array( $this, 'oembed_request_post_id_for_recurring_events' ), 10, 2 );
 
-				// WPML support
-				if ( class_exists( 'SitePress' ) ) {
-					add_action( 'tribe_events_pro_recurring_event_instance_updated', 
-						array( Tribe__Events__Pro__WPML__Event_Listener::instance(), 'handle_recurring_event_creation' ),
-						10, 1 );
-				}
+				$this->load_wpml_support();
 			}
 
 			/**
@@ -1782,5 +1777,25 @@
 
 				return tribe_get_upcoming_recurring_event_id_from_url( $url );
 			}
+
+			/**
+			 * Loads WPML support classes and event listeners.
+			 * 
+			 * @return bool
+			 */
+			private function load_wpml_support() {
+				if ( ! ( class_exists( 'SitePress' ) && defined( 'ICL_PLUGIN_PATH' ) ) ) {
+					return false;
+				}
+				
+				// the WPML API is not included by default
+				require_once ICL_PLUGIN_PATH . '/inc/wpml-api.php';
+				
+				add_action( 'tribe_events_pro_recurring_event_instance_updated', array( Tribe__Events__Pro__WPML__Event_Listener::instance(), 'handle_recurring_event_creation' ),
+					10, 1 );
+
+				return true;
+			}
+			
 		} // end Class
 	}

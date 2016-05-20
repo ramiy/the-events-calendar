@@ -1791,9 +1791,9 @@
 				// the WPML API is not included by default
 				require_once ICL_PLUGIN_PATH . '/inc/wpml-api.php';
 				
-				add_action( 'tribe_events_pro_recurring_event_instance_updated', array( Tribe__Events__Pro__WPML__Event_Listener::instance(), 'handle_recurring_event_creation' ),
-					10, 1 );
-
+				add_action( 'tribe_events_pro_recurring_event_instance_inserted', array( Tribe__Events__Pro__WPML__Event_Listener::instance(), 'handle_recurring_event_creation' ),
+					10, 2 );
+				
 				return true;
 			}
 			

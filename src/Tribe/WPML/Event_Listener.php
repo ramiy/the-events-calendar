@@ -6,6 +6,7 @@
  *
  * Listens for Tribe Events events (actions and filters) and dispatches
  */
+// @todo: extract this to an interface and abstract class
 class Tribe__Events__Pro__WPML__Event_Listener {
 
 	/**

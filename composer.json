@@ -10,7 +10,8 @@
   "license": "GPL-2.0",
   "require-dev": {
     "lucatume/wp-browser": "^1.10",
-    "mikey179/vfsStream": "^1.6"
+    "mikey179/vfsStream": "^1.6",
+    "lucatume/function-mocker": "^1.0"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,

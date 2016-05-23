@@ -1,6 +1,6 @@
 <?php
 
-interface Tribe__Events__Pro__WPML__Handler_Interface {
+interface Tribe__Events__Pro__Supports__WPML__Handler_Interface {
 
 	/**
 	 * @param int      $event_id

@@ -194,7 +194,7 @@
 
 				add_filter( 'oembed_discovery_links', array( $this, 'oembed_discovery_links_for_recurring_events' ) );
 				add_filter( 'oembed_request_post_id', array( $this, 'oembed_request_post_id_for_recurring_events' ), 10, 2 );
-
+				
 				$this->load_wpml_support();
 			}
 
@@ -1792,7 +1792,7 @@
 				require_once ICL_PLUGIN_PATH . '/inc/wpml-api.php';
 
 				add_action( 'tribe_events_pro_recurring_event_instance_inserted', 
-					array( Tribe__Events__Pro__WPML__Event_Listener::instance(), 'handle_recurring_event_creation' ),
+					array( Tribe__Events__Pro__Supports__WPML__Event_Listener::instance(), 'handle_recurring_event_creation' ),
 					10,
 					2 
 				);

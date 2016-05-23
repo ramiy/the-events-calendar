@@ -1,9 +1,9 @@
 <?php
-namespace Tribe\Events\Pro\WPML;
+namespace Tribe\Events\Pro\Supports\WPML;
 
 use Prophecy\Argument;
 use Tribe__Events__Main as Main;
-use Tribe__Events__Pro__WPML__Event_Listener as Event_Listener;
+use Tribe__Events__Pro__Supports__WPML__Event_Listener as Event_Listener;
 
 class Event_ListenerTest extends \Codeception\TestCase\WPTestCase {
 

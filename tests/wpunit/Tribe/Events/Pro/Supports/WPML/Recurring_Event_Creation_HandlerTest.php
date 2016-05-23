@@ -1,9 +1,9 @@
 <?php
-namespace Tribe\Events\Pro\WPML;
+namespace Tribe\Events\Pro\Supports\WPML;
 
 use tad\FunctionMocker\FunctionMocker;
 use Tribe__Events__Main as Main;
-use Tribe__Events__Pro__WPML__Recurring_Event_Creation_Handler as Handler;
+use Tribe__Events__Pro__Supports__WPML__Recurring_Event_Creation_Handler as Handler;
 
 class Recurring_Event_Creation_HandlerTest extends \Codeception\TestCase\WPTestCase {
 

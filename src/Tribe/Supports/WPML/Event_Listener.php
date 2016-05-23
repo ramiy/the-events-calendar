@@ -38,12 +38,14 @@ class Tribe__Events__Pro__Supports__WPML__Event_Listener {
 	/**
 	 * Tribe__Events__Pro__Supports__WPML__Event_Listener constructor.
 	 *
-	 * @param array|null         $handlers_map An associative array of event type to handling class instances.
-	 * @param Tribe__Log__Logger $logger
+	 * @param array|null                               $handlers_map An associative array of event type to handling class instances.
+	 * @param Tribe__Log__Logger                       $logger
+	 * @param Tribe__Events__Pro__Supports__WPML__WPML $wpml
 	 */
-	public function __construct( array $handlers_map = null, Tribe__Log__Logger $logger = null ) {
+	public function __construct( array $handlers_map = null, Tribe__Log__Logger $logger = null, Tribe__Events__Pro__Supports__WPML__WPML $wpml = null ) {
 		$this->handlers_map = $handlers_map ? $handlers_map : $this->get_handlers_map();
 		$this->logger       = $logger ? $logger : Tribe__Main::instance()->log()->get_current_logger();
+		$this->wpml         = $wpml ? $wpml : Tribe__Events__Pro__Supports__WPML__WPML::instance();
 	}
 
 	/**
@@ -73,7 +75,7 @@ class Tribe__Events__Pro__Supports__WPML__Event_Listener {
 	 * @return array
 	 */
 	private function get_handlers_map() {
-		return array( 'event.recurring.created' => new Tribe__Events__Pro__Supports__WPML__Recurring_Event_Creation_Handler( $this ) );
+		return array( 'event.recurring.created' => 'Tribe__Events__Pro__Supports__WPML__Recurring_Event_Creation_Handler' );
 	}
 
 	/**
@@ -101,7 +103,7 @@ class Tribe__Events__Pro__Supports__WPML__Event_Listener {
 	 */
 	protected function get_handler_for_event( $event ) {
 		if ( ! is_a( $this->handlers_map[ $event ], 'Tribe__Events__Pro__Supports__WPML__Handler_Interface' ) ) {
-			$this->handlers_map[ $event ] = new $this->handlers_map[$event];
+			$this->handlers_map[ $event ] = new $this->handlers_map[$event]( $this, $this->wpml );
 		}
 
 		return $this->handlers_map[ $event ];

@@ -4,7 +4,7 @@
 /**
  * Class Tribe__Events__Pro__Supports__WPML__WPML
  *
- * An facade class to wrap and customize access to WPML API through adapters.
+ * A facade class to wrap and customize access to WPML API through adapters.
  * Any call should be forwarded to specialized adapter classes.
  */
 class Tribe__Events__Pro__Supports__WPML__WPML {

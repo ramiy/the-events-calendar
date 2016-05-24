@@ -47,6 +47,15 @@ class Tribe__Events__Pro__Supports__WPML__API__Translations {
 	}
 
 	/**
+	 * Returns the post WPML language code reading it from the globals.
+	 *
+	 * @return string
+	 */
+	private function get_language_code_from_globals() {
+		return $_POST['icl_post_language'];
+	}
+
+	/**
 	 * Returns a post language code reading it from WPML tables.
 	 *
 	 * @param int $post_id
@@ -60,15 +69,6 @@ class Tribe__Events__Pro__Supports__WPML__API__Translations {
 		}
 
 		return $language_information['language_code'];
-	}
-
-	/**
-	 * Returns the post WPML language code reading it from the globals.
-	 *
-	 * @return string
-	 */
-	private function get_language_code_from_globals() {
-		return $_POST['icl_post_language'];
 	}
 
 	/**

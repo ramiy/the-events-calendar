@@ -39,7 +39,7 @@ class Event_ListenerTest extends \Codeception\TestCase\WPTestCase {
 	public function it_should_be_instantiatable() {
 		$sut = $this->make_instance();
 
-		$this->assertInstanceOf( 'Tribe__Events__Pro__WPML__Event_Listener', $sut );
+		$this->assertInstanceOf( 'Tribe__Events__Pro__Supports__WPML__Event_Listener', $sut );
 	}
 
 	/**
@@ -141,7 +141,7 @@ class Event_ListenerTest extends \Codeception\TestCase\WPTestCase {
 		$parent_event_id = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE ] );
 		$event_id        = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE, 'post_parent' => $parent_event_id ] );
 
-		$handler = $this->prophesize( 'Tribe__Events__Pro__WPML__Handler_Interface' );
+		$handler = $this->prophesize( 'Tribe__Events__Pro__Supports__WPML__Handler_Interface' );
 		$handler->handle( $event_id, $parent_event_id )->shouldBeCalled();
 		$this->handlers_map = [ 'event.recurring.created' => $handler->reveal() ];
 
@@ -158,7 +158,7 @@ class Event_ListenerTest extends \Codeception\TestCase\WPTestCase {
 		$parent_event_id = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE ] );
 		$event_id        = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE, 'post_parent' => $parent_event_id ] );
 
-		$handler = $this->prophesize( 'Tribe__Events__Pro__WPML__Handler_Interface' );
+		$handler = $this->prophesize( 'Tribe__Events__Pro__Supports__WPML__Handler_Interface' );
 		$handler->handle( $event_id, $parent_event_id )->willReturn( 'an exit status' );
 		$this->logger->log( Argument::type( 'string' ), Argument::type( 'string' ), Argument::type( 'string' ) )->shouldBeCalled();
 		$this->handlers_map = [ 'event.recurring.created' => $handler->reveal() ];
@@ -186,7 +186,7 @@ class Event_ListenerTest extends \Codeception\TestCase\WPTestCase {
 		$parent_event_id = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE ] );
 		$event_id        = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE, 'post_parent' => $parent_event_id ] );
 
-		$handler = $this->prophesize( 'Tribe__Events__Pro__WPML__Handler_Interface' );
+		$handler = $this->prophesize( 'Tribe__Events__Pro__Supports__WPML__Handler_Interface' );
 		$handler->handle( $event_id, $parent_event_id )->willReturn( $exit_status );
 		$this->logger->log( Argument::containingString( $expected_log_entry ), Argument::type( 'string' ), Argument::type( 'string' ) )->shouldBeCalled();
 		$this->handlers_map = [ 'event.recurring.created' => $handler->reveal() ];

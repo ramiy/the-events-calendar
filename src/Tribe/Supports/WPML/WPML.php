@@ -9,6 +9,12 @@
  */
 class Tribe__Events__Pro__Supports__WPML__WPML {
 
+	/**
+	 * The key WPML will store the current post language code while saving in the $_POST global.
+	 * 
+	 * @var string
+	 */
+	public static $post_language_post_global_key = 'icl_post_language';
 
 	/**
 	 * @var Tribe__Events__Pro__Supports__WPML__WPML

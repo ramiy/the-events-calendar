@@ -33,11 +33,12 @@ class Tribe__Events__Pro__Supports__WPML__Recurring_Event_Creation_Handler imple
 	 */
 	public function handle( $event_id, $parent_event_id = null ) {
 		$language_code = $this->wpml->get_parent_language_code( $parent_event_id );
-		$trid          = $this->wpml->get_master_series_instance_trid( $event_id, $parent_event_id);
 
 		if ( empty( $language_code ) ) {
 			return - 1;
 		}
+		
+		$trid          = $this->wpml->get_master_series_instance_trid( $event_id, $parent_event_id);
 
 		return $this->wpml->insert_event_translation_for_language_code( $event_id, $language_code, $trid, true );
 	}

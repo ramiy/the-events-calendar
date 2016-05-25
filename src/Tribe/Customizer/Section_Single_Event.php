@@ -135,6 +135,8 @@ final class Tribe__Events__Pro__Customizer__Section_Single_Event extends Tribe__
 			)
 		);
 
-
+		// Introduced to make Selective Refresh have less code duplication
+		$customizer->add_setting_name( $customizer->get_setting_name( 'post_title_color', $section ) );
+		$customizer->add_setting_name( $customizer->get_setting_name( 'details_bg_color', $section ) );
 	}
 }

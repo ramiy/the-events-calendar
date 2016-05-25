@@ -109,6 +109,8 @@ final class Tribe__Events__Pro__Customizer__Section_Photo_View extends Tribe__Ev
 			)
 		);
 
+		// Introduced to make Selective Refresh have less code duplication
+		$customizer->add_setting_name( $customizer->get_setting_name( 'bg_color', $section ) );
 	}
 
 }

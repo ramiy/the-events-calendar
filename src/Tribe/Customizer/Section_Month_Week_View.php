@@ -200,6 +200,9 @@ final class Tribe__Events__Pro__Customizer__Section_Month_Week_View extends Trib
 			)
 		);
 
+		// Introduced to make Selective Refresh have less code duplication
+		$customizer->add_setting_name( $customizer->get_setting_name( 'table_bg_color', $section ) );
+		$customizer->add_setting_name( $customizer->get_setting_name( 'highlight_color', $section ) );
 	}
 
 }

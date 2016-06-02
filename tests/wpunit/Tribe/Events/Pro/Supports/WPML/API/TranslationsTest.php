@@ -1,6 +1,7 @@
 <?php
 namespace Tribe\Events\Pro\Supports\WPML\API;
 
+use Helper\RecurringEvents;
 use tad\FunctionMocker\FunctionMocker;
 use Tribe__Events__Main as Main;
 use Tribe__Events__Pro__Supports__WPML__API__Translations as Translations;
@@ -8,12 +9,18 @@ use Tribe__Events__Pro__Supports__WPML__WPML as WPML;
 
 class TranslationsTest extends \Codeception\TestCase\WPTestCase {
 
+	/**
+	 * @var RecurringEvents
+	 */
+	protected $recurring_events;
+
 	public function setUp() {
 		// before
 		parent::setUp();
 
 		// your set up methods here
 		FunctionMocker::setUp();
+		$this->recurring_events = $this->getModule( '\Helper\RecurringEvents' );
 	}
 
 	public function tearDown() {
@@ -83,6 +90,33 @@ class TranslationsTest extends \Codeception\TestCase\WPTestCase {
 		$language_code = $sut->get_parent_language_code( $parent_post_id );
 
 		$this->assertFalse( $language_code );
+	}
+
+	/**
+	 * @test
+	 * it should return false if trying to get master series event trid of non recurring event
+	 */
+	public function it_should_return_false_if_trying_to_get_master_series_event_trid_of_non_recurring_event() {
+		$parent_event_id = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE ] );
+		$child_event_id  = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE, 'post_parent' => $parent_event_id ] );
+
+		$sut = $this->make_instance();
+
+		$this->assertFalse( $sut->get_master_series_instance_trid( $child_event_id, $parent_event_id ) );
+	}
+
+	/**
+	 * @test
+	 * it should return false if child event has not a start date
+	 */
+	public function it_should_return_false_if_child_event_has_not_a_start_date() {
+		$parent_event_id = $this->recurring_events->create_recurring_event();
+		$child_event_id  = $this->recurring_events->last_series()->first_child();
+		delete_post_meta( $child_event_id, '_EventStartDate' );
+
+		$sut = $this->make_instance();
+
+		$this->assertFalse( $sut->get_master_series_instance_trid( $child_event_id, $parent_event_id ) );
 	}
 
 	private function make_instance() {

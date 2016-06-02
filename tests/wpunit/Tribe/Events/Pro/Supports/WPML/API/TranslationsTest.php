@@ -119,6 +119,55 @@ class TranslationsTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertFalse( $sut->get_master_series_instance_trid( $child_event_id, $parent_event_id ) );
 	}
 
+	/**
+	 * @test
+	 * it should return master series instance trid
+	 * @env wpml
+	 */
+	public function it_should_return_master_series_instance_trid() {
+		
+		// create the default language series
+		// WPML will not create translated instances as the default language has not been setup yet
+		$master_series_parent_event_id = $this->recurring_events->create_recurring_event();
+		$master_series_child_event_id  = $this->recurring_events->last_series()->first_child();
+
+		$element_type = 'post_' . Main::POSTTYPE;
+	
+		// add an entry for the master series paren and first child in the translations table
+		wpml_add_translatable_content( $element_type, $master_series_parent_event_id, 'en' );
+		wpml_add_translatable_content( $element_type, $master_series_child_event_id, 'en' );
+
+		/** @var \wpdb $wpdb */
+		global $wpdb;
+	
+		// get the two translations `trid`s
+		$master_series_parent_event_trid = $wpdb->get_var( "SELECT trid 
+			FROM {$wpdb->prefix}icl_translations 
+			WHERE element_type = '{$element_type}'
+			AND element_id = {$master_series_parent_event_id}
+			AND language_code = 'en'	
+			AND source_language_code IS NULL" );
+
+		$master_series_child_event_trid = $wpdb->get_var( "SELECT trid 
+			FROM {$wpdb->prefix}icl_translations 
+			WHERE element_type = '{$element_type}'
+			AND element_id = {$master_series_child_event_id}
+			AND language_code = 'en'	
+			AND source_language_code IS NULL" );
+	
+		// create the translated series, not related to the master one in any way yet
+		// WPML will not create translated instances as the default language has not been setup yet
+		$translated_series_parent_event_id = $this->recurring_events->create_recurring_event();
+		$translated_series_child_event_id  = $this->recurring_events->last_series()->first_child();
+	
+		// now add the translations table entry and relate it to the master series using the `trid`s
+		wpml_add_translatable_content( $element_type, $translated_series_parent_event_id, 'it', $master_series_parent_event_trid );
+		wpml_add_translatable_content( $element_type, $translated_series_child_event_id, 'it', $master_series_child_event_trid );
+
+		$sut = $this->make_instance();
+		$this->assertEquals( $master_series_child_event_trid, $sut->get_master_series_instance_trid( $master_series_child_event_id, $translated_series_parent_event_id ) );
+	}
+
 	private function make_instance() {
 		return new Translations();
 	}

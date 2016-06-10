@@ -53,7 +53,8 @@ class RecurringEvents extends \Codeception\Module {
 
 		$args = array_merge( [
 			'post_title'       => 'Recurring Event ' . $count,
-			'post_content'     => 'Recurring Event Content' . $count,
+			'post_content'     => 'Recurring Event Content ' . $count,
+			'post_status'      => 'publish',
 			'EventStartDate'   => $start_date,
 			'EventEndDate'     => $start_date,
 			'EventStartHour'   => 16,
@@ -67,11 +68,7 @@ class RecurringEvents extends \Codeception\Module {
 		$post_id = API::createEvent( $args );
 
 		$queue_processor = new Queue_Processor;
-		$processed       = $queue_processor->process_batch( $post_id, 200 );
-
-		if ( empty( $processed ) ) {
-			throw new \RuntimeException( __CLASS__ . ': could not process batch for event with ID [' . $post_id . ']' );
-		}
+		$queue_processor->process_batch( $post_id, 200 );
 
 		$this->last = $post_id;
 

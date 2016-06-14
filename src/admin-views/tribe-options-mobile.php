@@ -1,7 +1,8 @@
 <?php
 /**
  * Filter the array of views that are registered for the tribe bar
- * @param array array() {
+ *
+ * @param array $views {
  *     Array of views, where each view is itself represented by an associative array consisting of these keys:
  *
  *     @type string $displaying         slug for the view
@@ -9,7 +10,8 @@
  *     @type string $event_bar_hook     not used
  *     @type string $url                url to the view
  * }
- * @param boolean
+ *
+ * @param boolean $context
  */
 $views = apply_filters( 'tribe-events-bar-views', array(), false );
 
@@ -25,7 +27,7 @@ $settings = Tribe__Main::array_insert_after_key(
 	'viewOption',
 	$settings,
 	array(
-		'mobile_default_view'                => array(
+		'mobile_default_view' => array(
 			'type'            => 'dropdown_select2',
 			'label'           => esc_html__( 'Default mobile view', 'tribe-events-calendar-pro' ),
 			'tooltip'         => esc_html__( 'Change the default view for Mobile users.', 'tribe-events-calendar-pro' ),

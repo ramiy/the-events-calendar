@@ -883,6 +883,11 @@ if ( ! function_exists( 'tribe_get_mobile_default_view' ) ) {
 			$default_view = $default;
 		}
 
+		/**
+		 * Allow users to filter which is the default Mobile view globally
+		 *
+		 * @param string $default_view The default view set
+		 */
 		return apply_filters( 'tribe_events_mobile_default_view', $default_view );
 	}
 }//end if

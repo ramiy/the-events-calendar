@@ -14,11 +14,11 @@ class Tribe__Events__Pro__Recurrence__Admin_Notices {
 		return self::$instance;
 	}
 
-	public function display_editing_all_recurrences_notice(){
+	public function display_editing_all_recurrences_notice() {
 		_deprecated_function( __METHOD__, '4.3', 'Tribe__Admin__Notices' );
 	}
 
-	public function display_created_recurrences_notice(){
+	public function display_created_recurrences_notice() {
 		_deprecated_function( __METHOD__, '4.3', 'Tribe__Admin__Notices' );
 	}
 }

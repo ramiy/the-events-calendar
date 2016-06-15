@@ -92,28 +92,29 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 	 * A test that creates a recurring event and checks the start date
 	 */
 	public function test_get_recurrence_start_dates() {
-		$start_date = date('Y-m-d', strtotime('2014-05-01'));
+		$start_date = date('Y-m-d', strtotime('today'));
 		// Event that recurs 5 times
-		$post_id = Tribe__Events__API::createEvent(array(
-			'post_title' => __FUNCTION__,
-			'post_content' => __CLASS__ . ' ' . __FUNCTION__,
-			'EventStartDate' => $start_date,
-			'EventEndDate' => $start_date,
-			'EventStartHour' => 16,
-			'EventEndHour' => 17,
+		$post_data = array(
+			'post_title'       => __FUNCTION__,
+			'post_content'     => __CLASS__ . ' ' . __FUNCTION__,
+			'EventStartDate'   => $start_date,
+			'EventEndDate'     => $start_date,
+			'EventStartHour'   => 16,
+			'EventEndHour'     => 17,
 			'EventStartMinute' => 0,
-			'EventEndMinute' => 0,
-			'recurrence' => array(
+			'EventEndMinute'   => 0,
+			'recurrence'       => array(
 				'rules' => array(
 					0 => array(
-						'type' 				=> 'Every Week',
-						'end-type' 			=> 'After',
-						'end'				=> null,
-						'end-count' 		=> 5,
+						'type'      => 'Every Week',
+						'end-type'  => 'After',
+						'end'       => null,
+						'end-count' => 5,
 					),
 				),// end rules array
 			)
-		));
+		);
+		$post_id   = Tribe__Events__API::createEvent( $post_data );
 
 		// Create a new queue processor to generate the children for this new event
 		$queue_processor = new Tribe__Events__Pro__Recurrence__Queue_Processor;
@@ -124,11 +125,11 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 
 		$dates = tribe_get_recurrence_start_dates( $post_id );
 		$expected = array(
-			'2014-05-01 16:00:00',
-			'2014-05-08 16:00:00',
-			'2014-05-15 16:00:00',
-			'2014-05-22 16:00:00',
-			'2014-05-29 16:00:00',
+			$start_date . ' 16:00:00',
+			date( 'Y-m-d', strtotime( '+1 week' ) ) . ' 16:00:00',
+			date( 'Y-m-d', strtotime( '+2 weeks' ) ) . ' 16:00:00',
+			date( 'Y-m-d', strtotime( '+3 weeks' ) ) . ' 16:00:00',
+			date( 'Y-m-d', strtotime( '+4 weeks' ) ) . ' 16:00:00',
 		);
 		//checks that the expected recurring dates are what they say to be
 		$this->assertEqualSets($expected, $dates);

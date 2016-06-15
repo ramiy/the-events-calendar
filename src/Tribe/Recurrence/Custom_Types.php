@@ -46,6 +46,7 @@ class Tribe__Events__Pro__Recurrence__Custom_Types {
 			'week',
 			'month',
 			'year',
+			'date',
 		);
 	}
 

@@ -139,11 +139,9 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 
 	/**
 	 * test_update_event
-	 * works in isolation but not with the other tests!!!
-	 * FAILS!!!
 	 */
 	public function test_update_event() {
-		$start_date = date( 'Y-m-d', strtotime( '2014-05-01' ) );
+		$start_date = date( 'Y-m-d', strtotime( 'today' ) );
 		$event_args = array(
 			'post_type'        => Tribe__Events__Main::POSTTYPE,
 			'post_title'       => __FUNCTION__,
@@ -183,11 +181,11 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 		$this->assertEqualSets( $original_dates, $updated_dates, 'Checks that original dates are the same as the updated' );
 
 		$expected = array(
-			'2014-05-01 16:00:00',
-			'2014-05-08 16:00:00',
-			'2014-05-15 16:00:00',
-			'2014-05-22 16:00:00',
-			'2014-05-29 16:00:00',
+			$start_date . ' 16:00:00',
+			date( 'Y-m-d', strtotime( '+1 week' ) ) . ' 16:00:00',
+			date( 'Y-m-d', strtotime( '+2 weeks' ) ) . ' 16:00:00',
+			date( 'Y-m-d', strtotime( '+3 weeks' ) ) . ' 16:00:00',
+			date( 'Y-m-d', strtotime( '+4 weeks' ) ) . ' 16:00:00',
 		);
 		//checks that the expected dates are the same as the updated events
 		$this->assertEqualSets( $expected, $updated_dates, 'Checks that the updated dates are the same to the expected' );
@@ -198,7 +196,7 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 	 * creates event that recurs 5 times and updates it and checks that the updated and original are the same
 	 */
 	public function test_nondestructive_update_event() {
-		$start_date = date( 'Y-m-d', strtotime( '2014-05-01' ) );
+		$start_date = date( 'Y-m-d', strtotime( 'today' ) );
 		$event_args = array(
 			'post_type'        => Tribe__Events__Main::POSTTYPE,
 			'post_title'       => __FUNCTION__,
@@ -240,13 +238,14 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 		//updates Event using the original event
 		Tribe__Events__API::updateEvent( $post_id, $event_args );
 
-		$updated_children = get_posts( array(
+		$updated_children = get_post( array(
 			'post_type'      => Tribe__Events__Main::POSTTYPE,
 			'post_parent'    => $post_id,
 			'post_status'    => 'publish',
 			'fields'         => 'ids',
 			'posts_per_page' => 25,
 		) );
+		
 		//checks that the updated children have 4 events which excludes the parent
 		$this->assertCount( 4, $updated_children, 'Checks the updated children is 4 which excludes the parent' );
 
@@ -260,7 +259,7 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 	 * contain the excluded date in it.
 	 */
 	public function test_update_event_with_deleted_instances() {
-		$start_date = date( 'Y-m-d', strtotime( '2014-05-01' ) );
+		$start_date = date( 'Y-m-d', strtotime( 'today' ) );
 		$event_args = array(
 			'post_type'        => Tribe__Events__Main::POSTTYPE,
 			'post_title'       => __FUNCTION__,
@@ -284,6 +283,9 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 			)
 		);
 		$post_id    = Tribe__Events__API::createEvent( $event_args );
+		
+		// give SQL the time to write
+		sleep(1);
 
 		// Create a new queue processor to generate the children for this new event
 		$queue_processor = new Tribe__Events__Pro__Recurrence__Queue_Processor;
@@ -295,7 +297,8 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 			'post_status'    => 'publish',
 			'fields'         => 'ids',
 			'posts_per_page' => 25,
-			'orderby'        => 'ID',
+			'meta_key'       => '_EventStartDate',
+			'orderby'        => '_EventStartDate',
 			'order'          => 'ASC',
 		) );
 		//Checks that the original children are not empty
@@ -304,16 +307,23 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 		//Checks that the original children has 4 events
 		$this->assertCount( 4, $original_children, 'Checks that there are 4 children before the deletion' );
 
-		wp_delete_post( $original_children[2], true );
+		$deleted_child_event_id = $original_children[2];
+		wp_delete_post( $deleted_child_event_id, true );
 
-		//Checks that the original children now have 4 after it deleted a recurrence
-		$this->assertCount( 4, $original_children, 'Checks that there are still 4 children after the deletion' );
+		$recurrence_meta = get_post_meta( $post_id, '_EventRecurrence', true );
 
-		$meta = get_post_meta( $post_id, '_EventRecurrence', true );
-		$this->assertContains( '2014-05-22 16:00:00', $meta['exclusions'][0]['custom']['date'],
-			'Checks that the date that was deleted from the children was the 3rd one which was 2014-05 16:00:00' );
+		$this->assertArrayHasKey( 'date', $recurrence_meta['exclusions'][0]['custom'], 'Recurrence meta is missing the date exclusion entry' );
 
-		Tribe__Events__API::updateEvent( $post_id, $event_args );
+		$excluded_dates = $recurrence_meta['exclusions'][0]['custom']['date'];
+		$this->assertCount( 1, $excluded_dates, 'Recurrence meta should contain one date exclusion only' );
+	
+		$expected_deleted_date = date( 'Y-m-d', strtotime( '+3 weeks' ) ) . ' 16:00:00';
+		$this->assertEquals( $expected_deleted_date, reset( $excluded_dates ) );
+	
+		// let's update the event with the updated recurrence meta
+		$updated_events_args = $event_args;
+		$updated_events_args['recurrence'] = $recurrence_meta;
+		Tribe__Events__API::updateEvent( $post_id, $updated_events_args );
 
 		$updated_children = get_posts( array(
 			'post_type'      => Tribe__Events__Main::POSTTYPE,
@@ -321,15 +331,16 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 			'post_status'    => 'publish',
 			'fields'         => 'ids',
 			'posts_per_page' => 25,
+			'meta_key'       => '_EventStartDate',
+			'orderby'        => '_EventStartDate',
+			'order'          => 'ASC',
 		) );
-		//Checks that the original children is still 4
-		$this->assertCount( 4, $original_children, 'Checks that the original children is still 4 after the update' );
 
 		//Checks that the updated children is 3 because of the original children that had an exclusion
-		$this->assertCount( 3, $updated_children, 'Checks that the updated children is 3' );
+		$this->assertCount( 3, $updated_children, 'Expected children events count to be 3' );
 
 		//Checks that the excluded date from the original children is not in the updated children
-		$this->assertNotContains( $original_children[2], $updated_children, 'Checks that the excluded date from the original is not in the updated' );
+		$this->assertNotContains( $deleted_child_event_id, $updated_children, 'Expected deleted child event post id not to be among updated children' );
 	}//ends test_update_event_with_deleted_instances
 
 	/**

@@ -221,7 +221,7 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 		);
 		$post_id    = Tribe__Events__API::createEvent( $event_args );
 		// give SQL the time
-		sleep(1);
+		sleep( 1 );
 
 		// Create a new queue processor to generate the children for this new event
 		$queue_processor = new Tribe__Events__Pro__Recurrence__Queue_Processor;
@@ -247,7 +247,7 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 			'fields'         => 'ids',
 			'posts_per_page' => 25,
 		) );
-		
+
 		//checks that the updated children have 4 events which excludes the parent
 		$this->assertCount( 4, $updated_children, 'Checks the updated children is 4 which excludes the parent' );
 
@@ -285,9 +285,9 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 			)
 		);
 		$post_id    = Tribe__Events__API::createEvent( $event_args );
-		
+
 		// give SQL the time to write
-		sleep(1);
+		sleep( 1 );
 
 		// Create a new queue processor to generate the children for this new event
 		$queue_processor = new Tribe__Events__Pro__Recurrence__Queue_Processor;
@@ -318,12 +318,12 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 
 		$excluded_dates = $recurrence_meta['exclusions'][0]['custom']['date'];
 		$this->assertCount( 1, $excluded_dates, 'Recurrence meta should contain one date exclusion only' );
-	
+
 		$expected_deleted_date = date( 'Y-m-d', strtotime( '+3 weeks' ) ) . ' 16:00:00';
 		$this->assertEquals( $expected_deleted_date, reset( $excluded_dates ) );
-	
+
 		// let's update the event with the updated recurrence meta
-		$updated_events_args = $event_args;
+		$updated_events_args               = $event_args;
 		$updated_events_args['recurrence'] = $recurrence_meta;
 		Tribe__Events__API::updateEvent( $post_id, $updated_events_args );
 
@@ -351,7 +351,7 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 	 * events and checks that the new dates are all good.
 	 */
 	public function test_changing_start_date() {
-		$start_date = date( 'Y-m-d', strtotime( '2014-05-01' ) );
+		$start_date = date( 'Y-m-d', strtotime( 'today' ) );
 		$event_args = array(
 			'post_type'        => Tribe__Events__Main::POSTTYPE,
 			'post_title'       => __FUNCTION__,
@@ -376,36 +376,26 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 		);
 		$post_id    = Tribe__Events__API::createEvent( $event_args );
 
-		// Create a new queue processor to generate the children for this new event
-		$queue_processor = new Tribe__Events__Pro__Recurrence__Queue_Processor;
-		$queue_processor->process_queue( $post_id );
-		sleep( 1 );
+		// process the queue, otherwise all the children won't get created
+		Tribe__Events__Pro__Main::instance()->queue_processor->process_queue();
 
 		$original_dates = tribe_get_recurrence_start_dates( $post_id );
 
 		//Checks that the original dates has 5 dates in its array
 		$this->assertCount( 5, $original_dates, 'Checks that the original dates have 5 dates' );
 
-		$expected_dates = array(
-			'2014-05-01 16:00:00',
-			'2014-05-02 16:00:00',
-			'2014-05-03 16:00:00',
-			'2014-05-04 16:00:00',
-			'2014-05-05 16:00:00',
-		);
+		$expected_dates = array_map( function ( $n ) {
+			return date( 'Y-m-d', strtotime( '+' . $n . ' days' ) ) . ' 16:00:00';
+		}, range( 0, 4 ) );
 
 		//Checks that the expected dates are equal to the original dates
 		$this->assertEqualSets( $expected_dates, $original_dates, 'Checks that the expected dates are the same as the original dates' );
 
-		$new_date                     = date( 'Y-m-d', strtotime( '2014-05-08' ) );
+		$new_date                     = date( 'Y-m-d', strtotime( '+1 week' ) );
 		$event_args['EventStartDate'] = $new_date;
 		$event_args['EventEndDate']   = $new_date;
+		
 		Tribe__Events__API::updateEvent( $post_id, $event_args );
-
-		// Create a new queue processor to generate the children for this new event
-		$queue_processor = new Tribe__Events__Pro__Recurrence__Queue_Processor;
-		$queue_processor->process_queue( $post_id );
-		sleep( 1 );
 
 		$new_dates = tribe_get_recurrence_start_dates( $post_id );
 
@@ -415,15 +405,17 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 		//Checks that the original dates are not the same as the new dates
 		$this->assertNotContains( $original_dates, $new_dates, 'Checks that the new dates and the original dates are not the same' );
 
-		$new_dates = $new_dates;
-
-		$expected_new_dates = array(
-			'2014-05-08 16:00:00',
-			'2014-05-09 16:00:00',
-			'2014-05-10 16:00:00',
-			'2014-05-11 16:00:00',
-			'2014-05-12 16:00:00',
-		);
+		$expected_new_dates = array_map( function ( $n ) {
+			return date( 'Y-m-d', strtotime( '+1 week +' . $n . ' days' ) ) . ' 16:00:00';
+		}, range( 0, 4 ) );
+		
+//		$expected_new_dates = array(
+//			'2014-05-08 16:00:00',
+//			'2014-05-09 16:00:00',
+//			'2014-05-10 16:00:00',
+//			'2014-05-11 16:00:00',
+//			'2014-05-12 16:00:00',
+//		);
 
 		//Checks that the expected new dates are equal to the new dates
 		$this->assertEqualSets( $expected_new_dates, $new_dates, 'Checks that the expected new dates are the same as the new dates' );

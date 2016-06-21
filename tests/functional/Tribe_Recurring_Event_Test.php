@@ -408,14 +408,6 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 		$expected_new_dates = array_map( function ( $n ) {
 			return date( 'Y-m-d', strtotime( '+1 week +' . $n . ' days' ) ) . ' 16:00:00';
 		}, range( 0, 4 ) );
-		
-//		$expected_new_dates = array(
-//			'2014-05-08 16:00:00',
-//			'2014-05-09 16:00:00',
-//			'2014-05-10 16:00:00',
-//			'2014-05-11 16:00:00',
-//			'2014-05-12 16:00:00',
-//		);
 
 		//Checks that the expected new dates are equal to the new dates
 		$this->assertEqualSets( $expected_new_dates, $new_dates, 'Checks that the expected new dates are the same as the new dates' );
@@ -430,7 +422,7 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 			$this->factory->tag->create_object( array( 'name' => 'test tag a' ) ),
 			$this->factory->tag->create_object( array( 'name' => 'test tag b' ) ),
 		);
-		$start_date = date( 'Y-m-d', strtotime( '2014-05-01' ) );
+		$start_date = date( 'Y-m-d', strtotime( 'today' ) );
 		$event_args = array(
 			'post_type'        => Tribe__Events__Main::POSTTYPE,
 			'post_title'       => __FUNCTION__,
@@ -505,7 +497,7 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 				'Venue' => 'Test Venue B',
 			) ),
 		);
-		$start_date = date( 'Y-m-d', strtotime( '2014-05-01' ) );
+		$start_date = date( 'Y-m-d', strtotime( 'today' ) );
 		$event_args = array(
 			'post_type'        => Tribe__Events__Main::POSTTYPE,
 			'post_title'       => __FUNCTION__,
@@ -692,7 +684,7 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 		$old_current_user = get_current_user_id();
 		wp_set_current_user( $author_id );
 
-		$start_date = date( 'Y-m-d', strtotime( '2014-05-01' ) );
+		$start_date = date( 'Y-m-d', strtotime( 'today' ) );
 		$event_args = array(
 			'post_type'        => Tribe__Events__Main::POSTTYPE,
 			'post_title'       => __FUNCTION__,
@@ -782,7 +774,7 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 	 *
 	 */
 	public function test_remove_recurrence() {
-		$start_date = date( 'Y-m-d', strtotime( '2014-05-01' ) );
+		$start_date = date( 'Y-m-d', strtotime( 'today' ) );
 		$event_args = array(
 			'post_type'        => Tribe__Events__Main::POSTTYPE,
 			'post_title'       => __FUNCTION__,

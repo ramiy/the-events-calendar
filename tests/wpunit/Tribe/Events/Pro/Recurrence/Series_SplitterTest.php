@@ -40,8 +40,8 @@ class Series_SplitterTest extends \Codeception\TestCase\WPTestCase {
 		);
 		$post_id    = Tribe__Events__API::createEvent( $event_args );
 
-		// give the DB the time to create the instances
-		sleep( 1 );
+		// process the queue, otherwise all the children won't get created
+		Tribe__Events__Pro__Main::instance()->queue_processor->process_queue();
 
 		$original_children = get_posts( array(
 			'post_type'   => Tribe__Events__Main::POSTTYPE,
@@ -116,12 +116,13 @@ class Series_SplitterTest extends \Codeception\TestCase\WPTestCase {
 						'type'      => 'Every Week',
 						'end-type'  => 'After',
 						'end'       => null,
-						'end-count' => 50,
+						'end-count' => 30,
 					),
 				),// end rules array
 			)
 		);
 		$post_id    = Tribe__Events__API::createEvent( $event_args );
+		
 		// process the queue, otherwise all the children won't get created
 		Tribe__Events__Pro__Main::instance()->queue_processor->process_queue();
 
@@ -137,7 +138,7 @@ class Series_SplitterTest extends \Codeception\TestCase\WPTestCase {
 		) );
 		$this->assertNotEmpty( $original_children );
 		// we fetched all the children of the orginal, so we'd expect 1 less than the total events
-		$this->assertCount( 49, $original_children );
+		$this->assertCount( 29, $original_children );
 
 		$breaker = new Tribe__Events__Pro__Recurrence__Series_Splitter();
 
@@ -164,7 +165,7 @@ class Series_SplitterTest extends \Codeception\TestCase\WPTestCase {
 		// the new parent should not have a parent
 		$this->assertEmpty( $new_parent->post_parent );
 		// first child was promoted to parent, so remaining children count should be 48
-		$this->assertCount( 48, get_posts( array(
+		$this->assertCount( 28, get_posts( array(
 			'post_type'      => Tribe__Events__Main::POSTTYPE,
 			'post_parent'    => $new_parent->ID,
 			'post_status'    => 'publish',

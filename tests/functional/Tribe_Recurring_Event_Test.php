@@ -397,6 +397,9 @@ class Tribe_Recurring_Event_Test extends \Codeception\TestCase\WPTestCase {
 		
 		Tribe__Events__API::updateEvent( $post_id, $event_args );
 
+		// process the queue, otherwise all the children won't get created
+		Tribe__Events__Pro__Main::instance()->queue_processor->process_queue();
+		
 		$new_dates = tribe_get_recurrence_start_dates( $post_id );
 
 		//Checks that the new dates that were created with the updated event is 5

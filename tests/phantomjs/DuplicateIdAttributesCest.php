@@ -11,8 +11,9 @@ class DuplicateIdAttributesCest {
 		$I->haveOptionInDatabase( 'stylesheet', $default_theme_slug );
 
 		// add 2 of each widget
-		$first_sidebar = reset( $I->getThemeSidebars() );
-		$widgets       = [
+		$theme_sidebars = $I->getThemeSidebars();
+		$first_sidebar  = reset( $theme_sidebars );
+		$widgets        = [
 			'wp_inactive_widgets' => [
 			],
 			$first_sidebar        => [
@@ -58,9 +59,6 @@ class DuplicateIdAttributesCest {
 		$I->haveOptionInDatabase( 'tribe_events_calendar_options', $options );
 
 		$I->resizeWindow( 1200, 1000 );
-	}
-
-	public function _after( PhantomjsTester $I ) {
 	}
 
 	/**

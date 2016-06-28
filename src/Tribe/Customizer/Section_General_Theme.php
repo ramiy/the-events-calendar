@@ -111,6 +111,9 @@ final class Tribe__Events__Pro__Customizer__Section_General_Theme extends Tribe_
 				)
 			)
 		);
+
+		// Introduced to make Selective Refresh have less code duplication
+		$customizer->add_setting_name( $customizer->get_setting_name( 'accent_color', $section ) );
 	}
 
 }

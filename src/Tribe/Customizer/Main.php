@@ -86,6 +86,15 @@ final class Tribe__Events__Pro__Customizer__Main {
 	private $sections_class = array();
 
 	/**
+	 * Array of Sections Classes, for non-panel pages
+	 *
+	 * @since 4.2
+	 * @access private
+	 * @var array
+	 */
+	private $settings = array();
+
+	/**
 	 * Loads the Basic Settings for the Class to work
 	 *
 	 * @since  4.0
@@ -113,7 +122,6 @@ final class Tribe__Events__Pro__Customizer__Main {
 		add_action( 'customize_register', array( $this, 'register' ), 15 );
 
 		add_action( 'wp_print_footer_scripts', array( $this, 'print_css_template' ), 15 );
-
 	}
 
 	/**
@@ -326,6 +334,9 @@ final class Tribe__Events__Pro__Customizer__Main {
 		 * @var Tribe__Events__Pro__Customizer__Main
 		 */
 		$this->sections = apply_filters( 'tribe_events_pro_customizer_sections', $this->sections, $this );
+
+		// After everything is done, try to add Selective refresh
+		$this->maybe_selective_refresh();
 	}
 
 	/**
@@ -419,6 +430,70 @@ final class Tribe__Events__Pro__Customizer__Main {
 		$name .= '[' . esc_attr( $slug ) . ']';
 
 		return $name;
+	}
+
+
+	/**
+	 * Adds a setting field name to the Array of Possible Selective refresh fields
+	 *
+	 * @since  4.2
+	 *
+	 * @param  string $name    The actual Setting name
+	 *
+	 * @return array           The list of existing Settings, the new one included
+	 */
+	public function add_setting_name( $name ) {
+		$this->settings[] = $name;
+		return $this->settings;
+	}
+
+
+	/**
+	 * Using the Previously created CSS element, we not just re-create it every setting change
+	 *
+	 * @since  4.2
+	 *
+	 * @return void
+	 */
+	public function maybe_selective_refresh() {
+		// Only try to apply selective refresh if it's active
+		if ( ! isset( $this->manager->selective_refresh ) ) {
+			return;
+		}
+
+		foreach ( $this->settings as $name ) {
+			$setting = $this->manager->get_setting( $name );
+
+			// Skip if we don't have that setting then skip it
+			if ( is_null( $setting ) ) {
+				continue;
+			}
+
+			// Skip if we already have that
+			if ( ! is_null( $this->manager->selective_refresh->get_partial( $name ) ) ) {
+				continue;
+			}
+
+			// Remove the Setting
+			// We need this because settings are protected on the WP_Customize_Manager
+			$this->manager->remove_setting( $name );
+
+			// Change the Transport
+			$setting->transport = 'postMessage';
+
+			// Re-add the setting
+			// We need this because settings are protected on the WP_Customize_Manager
+			$this->manager->add_setting( $setting );
+
+			// Add the Partial
+			$this->manager->selective_refresh->add_partial(
+				$name,
+				array(
+					'selector'        => '#tribe_events_pro_customizer_css',
+					'render_callback' => array( $this, 'print_css_template' ),
+				)
+			);
+		}
 	}
 
 }

@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $days_of_week = tribe_events_get_days_of_week();
 $week = 0;
 global $wp_locale;
+global $post;
 ?>
 
 <?php do_action( 'tribe_events_before_the_grid' ) ?>
@@ -38,7 +39,8 @@ global $wp_locale;
 
 			<?php
 			// Get data for this day within the loop.
-			$daydata = tribe_events_get_current_month_day(); ?>
+			$daydata = tribe_events_get_current_month_day();
+			?>
 
 			<td class="<?php tribe_events_the_month_day_classes() ?>"
 				data-day="<?php echo esc_attr( isset( $daydata['daynum'] ) ? $daydata['date'] : '' ); ?>"

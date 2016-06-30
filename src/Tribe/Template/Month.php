@@ -1023,7 +1023,9 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 			foreach ( tribe_get_organizer_ids( $post->ID ) as $organizer_id ) {
 				$classes[] = 'tribe-events-organizer-' . $organizer_id;
 			}
-
+			if ( tribe_event_is_multiday() ) {
+				$classes[] = 'tribe-events-multiday';
+			}
 			if ( $day['events']->current_post + 1 == $day['events']->post_count ) {
 				$classes[] = 'tribe-events-last';
 			}

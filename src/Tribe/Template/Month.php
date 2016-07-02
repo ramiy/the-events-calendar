@@ -550,6 +550,7 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 		private function get_event_ids_by_day( $date ) {
 			if ( ! $this->event_ids_by_day ) {
 				$this->event_ids_by_day = array();
+//				var_dump($this->events_in_month);
 
 				// Let's loop over all of the events in the month and assign them to days
 				foreach ( $this->events_in_month as $event ) {
@@ -618,6 +619,8 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 					if ( $diff > 0 ) {
 						// There IS a difference. How many days?
 						$diff_in_days = $diff / DAY_IN_SECONDS;
+//						echo $diff_in_days;
+
 
 						// add the event to each day until the event end
 						$new_start = $start;
@@ -697,6 +700,7 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 					),
 				), $this->args
 			);
+//var_dump($args);
 
 			/**
 			  * Filter Daily Events Query Arguments.
@@ -981,6 +985,10 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 				$classes .= ' tribe-events-right';
 			}
 
+			if ( $column == 0 ) {
+				$classes .= ' tribe-events-left';
+			}
+
 			return $classes;
 		}
 
@@ -1004,9 +1012,11 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 
 			$day = self::get_current_day();
 
+
 			if ( ! isset( $day['events'] ) ) {
 				return $classes;
 			}
+			$start_date = tribe_get_start_date( $day['ID'], false, 'Y-m-d', '');
 
 			$post = $day['events']->post;
 
@@ -1023,8 +1033,11 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 			foreach ( tribe_get_organizer_ids( $post->ID ) as $organizer_id ) {
 				$classes[] = 'tribe-events-organizer-' . $organizer_id;
 			}
-			if ( tribe_event_is_multiday() ) {
+			if( tribe_event_is_multiday() ) {
 				$classes[] = 'tribe-events-multi-day';
+			}
+			if ( tribe_event_is_multiday() && ( $start_date !== $day['date'] ) ) {
+				$classes[] = 'tribe-events-multi-day-hidden';
 			}
 			if ( $day['events']->current_post + 1 == $day['events']->post_count ) {
 				$classes[] = 'tribe-events-last';

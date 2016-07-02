@@ -2011,17 +2011,23 @@ body.tribe-theme-twentysixteen .datepicker table {
 	word-wrap: normal !important;
 }
 
-.events-archive.events-gridview #tribe-events-content table .type-tribe_events.tribe-events-multi-day {
+/* Styles for multi-day spans */
+
+.events-archive.events-gridview #tribe-events-content .tribe-events-calendar .type-tribe_events.tribe-events-multi-day {
 	width: 100%;
 	background: #E0E0E0;
 	margin: 0 0 3px 0;
 }
 
-.events-archive.events-gridview #tribe-events-content table .type-tribe_events.tribe-events-multi-day-hidden h3 {
+.events-archive.events-gridview .tribe-events-multi-day-hidden h3 {
 	visibility: hidden;
 }
 
-.events-archive.events-gridview #tribe-events-content table .type-tribe_events.tribe-events-multi-day-hidden .tribe-events-tooltip {
+.events-archive.events-gridview .tribe-events-left .tribe-events-multi-day-hidden h3 {
+	visibility: visible;
+}
+
+.events-archive.events-gridview .tribe-events-multi-day-hidden .tribe-events-tooltip {
 	display: none !important;
 }
 

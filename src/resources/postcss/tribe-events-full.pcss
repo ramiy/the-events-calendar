@@ -2122,16 +2122,27 @@ body.tribe-theme-twentysixteen {
 	word-wrap: normal !important;
 }
 
-.events-archive.events-gridview #tribe-events-content table .type-tribe_events.tribe-events-multi-day {
-	width: 100%;
-	background: #E0E0E0;
-	margin: 0 0 3px 0;
-}
+/* Styles for multi-day spans */
 
-.events-archive.events-gridview #tribe-events-content table .type-tribe_events.tribe-events-multi-day-hidden h3 {
-	visibility: hidden;
-}
-
-.events-archive.events-gridview #tribe-events-content table .type-tribe_events.tribe-events-multi-day-hidden .tribe-events-tooltip {
-	display: none !important;
+.events-archive.events-gridview {
+	#tribe-events-content {
+		.tribe-events-calendar {
+			.type-tribe_events.tribe-events-multi-day {
+				width: 100%;
+				background: #E0E0E0;
+				margin: 0 0 3px 0;
+			}
+		}
+	}
+	.tribe-events-multi-day-hidden h3 {
+		visibility: hidden;
+	}
+	.tribe-events-left {
+		.tribe-events-multi-day-hidden h3 {
+			visibility: visible;
+		}
+	}
+	.tribe-events-multi-day-hidden .tribe-events-tooltip {
+		display: none !important;
+	}
 }

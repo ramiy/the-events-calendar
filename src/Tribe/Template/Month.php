@@ -1017,6 +1017,7 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 				return $classes;
 			}
 			$start_date = tribe_get_start_date( $day['ID'], false, 'Y-m-d', '');
+			$end_date 	= tribe_get_end_date( $day['ID'], false, 'Y-m-d', '');
 
 			$post = $day['events']->post;
 
@@ -1036,8 +1037,14 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 			if( tribe_event_is_multiday() ) {
 				$classes[] = 'tribe-events-multi-day';
 			}
+			if ( tribe_event_is_multiday() && ( $start_date == $day['date'] ) ) {
+				$classes[] = 'tribe-events-multi-day-start';
+			}
 			if ( tribe_event_is_multiday() && ( $start_date !== $day['date'] ) ) {
 				$classes[] = 'tribe-events-multi-day-hidden';
+			}
+			if ( tribe_event_is_multiday() && ( $end_date == $day['date'] ) ) {
+				$classes[] = 'tribe-events-multi-day-end';
 			}
 			if ( $day['events']->current_post + 1 == $day['events']->post_count ) {
 				$classes[] = 'tribe-events-last';

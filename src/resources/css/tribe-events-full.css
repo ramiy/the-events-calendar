@@ -2014,9 +2014,16 @@ body.tribe-theme-twentysixteen .datepicker table {
 /* Styles for multi-day spans */
 
 .events-archive.events-gridview #tribe-events-content .tribe-events-calendar .type-tribe_events.tribe-events-multi-day {
-	width: 100%;
 	background: #E0E0E0;
-	margin: 0 0 3px 0;
+	margin: 3px 0 3px 0;
+}
+
+.events-archive.events-gridview #tribe-events-content .tribe-events-calendar .type-tribe_events.tribe-events-multi-day-start {
+	position: relative;
+}
+
+.events-archive.events-gridview #tribe-events-content .tribe-events-calendar .type-tribe_events.tribe-events-multi-day-end {
+	position: relative;
 }
 
 .events-archive.events-gridview .tribe-events-multi-day-hidden h3 {

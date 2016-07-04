@@ -378,6 +378,54 @@
 		} );
 
 		/**
+		 * Contains the jquery for multi-day events
+		 *
+		 */
+
+		$( '.tribe-events-multi-day-end' ).each( function() {
+			var elem = $(this).attr('id');
+			var result = document.getElementById( elem ).scrollHeight;
+			console.log(result);
+			var styles =
+				'#' + elem + '.tribe-events-multi-day-end::after { ' +
+				'content: " "; ' +
+				'position: absolute; ' +
+				'width: 0; ' +
+				'height: 0; ' +
+				'right: -' + result/2 + 'px; ' +
+				'top: 0; ' +
+				'border-style: solid; ' +
+				'border-width:' + result/2 + 'px 0 ' + result/2 + 'px ' + result/2 + 'px; ' +
+				'border-color: transparent transparent transparent #e0e0e0;' +
+				'}' +
+				'.events-archive.events-gridview #tribe-events-content .tribe-events-calendar ' + '#' + elem + '.type-tribe_events.tribe-events-multi-day-end { ' +
+				'margin: 3px ' + result/2 + 'px 3px 0;' +
+				'}';
+			$( 'head' ).append( '<style type="text/css">' + styles + '</style>' );
+		});
+
+		$( '.tribe-events-multi-day-start' ).each( function() {
+			var elem = $(this).attr('id');
+			var result = document.getElementById( elem ).scrollHeight;
+			var styles =
+				'#' + elem + '.tribe-events-multi-day-start::before { ' +
+				'content: " "; ' +
+				'position: absolute; ' +
+				'width: 0; ' +
+				'height: 0; ' +
+				'left: -' + result/2 + 'px; ' +
+				'top: 0; ' +
+				'border-style: solid; ' +
+				'border-width:' + result/2 + 'px ' + result/2 + 'px ' + result/2 + 'px ' + '0;' +
+				'border-color: transparent #e0e0e0 transparent transparent;' +
+				'}' +
+				'.events-archive.events-gridview #tribe-events-content .tribe-events-calendar ' + '#' + elem + '.type-tribe_events.tribe-events-multi-day-start { ' +
+				'margin: 3px 0 3px ' + result/2 + 'px; ' +
+				'}';
+			$( 'head' ).append( '<style type="text/css">' + styles + '</style>' );
+		});
+
+		/**
 		 * @function tribe_events_calendar_ajax_post
 		 * @desc The ajax handler for month view.
 		 * Fires the custom event 'tribe_ev_serializeBar' at start, then 'tribe_ev_collectParams' to gather any additional paramters before actually launching the ajax post request.

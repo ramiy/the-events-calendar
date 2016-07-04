@@ -1012,12 +1012,13 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 
 			$day = self::get_current_day();
 
+				$start_date = tribe_get_start_date( $day['ID'], false, 'Y-m-d', '');
+				$end_date 	= tribe_get_end_date( $day['ID'], false, 'Y-m-d', '');
+
 
 			if ( ! isset( $day['events'] ) ) {
 				return $classes;
 			}
-			$start_date = tribe_get_start_date( $day['ID'], false, 'Y-m-d', '');
-			$end_date 	= tribe_get_end_date( $day['ID'], false, 'Y-m-d', '');
 
 			$post = $day['events']->post;
 

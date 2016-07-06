@@ -4,7 +4,7 @@ Contributors: ModernTribe, barry.hughes, bordoni, borkweb, brianjessee, brook-tr
 Tags: events, calendar, event, venue, organizer, dates, date, google maps, conference, workshop, concert, meeting, seminar, summit, class, modern tribe, tribe, widget, pro
 Donate link: http://m.tri.be/29
 Requires at least: 3.9
-Tested up to: 4.5.2
+Tested up to: 4.5.3
 Stable tag: 4.3dev
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -202,6 +202,12 @@ Our Premium Plugins:
 * <a href="http://m.tri.be/fa" target="_blank">The Events Calendar: Filter Bar</a>
 
 == Changelog ==
+
+= [4.2.2] 2016-07-06 =
+
+* Fix - Broken oembedding of content
+* Fix - Recurring event instances happening on the same day are now assigned different post names and guids
+* Tweak - Avoid loading customizer preview scripts when not previewing site in Theme Customizer
 
 = [4.2.1] 2016-06-22 =
 

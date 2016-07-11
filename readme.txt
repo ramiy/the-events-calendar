@@ -203,6 +203,10 @@ Our Premium Plugins:
 
 == Changelog ==
 
+= [4.2.2.1] 2016-07-11 =
+
+* Fix - Issue that could lead to the generation of infinite recurring events (props to hydeaway and many others)
+
 = [4.2.2] 2016-07-06 =
 
 * Fix - Broken oembedding of content

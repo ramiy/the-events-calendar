@@ -95,15 +95,15 @@ class Tribe__Events__Pro__Recurrence__Instance {
 			add_post_meta( $this->post_id, '_EventDuration',     $this->duration );
 
 			if ( ! empty( $this->sequence_number ) && 1 !== $this->sequence_number ) {
+				add_post_meta( $this->post_id, '_EventSequence', $this->sequence_number );
+			}
 			/**
 			 * Triggers when a recurring event instance is inserted due to the whole series being created.
 			 *
-			 * @param int $post_id The updated recurring event instance post ID.
+			 * @param int $post_id   The updated recurring event instance post ID.
 			 * @param int $parent_id The updated recurring event instance `post_parent` post ID.
 			 */
-				add_post_meta( $this->post_id, '_EventSequence', $this->sequence_number );
-			do_action('tribe_events_pro_recurring_event_instance_inserted', $this->post_id, $this->parent_id);
-			}
+			do_action( 'tribe_events_pro_recurring_event_instance_inserted', $this->post_id, $this->parent_id );
 		}
 
 		$this->copy_meta(); // everything else

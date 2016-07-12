@@ -60,8 +60,6 @@ class Tribe__Events__Pro__Recurrence__Meta {
 
 		add_action( 'load-edit.php', array( __CLASS__, 'combineRecurringRequestIds' ) );
 
-		add_action( 'load-post.php', array( __CLASS__, 'enqueue_post_editor_notices' ), 10, 1 );
-
 		add_action( 'updated_post_meta', array( __CLASS__, 'update_child_thumbnails' ), 4, 40 );
 		add_action( 'added_post_meta', array( __CLASS__, 'update_child_thumbnails' ), 4, 40 );
 		add_action( 'deleted_post_meta', array( __CLASS__, 'remove_child_thumbnails' ), 4, 40 );
@@ -81,6 +79,53 @@ class Tribe__Events__Pro__Recurrence__Meta {
 		}
 
 		self::reset_scheduler();
+
+		/**
+		 * Register Notices
+		 */
+		Tribe__Admin__Notices::instance()->register( 'editing-all-recurrences', array( __CLASS__, 'render_notice_editing_all_recurrences' ), 'type=success' );
+		Tribe__Admin__Notices::instance()->register( 'created-recurrences', array( __CLASS__, 'render_notice_created_recurrences' ), 'type=success' );
+	}
+
+	/**
+	 * Displays a message informing the user she is editing all of the recurrences in the series.
+	 */
+	public static function render_notice_editing_all_recurrences() {
+		if ( ! Tribe__Admin__Helpers::instance()->is_post_type_screen( Tribe__Events__Main::POSTTYPE ) ) {
+			return false;
+		}
+
+		if ( empty( $_REQUEST['post'] ) || ! tribe_is_recurring_event( $_REQUEST['post'] ) ) {
+			return false;
+		}
+
+		$message = '<p>' . esc_html__( 'You are currently editing all events in a recurring series.', 'tribe-events-calendar-pro' ) . '</p>';
+
+		return Tribe__Admin__Notices::instance()->render( 'editing-all-recurrences', $message );
+	}
+
+	public static function render_notice_created_recurrences() {
+		if ( ! Tribe__Admin__Helpers::instance()->is_post_type_screen( Tribe__Events__Main::POSTTYPE ) ) {
+			return false;
+		}
+
+		if ( empty( $_REQUEST['post'] ) || ! tribe_is_recurring_event( $_REQUEST['post'] ) ) {
+			return false;
+		}
+
+		$pending = get_post_meta( get_the_ID(), '_EventNextPendingRecurrence', true );
+
+		if ( ! $pending ) {
+			return false;
+		}
+
+		$start_dates     = tribe_get_recurrence_start_dates( get_the_ID() );
+		$count           = count( $start_dates );
+		$last            = end( $start_dates );
+		$pending_message = __( '%d instances of this event have been created through %s. <a href="%s">Learn more.</a>', 'tribe-events-calendar-pro' );
+		$pending_message = '<p>' . sprintf( $pending_message, $count, date_i18n( tribe_get_date_format( true ), strtotime( $last ) ), 'http://m.tri.be/lq' ) . '</p>';
+
+		return Tribe__Admin__Notices::instance()->render( 'created-recurrences', $pending_message );
 	}
 
 	public static function filter_edit_post_link( $url, $post_id, $context ) {
@@ -833,6 +878,8 @@ class Tribe__Events__Pro__Recurrence__Meta {
 		$latest_date = strtotime( self::$scheduler->get_latest_date() );
 
 		$recurrences = self::get_recurrence_for_event( $event_id );
+
+		/** @var Tribe__Events__Pro__Recurrence $recurrence */
 		foreach ( $recurrences['rules'] as &$recurrence ) {
 			$recurrence->setMinDate( strtotime( $next_pending ) );
 			$recurrence->setMaxDate( $latest_date );
@@ -841,16 +888,19 @@ class Tribe__Events__Pro__Recurrence__Meta {
 			if ( empty( $dates ) ) {
 				return; // nothing to add right now. try again later
 			}
+			
+			$sequence = new Tribe__Events__Pro__Recurrence__Sequence( $dates, $event_id );
 
 			delete_post_meta( $event_id, '_EventNextPendingRecurrence' );
+			
 			if ( $recurrence->constrainedByMaxDate() !== false ) {
 				update_post_meta( $event_id, '_EventNextPendingRecurrence', date( Tribe__Events__Pro__Date_Series_Rules__Rules_Interface::DATE_FORMAT, $recurrence->constrainedByMaxDate() ) );
 			}
 
 			$excluded = array_map( 'strtotime', self::get_excluded_dates( $event_id ) );
-			foreach ( $dates as $date_duration ) {
+			foreach ( $sequence->get_sorted_sequence() as $date_duration ) {
 				if ( ! in_array( $date_duration, $excluded ) ) {
-					$instance = new Tribe__Events__Pro__Recurrence__Instance( $event_id, $date_duration );
+					$instance = new Tribe__Events__Pro__Recurrence__Instance( $event_id, $date_duration, 0, $date_duration['sequence'] );
 					$instance->save();
 				}
 			}
@@ -887,6 +937,12 @@ class Tribe__Events__Pro__Recurrence__Meta {
 		foreach ( array( 'rules', 'exclusions' ) as $rule_type ) {
 			foreach ( $recurrence_meta[ $rule_type ] as &$recurrence ) {
 				$rule = Tribe__Events__Pro__Recurrence__Series_Rules_Factory::instance()->build_from( $recurrence, $rule_type );
+
+				// recurrence meta entry might be malformed
+				if ( is_wp_error( $rule ) ) {
+					// let's not process it and let's not try to fix it as it might be a third-party modification
+					continue;
+				}
 
 				$custom_type = 'none';
 				$start_time  = null;
@@ -1700,13 +1756,6 @@ class Tribe__Events__Pro__Recurrence__Meta {
 			delete_post_meta( $child_id, $meta_key, $meta_value );
 		}
 		$recursing = false;
-	}
-
-	public static function enqueue_post_editor_notices() {
-		if ( ! empty( $_REQUEST['post'] ) && tribe_is_recurring_event( $_REQUEST['post'] ) ) {
-			add_action( 'admin_notices', array( Tribe__Events__Pro__Recurrence__Admin_Notices::instance(), 'display_editing_all_recurrences_notice' ), 10, 0 );
-			add_action( 'admin_notices', array( Tribe__Events__Pro__Recurrence__Admin_Notices::instance(), 'display_created_recurrences_notice' ), 10, 0 );
-		}
 	}
 
 	/**

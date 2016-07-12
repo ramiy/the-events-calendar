@@ -4,8 +4,8 @@ Contributors: ModernTribe, barry.hughes, bordoni, borkweb, brianjessee, brook-tr
 Tags: events, calendar, event, venue, organizer, dates, date, google maps, conference, workshop, concert, meeting, seminar, summit, class, modern tribe, tribe, widget, pro
 Donate link: http://m.tri.be/29
 Requires at least: 3.9
-Tested up to: 4.4.2
-Stable tag: 4.2rc1
+Tested up to: 4.5.3
+Stable tag: 4.3dev
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -203,13 +203,31 @@ Our Premium Plugins:
 
 == Changelog ==
 
-= [4.2] TBD =
+= [4.2.2.1] 2016-07-11 =
+
+* Fix - Issue that could lead to the generation of infinite recurring events (props to hydeaway and many others)
+
+= [4.2.2] 2016-07-06 =
+
+* Fix - Broken oembedding of content
+* Fix - Recurring event instances happening on the same day are now assigned different post names and guids
+* Tweak - Avoid loading customizer preview scripts when not previewing site in Theme Customizer
+
+= [4.2.1] 2016-06-22 =
+
+* Fix - Fix issue where width of content area in photo view was inheriting styles making it too narrow
+* Fix - Allow '0' to be set as the value of additional fields
+* Fix - Graciously handle malformed recurrence event meta information
+* Tweak - Added helper text near Distance filter to add clarity for Filter Bar users
+* Fix - Fixed an issue where 'All Day' label was displaying on Wednesday rather than the time column
+
+= [4.2] 2016-06-08 =
 
 * Tweak - Advanced List Widget shows the month instead of the day of the week in the date icon when the event is not in the current month
-* Tweak - Improved our JSON-LD output to ensure consistency (Propos to @garrettjohnson!)
-* Tweak - Language files in the `wp-content/languages/plugins` path will be loaded before attempting to load internal language files (Thank you to user aafhhl for bringing this to our attention!)
+* Tweak - Improved our JSON-LD output to ensure consistency (Props to @garrettjohnson!)
+* Tweak - Language files in the `wp-content/languages/plugins` path will be loaded before attempting to load internal language files (Thank you to user @aafhhl for bringing this to our attention!)
 * Tweak - Move plugin CSS to PostCSS
-* Fix - Tool tip not was not rendering properly for date recurrence (Thank you Maciej for reporting this issue!)
+* Fix - Tooltip not was not rendering properly for date recurrence (Thank you @Maciej for reporting this issue!)
 
 = [4.1.3] 2016-05-19 =
 

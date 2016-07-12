@@ -12,11 +12,19 @@ class Tribe__Events__Pro__Recurrence__Instance {
 	private $post_id = 0;
 
 	/**
+	 * @var int
+	 */
+	private $sequence_number;
+
+	/**
 	 * @param int       $parent_id
 	 * @param int|array $date_duration
 	 * @param int       $instance_id
+	 * @param int|bool  $sequence_number Whether the recurring event instance is part of a sequence and what number the event is in the sequence.
+	 *                                   A "sequence" is a group of events that shares the same start date and/or time. By default an event is the first in its
+	 *                                   sequence.
 	 */
-	public function __construct( $parent_id, $date_duration, $instance_id = 0 ) {
+	public function __construct( $parent_id, $date_duration, $instance_id = 0, $sequence_number = 1 ) {
 		$this->parent_id  = $parent_id;
 		$this->post_id    = $instance_id;
 
@@ -31,6 +39,8 @@ class Tribe__Events__Pro__Recurrence__Instance {
 			$this->start_date = new DateTime( '@' . $date_duration );
 			$this->duration = $this->get_parent_duration();
 		}
+		
+		$this->sequence_number = $sequence_number;
 	}
 
 	public function save() {
@@ -56,6 +66,15 @@ class Tribe__Events__Pro__Recurrence__Instance {
 			update_post_meta( $this->post_id, '_EventEndDate',      $this->db_formatted_end_date() );
 			update_post_meta( $this->post_id, '_EventEndDateUTC',   $this->db_formatted_end_date_utc() );
 			update_post_meta( $this->post_id, '_EventDuration',     $this->duration );
+		} else { // add a new post
+			$query_args           = array( 'eventDate' => $this->start_date->format( 'Y-m-d' ) );
+			
+			// if an event is the first in a sequence do not append the sequence var
+			if ( ! empty( $this->sequence_number ) && 1 !== $this->sequence_number ) {
+				$query_args['eventSequence'] = $this->sequence_number;
+			}	
+			
+			$post_to_save['guid'] = esc_url( add_query_arg( $query_args, $parent->guid ) );
 
 			/**
 			 * Triggers when a recurring event instance is updated due to the whole series being edited.  
@@ -75,13 +94,16 @@ class Tribe__Events__Pro__Recurrence__Instance {
 			add_post_meta( $this->post_id, '_EventEndDateUTC',   $this->db_formatted_end_date_utc() );
 			add_post_meta( $this->post_id, '_EventDuration',     $this->duration );
 
+			if ( ! empty( $this->sequence_number ) && 1 !== $this->sequence_number ) {
 			/**
 			 * Triggers when a recurring event instance is inserted due to the whole series being created.
 			 *
 			 * @param int $post_id The updated recurring event instance post ID.
 			 * @param int $parent_id The updated recurring event instance `post_parent` post ID.
 			 */
+				add_post_meta( $this->post_id, '_EventSequence', $this->sequence_number );
 			do_action('tribe_events_pro_recurring_event_instance_inserted', $this->post_id, $this->parent_id);
+			}
 		}
 
 		$this->copy_meta(); // everything else

@@ -129,7 +129,6 @@ class Tribe__Events__Pro__Supports__WPML__API__Translations {
 					AND wpml.element_type = 'post_{$post_type}'
 					AND wpml.element_id IN (SELECT ID FROM {$wpdb->posts} WHERE ID = {$master_parent_event_id} OR post_parent = {$master_parent_event_id}) 
 					AND wpml.trid IS NOT NULL
-					AND wpml.source_language_code IS NULL
 					AND p.post_type = '{$post_type}'" );
 
 			$this->master_series_ids_and_start_dates_cache[ $master_parent_event_id ] = ! empty( $results ) ? array_combine( wp_list_pluck( $results, 'start_date' ),

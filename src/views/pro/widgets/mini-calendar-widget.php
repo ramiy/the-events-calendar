@@ -41,6 +41,7 @@ $args = tribe_events_get_mini_calendar_args();
 	$event_ids = tribe_show_month( $month_widget_args, 'pro/widgets/mini-calendar/grid' );
 
 	if ( ! empty( $event_ids ) ) {
+		// print JSON-LD data about events contained in the mini calendar widget
 		Tribe__Events__JSON_LD__Event::instance()->markup( $event_ids );
 	}
 	?>

@@ -5,7 +5,7 @@ Tags: events, calendar, event, venue, organizer, dates, date, google maps, confe
 Donate link: http://m.tri.be/29
 Requires at least: 3.9
 Tested up to: 4.5.3
-Stable tag: 4.3dev
+Stable tag: 4.2.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -202,6 +202,10 @@ Our Premium Plugins:
 * <a href="http://m.tri.be/fa" target="_blank">The Events Calendar: Filter Bar</a>
 
 == Changelog ==
+
+= [4.2.3] TDB =
+
+* Fix - Add check for past events in the mini calendar and event list widget date icon box so it shows the correct information [62524]
 
 = [4.2.2.1] 2016-07-11 =
 

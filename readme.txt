@@ -203,10 +203,6 @@ Our Premium Plugins:
 
 == Changelog ==
 
-= [4.2.3] TDB =
-
-* Fix - Add check for past events in the mini calendar and event list widget date icon box so it shows the correct information [62524]
-
 = [4.2.2.1] 2016-07-11 =
 
 * Fix - Issue that could lead to the generation of infinite recurring events (props to hydeaway and many others)

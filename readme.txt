@@ -203,6 +203,10 @@ Our Premium Plugins:
 
 == Changelog ==
 
+= [4.2.3] TDB =
+
+* Fix - Change myremove to jQuery Grep to improve compatibility with Black Studio TinyMCE Widget [63409]
+
 = [4.2.2.1] 2016-07-11 =
 
 * Fix - Issue that could lead to the generation of infinite recurring events (props to hydeaway and many others)

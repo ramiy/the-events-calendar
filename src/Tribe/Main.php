@@ -196,6 +196,7 @@
 				add_filter( 'oembed_request_post_id', array( $this, 'oembed_request_post_id_for_recurring_events' ), 10, 2 );
 				
 				add_action( 'plugins_loaded', array( 'Tribe__Events__Pro__Admin__Settings', 'hook' ) );
+
 				$this->load_wpml_support();
 			}
 
@@ -1804,52 +1805,8 @@
 				if ( ! ( class_exists( 'SitePress' ) && defined( 'ICL_PLUGIN_PATH' ) ) ) {
 					return false;
 				}
-				
-				// the WPML API is not included by default
-				require_once ICL_PLUGIN_PATH . '/inc/wpml-api.php';
 
-				add_action( 'tribe_events_pro_recurring_event_instance_inserted', 
-					array( Tribe__Events__Pro__Supports__WPML__Event_Listener::instance(), 'handle_recurring_event_creation' ),
-					10,
-					2 
-				);
-
-				add_filter( 'wpml_is_redirected',
-					array( Tribe__Events__Pro__Supports__WPML__Event_Listener::instance(), 'handle_wpml_is_redirected_event' ),
-					10,
-					3
-				);
-
-				add_filter( 'icl_ls_languages',
-					array( Tribe__Events__Pro__Supports__WPML__Event_Listener::instance(), 'handle_wpml_ls_languages_event' ),
-					10,
-					1
-				);
-
-				add_filter( 'tribe_events_pre_get_posts',
-					array( Tribe__Events__Pro__Supports__WPML__Event_Listener::instance(), 'handle_tribe_events_pre_get_posts' ),
-					10,
-					1
-				);
-
-				add_filter( 'wpml_get_ls_translations',
-					array( Tribe__Events__Pro__Supports__WPML__Event_Listener::instance(), 'handle_wpml_get_ls_translations_event' ),
-					10,
-					2
-				);
-
-				add_filter( 'wpml_pre_parse_query',
-					array( Tribe__Events__Pro__Supports__WPML__Event_Listener::instance(), 'handle_wpml_pre_parse_query_event' ),
-					10,
-					1
-				);
-
-				add_filter( 'wpml_post_parse_query',
-					array( Tribe__Events__Pro__Supports__WPML__Event_Listener::instance(), 'handle_wpml_post_parse_query_event' ),
-					10,
-					1
-				);
-
+				Tribe__Events__Pro__Supports__WPML__WPML::instance()->hook();
 
 				return true;
 			}

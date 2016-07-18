@@ -11,7 +11,7 @@ class Tribe__Events__Pro__Supports__WPML__WPML {
 
 	/**
 	 * The key WPML will store the current post language code while saving in the $_POST global.
-	 * 
+	 *
 	 * @var string
 	 */
 	public static $post_language_post_global_key = 'icl_post_language';
@@ -85,5 +85,21 @@ class Tribe__Events__Pro__Supports__WPML__WPML {
 	 */
 	public function insert_event_translation_for_language_code( $event_id, $language_code, $trid, $overwrite_if_existing = false ) {
 		return $this->translations->insert_event_translation_for_language_code( $event_id, $language_code, $trid, $overwrite_if_existing );
+	}
+
+	public function hook() {
+		// the WPML API is not included by default
+		require_once ICL_PLUGIN_PATH . '/inc/wpml-api.php';
+
+		$listener = Tribe__Events__Pro__Supports__WPML__Event_Listener::instance();
+		add_action( 'tribe_events_pro_recurring_event_instance_inserted', array( $listener, 'handle_recurring_event_creation' ), 10, 2 );
+
+		$filters = Tribe__Events__Pro__Supports__WPML__Filters::instance();
+		add_filter( 'tribe_events_pre_get_posts', array( $filters, 'filter_tribe_events_pre_get_posts' ), 10, 1 );
+		add_filter( 'wpml_is_redirected', array( $filters, 'filter_wpml_is_redirected_event' ), 10, 3 );
+		add_filter( 'icl_ls_languages', array( $filters, 'filter_wpml_ls_languages_event' ), 10, 1 );
+		add_filter( 'wpml_get_ls_translations', array( $filters, 'filter_wpml_get_ls_translations_event' ), 10, 2 );
+		add_filter( 'wpml_pre_parse_query', array( $filters, 'filter_wpml_pre_parse_query_event' ), 10, 1 );
+		add_filter( 'wpml_post_parse_query', array( $filters, 'filter_wpml_post_parse_query_event' ), 10, 1 );
 	}
 }

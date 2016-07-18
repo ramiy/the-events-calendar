@@ -3,22 +3,6 @@
 
 class Tribe__Events__Pro__Templates__Mods__List_View {
 
-	/**
-	 * @var Tribe__Events__Pro__Templates__Mods__List_View
-	 */
-	protected static $instance;
-
-	/**
-	 * @return Tribe__Events__Pro__Templates__Mods__List_View
-	 */
-	public static function instance() {
-		if ( empty( self::$instance ) ) {
-			self::$instance = new self;
-		}
-
-		return self::$instance;
-	}
-
 	public static function print_all_events_link() {
 		if ( tribe_is_recurring_event() ) {
 			?>

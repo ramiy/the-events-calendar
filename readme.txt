@@ -203,10 +203,10 @@ Our Premium Plugins:
 
 == Changelog ==
 
-= [4.2.3] TDB =
+= [4.2.3] 2016-07-20 =
 
-* Fix - Change myremove to jQuery Grep to improve compatibility with Black Studio TinyMCE Widget [63409]
-* Fix - Add check for past events in the mini calendar and event list widget date icon box so it shows the correct information [62524]
+* Fix - Change myremove to jQuery Grep to improve compatibility with Black Studio TinyMCE Widget (Thank you @digisavvy for reporting this in the support Forums)
+* Fix - Add check for past events in the mini calendar and event list widget date icon box so it shows the correct information (Initialy reported by @yuryvasilchenko in the support forums. Thanks!)
 
 = [4.2.2.1] 2016-07-11 =
 

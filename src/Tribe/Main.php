@@ -922,7 +922,7 @@
 			 */
 			private function set_post_id_for_recurring_event_query( $query ) {
 				$date = $query->get( 'eventDate' );
-				$slug = $query->get( 'name' );
+				$slug = $query->query['name'];
 				if ( empty( $date ) || empty( $slug ) ) {
 					return; // we shouldn't be here
 				}

@@ -59,7 +59,8 @@ class Tribe__Events__Pro__Supports__WPML__Filters {
 		return $translations;
 	}
 
-	public function filter_tribe_events_pre_get_posts( $query ) { if ( $query->get( 'p' ) && $query->get( 'post_parent' ) ) {
+	public function filter_tribe_events_pre_get_posts( $query ) {
+		if ( $query->get( 'p' ) && $query->get( 'post_parent' ) ) {
 			unset( $query->query_vars['p'] );
 		}
 
@@ -68,23 +69,21 @@ class Tribe__Events__Pro__Supports__WPML__Filters {
 
 	public function filter_wpml_pre_parse_query_event( $query ) {
 		if ( $this->is_all_event_query( $query ) ) {
-			$this->name_before_wpml_parse_query = $query->get( 'name' );
-		} else {
-			$this->name_before_wpml_parse_query = '';
+			$query->set( 'tribe_name_before_wpml_parse_query', $query->get( 'name' ) );
 		}
 
 		return $query;
 	}
 
-	public function filter_wpml_post_parse_query_event( $query ) {
-		if ( $this->name_before_wpml_parse_query ) {
-			$query->set( 'name', $this->name_before_wpml_parse_query );
+	public function filter_wpml_post_parse_query_event( WP_Query $query ) {
+		if ( $this->is_all_event_query( $query ) && ! empty( $query->get( 'tribe_name_before_wpml_parse_query', '' ) ) ) {
+			$query->set( 'name', $query->get( 'tribe_name_before_wpml_parse_query' ) );
 		}
 
 		return $query;
 	}
 
-	private function is_all_event_query( $query ) {
+	private function is_all_event_query( WP_Query $query ) {
 		return $query->get( 'post_type' ) == 'tribe_events' && 'all' === $query->get( 'eventDisplay' );
 	}
 

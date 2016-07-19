@@ -930,7 +930,7 @@
 				$post_id = $cache->get( 'single_event_' . $slug . '_' . $date, 'save_post' );
 				if ( ! empty( $post_id ) ) {
 					unset( $query->query_vars['name'] );
-					unset( $query->query_vars['tribe_events'] );
+					unset( $query->query_vars[ Tribe__Events__Main::POSTTYPE ] );
 					$query->set( 'p', $post_id );
 
 					return;

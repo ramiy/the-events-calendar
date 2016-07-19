@@ -78,6 +78,8 @@ if ( ! class_exists( 'Tribe__Events__Pro__Venue_Widget' ) ) {
 				$ecp->enable_recurring_info_tooltip();
 			}
 
+			$this->print_jsonld_markup_for( $events );
+
 			wp_reset_postdata();
 		}
 
@@ -108,6 +110,16 @@ if ( ! class_exists( 'Tribe__Events__Pro__Venue_Widget' ) ) {
 			$instance['hide_if_empty'] = $new_instance['hide_if_empty'];
 
 			return $instance;
+		}
+
+		protected function print_jsonld_markup_for( $events ) {
+			$events = $events->posts;
+
+			if ( empty( $events ) ) {
+				return;
+			}
+
+			Tribe__Events__JSON_LD__Event::instance()->markup( $events );
 		}
 	}
 }

@@ -202,6 +202,9 @@ Our Premium Plugins:
 * <a href="http://m.tri.be/fa" target="_blank">The Events Calendar: Filter Bar</a>
 
 == Changelog ==
+= [4.3] unreleased =
+
+* Tweak - added the "All Events" link on top of all recurring events view
 
 = [4.2.2.1] 2016-07-11 =
 

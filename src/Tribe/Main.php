@@ -926,8 +926,25 @@
 				if ( empty( $date ) || empty( $slug ) ) {
 					return; // we shouldn't be here
 				}
+
+				/**
+				 * Filters the recurring event parent post ID.
+				 *
+				 * @param bool|int $parent_id The parent event post ID. Defaults to `false`.
+				 *                            If anything but `false` is returned from this filter
+				 *                            that value will be used as the recurring event parent
+				 *                            post ID.
+				 * @param WP_Query $query     The current query.
+				 */
+				$parent_id = apply_filters('tribe_events_pro_recurring_event_parent_id', false, $query);
+
 				$cache = new Tribe__Cache();
-				$post_id = $cache->get( 'single_event_' . $slug . '_' . $date, 'save_post' );
+				if ( false === $parent_id ) {
+					$post_id = $cache->get( 'single_event_' . $slug . '_' . $date, 'save_post' );
+				} else {
+					$post_id = $cache->get( 'single_event_' . $slug . '_' . $date . '_' . $parent_id, 'save_post' );
+				}
+
 				if ( ! empty( $post_id ) ) {
 					unset( $query->query_vars['name'] );
 					unset( $query->query_vars[ Tribe__Events__Main::POSTTYPE ] );
@@ -935,12 +952,18 @@
 
 					return;
 				}
+
+				/** @var \wpdb $wpdb */
 				global $wpdb;
-				$parent_sql = "SELECT ID FROM {$wpdb->posts} WHERE post_name=%s AND post_type=%s";
-				$parent_sql = $wpdb->prepare( $parent_sql, $slug, Tribe__Events__Main::POSTTYPE );
-				$parent_id = $wpdb->get_var( $parent_sql );
+
+				if ( false === $parent_id ) {
+					$parent_sql = "SELECT ID FROM {$wpdb->posts} WHERE post_name=%s AND post_type=%s";
+					$parent_sql = $wpdb->prepare( $parent_sql, $slug, Tribe__Events__Main::POSTTYPE );
+					$parent_id  = $wpdb->get_var( $parent_sql );
+				}
 
 				$parent_start = get_post_meta( $parent_id, '_EventStartDate', true );
+
 				if ( empty( $parent_start ) ) {
 					return; // how does this series not have a start date?
 				} else {

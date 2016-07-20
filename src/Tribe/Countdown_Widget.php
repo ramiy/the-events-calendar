@@ -165,6 +165,8 @@ if ( ! class_exists( 'Tribe__Events__Pro__Countdown_Widget' ) ) {
 				$ret = $this->generate_countdown_output( $seconds, $instance['complete'], $hourformat, $event );
 			}
 
+			$this->print_jsonld_markup_for( $event );
+
 			return $ret;
 		}
 
@@ -194,6 +196,16 @@ if ( ! class_exists( 'Tribe__Events__Pro__Countdown_Widget' ) ) {
 				<span class="tribe-countdown-format">' . $hourformat . '</span>
 				' . $complete . '
 			</div>';
+		}
+
+		protected function print_jsonld_markup_for( $event ) {
+			$event = get_post( $event );
+
+			if ( empty( $event ) ) {
+				return;
+			}
+
+			Tribe__Events__JSON_LD__Event::instance()->markup( $event );
 		}
 
 	}

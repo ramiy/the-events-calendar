@@ -91,12 +91,23 @@ class Tribe__Events__Pro__Supports__WPML__WPML {
 		// the WPML API is not included by default
 		require_once ICL_PLUGIN_PATH . '/inc/wpml-api.php';
 
-		$listener = Tribe__Events__Pro__Supports__WPML__Event_Listener::instance();
-		add_action( 'tribe_events_pro_recurring_event_instance_inserted', array( $listener, 'handle_recurring_event_creation' ), 10, 2 );
+		$this->hook_actions();
+		$this->hook_filters();
+	}
 
+	protected function hook_actions() {
+		$listener = Tribe__Events__Pro__Supports__WPML__Event_Listener::instance();
+
+		add_action( 'tribe_events_pro_recurring_event_instance_inserted', array( $listener, 'handle_recurring_event_creation' ), 10, 2 );
+	}
+
+	protected function hook_filters() {
 		$filters = Tribe__Events__Pro__Supports__WPML__Filters::instance();
+
+		// Modern Tribe filters
 		add_filter( 'tribe_events_pre_get_posts', array( $filters, 'filter_tribe_events_pre_get_posts' ), 10, 1 );
 
+		// WPML filters
 		add_filter( 'wpml_is_redirected', array( $filters, 'filter_wpml_is_redirected_event' ), 10, 3 );
 		add_filter( 'icl_ls_languages', array( $filters, 'filter_wpml_ls_languages_event' ), 10, 1 );
 		add_filter( 'wpml_get_ls_translations', array( $filters, 'filter_wpml_get_ls_translations_event' ), 10, 2 );

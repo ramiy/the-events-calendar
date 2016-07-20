@@ -9,6 +9,11 @@ class Tribe__Events__Pro__Supports__WPML__Filters {
 	protected static $instance;
 
 	/**
+	 * @var int
+	 */
+	protected $recurring_event_parent_id;
+
+	/**
 	 * @return Tribe__Events_Pro__Supports__WPML__Filters
 	 */
 	public static function instance() {
@@ -24,6 +29,11 @@ class Tribe__Events__Pro__Supports__WPML__Filters {
 			if ( 'all' === $query->get( 'eventDisplay' ) || $query->get( 'eventDate' ) ) {
 				$redirect_target = false;
 			}
+		}
+
+		if ( $this->is_single_event_main_query( $query ) ) {
+			$this->recurring_event_parent_id = $post_id;
+			add_action( 'tribe_events_pro_recurring_event_parent_id', array( $this, 'filter_recurring_event_parent_id' ) );
 		}
 
 		return $redirect_target;
@@ -49,7 +59,6 @@ class Tribe__Events__Pro__Supports__WPML__Filters {
 
 		return $languages;
 	}
-
 
 	public function filter_wpml_get_ls_translations_event( $translations, $query ) {
 		if ( $this->is_all_event_query( $query ) ) {
@@ -87,4 +96,11 @@ class Tribe__Events__Pro__Supports__WPML__Filters {
 		return $query->get( 'post_type' ) == 'tribe_events' && 'all' === $query->get( 'eventDisplay' );
 	}
 
+	public function filter_recurring_event_parent_id() {
+		return $this->recurring_event_parent_id;
+	}
+
+	protected function is_single_event_main_query( WP_Query $query ) {
+		return $query->is_main_query() && $query->is_single() && $query->get( 'post_type' ) === Tribe__Events__Main::POSTTYPE;
+	}
 }

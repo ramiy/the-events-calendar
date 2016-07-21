@@ -472,6 +472,13 @@
 						break;
 
 				}
+				
+				/**
+				 * Provides an opportunity to modify the redirection URL prior to the actual redirection.
+				 *
+				 * @param string $current_url
+				 */
+				$current_url = apply_filters( 'tribe_events_pro_recurrence_redirect_url', $current_url );
 
 				if ( ! empty( $current_url ) ) {
 					// redirect user with 301

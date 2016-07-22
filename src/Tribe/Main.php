@@ -198,7 +198,7 @@
 				
 				add_action( 'plugins_loaded', array( 'Tribe__Events__Pro__Admin__Settings', 'hook' ) );
 
-                Tribe__Events__Pro__Supports__Manager::instance()->load_supports();
+				Tribe__Events__Pro__Supports__Manager::instance()->load_supports();
 			}
 
 			/**
@@ -923,7 +923,8 @@
 			 */
 			private function set_post_id_for_recurring_event_query( $query ) {
 				$date = $query->get( 'eventDate' );
-				$slug = $query->query['name'];
+				$slug = isset( $query->query['name'] ) ? $query['name'] : '';
+
 				if ( empty( $date ) || empty( $slug ) ) {
 					return; // we shouldn't be here
 				}
@@ -937,7 +938,7 @@
 				 *                            post ID.
 				 * @param WP_Query $query     The current query.
 				 */
-				$parent_id = apply_filters('tribe_events_pro_recurring_event_parent_id', false, $query);
+				$parent_id = apply_filters( 'tribe_events_pro_recurring_event_parent_id', false, $query );
 
 				$cache = new Tribe__Cache();
 				if ( false === $parent_id ) {

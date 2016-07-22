@@ -43,7 +43,7 @@ class Tribe__Events__Pro__Supports__WPML__API__Translations {
 	 * @return bool
 	 */
 	private function is_created_from_post_edit_screen() {
-		return ! empty( $_POST[Tribe__Events__Pro__Supports__WPML__WPML::$post_language_post_global_key] );
+		return ! empty( $_POST[ Tribe__Events__Pro__Supports__WPML__WPML::$post_language_post_global_key ] );
 	}
 
 	/**
@@ -52,7 +52,7 @@ class Tribe__Events__Pro__Supports__WPML__API__Translations {
 	 * @return string
 	 */
 	private function get_language_code_from_globals() {
-		return $_POST[Tribe__Events__Pro__Supports__WPML__WPML::$post_language_post_global_key];
+		return $_POST[ Tribe__Events__Pro__Supports__WPML__WPML::$post_language_post_global_key ];
 	}
 
 	/**

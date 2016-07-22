@@ -2,12 +2,12 @@
 
 
 /**
- * Class Tribe__Events__Pro__Supports__WPML__WPML
+ * Class Tribe__Events__Pro__Integrations__WPML__WPML
  *
  * A facade class to wrap and customize access to WPML API through adapters.
  * Any call should be forwarded to specialized adapter classes.
  */
-class Tribe__Events__Pro__Supports__WPML__WPML {
+class Tribe__Events__Pro__Integrations__WPML__WPML {
 
 	/**
 	 * The key WPML will store the current post language code while saving in the $_POST global.
@@ -17,18 +17,18 @@ class Tribe__Events__Pro__Supports__WPML__WPML {
 	public static $post_language_post_global_key = 'icl_post_language';
 
 	/**
-	 * @var Tribe__Events__Pro__Supports__WPML__WPML
+	 * @var Tribe__Events__Pro__Integrations__WPML__WPML
 	 */
 	protected static $instance;
 	/**
-	 * @var Tribe__Events__Pro__Supports__WPML__API__Translations
+	 * @var Tribe__Events__Pro__Integrations__WPML__API__Translations
 	 */
 	private $translations;
 
 	/**
 	 * The class singleton constructor.
 	 *
-	 * @return Tribe__Events__Pro__Supports__WPML__WPML
+	 * @return Tribe__Events__Pro__Integrations__WPML__WPML
 	 */
 	public static function instance() {
 		if ( empty( self::$instance ) ) {
@@ -39,12 +39,12 @@ class Tribe__Events__Pro__Supports__WPML__WPML {
 	}
 
 	/**
-	 * Tribe__Events__Pro__Supports__WPML__WPML constructor.
+	 * Tribe__Events__Pro__Integrations__WPML__WPML constructor.
 	 *
-	 * @param Tribe__Events__Pro__Supports__WPML__API__Translations|null $translations
+	 * @param Tribe__Events__Pro__Integrations__WPML__API__Translations|null $translations
 	 */
-	public function __construct( Tribe__Events__Pro__Supports__WPML__API__Translations $translations = null ) {
-		$this->translations = $translations ? $translations : new Tribe__Events__Pro__Supports__WPML__API__Translations();
+	public function __construct( Tribe__Events__Pro__Integrations__WPML__API__Translations $translations = null ) {
+		$this->translations = $translations ? $translations : new Tribe__Events__Pro__Integrations__WPML__API__Translations();
 	}
 
 	/**
@@ -96,13 +96,13 @@ class Tribe__Events__Pro__Supports__WPML__WPML {
 	}
 
 	protected function hook_actions() {
-		$listener = Tribe__Events__Pro__Supports__WPML__Event_Listener::instance();
+		$listener = Tribe__Events__Pro__Integrations__WPML__Event_Listener::instance();
 
 		add_action( 'tribe_events_pro_recurring_event_instance_inserted', array( $listener, 'handle_recurring_event_creation' ), 10, 2 );
 	}
 
 	protected function hook_filters() {
-		$filters = Tribe__Events__Pro__Supports__WPML__Filters::instance();
+		$filters = Tribe__Events__Pro__Integrations__WPML__Filters::instance();
 
 		// Modern Tribe filters
 		add_filter( 'tribe_events_pre_get_posts', array( $filters, 'filter_tribe_events_pre_get_posts' ), 10, 1 );

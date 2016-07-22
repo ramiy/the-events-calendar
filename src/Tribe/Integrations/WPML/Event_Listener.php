@@ -2,14 +2,14 @@
 
 
 /**
- * Class Tribe__Events__Pro__Supports__WPML__Event_Listener
+ * Class Tribe__Events__Pro__Integrations__WPML__Event_Listener
  *
  * Listens for Tribe Events events (actions and filters) and dispatches
  */
-class Tribe__Events__Pro__Supports__WPML__Event_Listener {
+class Tribe__Events__Pro__Integrations__WPML__Event_Listener {
 
 	/**
-	 * @var Tribe__Events__Pro__Supports__WPML__Event_Listener
+	 * @var Tribe__Events__Pro__Integrations__WPML__Event_Listener
 	 */
 	private static $instance;
 
@@ -29,7 +29,7 @@ class Tribe__Events__Pro__Supports__WPML__Event_Listener {
 	/**
 	 * The class singleton constructor.
 	 *
-	 * @return Tribe__Events__Pro__Supports__WPML__Event_Listener
+	 * @return Tribe__Events__Pro__Integrations__WPML__Event_Listener
 	 */
 	public static function instance() {
 		if ( empty( self::$instance ) ) {
@@ -40,16 +40,16 @@ class Tribe__Events__Pro__Supports__WPML__Event_Listener {
 	}
 
 	/**
-	 * Tribe__Events__Pro__Supports__WPML__Event_Listener constructor.
+	 * Tribe__Events__Pro__Integrations__WPML__Event_Listener constructor.
 	 *
 	 * @param array|null                               $handlers_map An associative array of event type to handling class instances.
 	 * @param Tribe__Log__Logger                       $logger
-	 * @param Tribe__Events__Pro__Supports__WPML__WPML $wpml
+	 * @param Tribe__Events__Pro__Integrations__WPML__WPML $wpml
 	 */
-	public function __construct( array $handlers_map = null, Tribe__Log__Logger $logger = null, Tribe__Events__Pro__Supports__WPML__WPML $wpml = null ) {
+	public function __construct( array $handlers_map = null, Tribe__Log__Logger $logger = null, Tribe__Events__Pro__Integrations__WPML__WPML $wpml = null ) {
 		$this->handlers_map = $handlers_map ? $handlers_map : $this->get_handlers_map();
 		$this->logger       = $logger ? $logger : Tribe__Main::instance()->log()->get_current_logger();
-		$this->wpml         = $wpml ? $wpml : Tribe__Events__Pro__Supports__WPML__WPML::instance();
+		$this->wpml         = $wpml ? $wpml : Tribe__Events__Pro__Integrations__WPML__WPML::instance();
 	}
 
 	/**
@@ -62,7 +62,7 @@ class Tribe__Events__Pro__Supports__WPML__Event_Listener {
 		$this->ensure_event_is_parent_to( $post_parent_id, $post_id );
 
 		if ( $this->has_handler_for_event( 'event.recurring.created' ) ) {
-			/** @var Tribe__Events__Pro__Supports__WPML__Handler_Interface $handler */
+			/** @var Tribe__Events__Pro__Integrations__WPML__Handler_Interface $handler */
 			$handler       = $this->get_handler_for_event( 'event.recurring.created' );
 			$handling_exit = $handler->handle( $post_id, $post_parent_id );
 
@@ -79,7 +79,7 @@ class Tribe__Events__Pro__Supports__WPML__Event_Listener {
 	 * @return array
 	 */
 	private function get_handlers_map() {
-		return array( 'event.recurring.created' => 'Tribe__Events__Pro__Supports__WPML__Recurring_Event_Creation_Handler' );
+		return array( 'event.recurring.created' => 'Tribe__Events__Pro__Integrations__WPML__Recurring_Event_Creation_Handler' );
 	}
 
 	/**
@@ -103,10 +103,10 @@ class Tribe__Events__Pro__Supports__WPML__Event_Listener {
 	/**
 	 * @param $event
 	 *
-	 * @return Tribe__Events__Pro__Supports__WPML__Handler_Interface
+	 * @return Tribe__Events__Pro__Integrations__WPML__Handler_Interface
 	 */
 	protected function get_handler_for_event( $event ) {
-		if ( ! is_a( $this->handlers_map[ $event ], 'Tribe__Events__Pro__Supports__WPML__Handler_Interface' ) ) {
+		if ( ! is_a( $this->handlers_map[ $event ], 'Tribe__Events__Pro__Integrations__WPML__Handler_Interface' ) ) {
 			$this->handlers_map[ $event ] = new $this->handlers_map[$event]( $this, $this->wpml );
 		}
 

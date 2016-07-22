@@ -198,7 +198,7 @@
 				
 				add_action( 'plugins_loaded', array( 'Tribe__Events__Pro__Admin__Settings', 'hook' ) );
 
-				Tribe__Events__Pro__Supports__Manager::instance()->load_supports();
+				Tribe__Events__Pro__Integrations__Manager::instance()->load_integrations();
 			}
 
 			/**

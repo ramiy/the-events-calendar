@@ -1,10 +1,10 @@
 <?php
 
 
-class Tribe__Events__Pro__Supports__WPML__Filters {
+class Tribe__Events__Pro__Integrations__WPML__Filters {
 
 	/**
-	 * @var Tribe__Events_Pro__Supports__WPML__Filters
+	 * @var Tribe__Events_Pro__Integrations__WPML__Filters
 	 */
 	protected static $instance;
 
@@ -14,7 +14,7 @@ class Tribe__Events__Pro__Supports__WPML__Filters {
 	protected $recurring_event_parent_id;
 
 	/**
-	 * @return Tribe__Events_Pro__Supports__WPML__Filters
+	 * @return Tribe__Events_Pro__Integrations__WPML__Filters
 	 */
 	public static function instance() {
 		if ( empty( self::$instance ) ) {

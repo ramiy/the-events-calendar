@@ -45,11 +45,6 @@ class Tribe__Events__Pro__Integrations__WPML__Filters {
 		}
 
 		foreach ( $languages as $key => $language ) {
-
-			// TODO: This should be filterd properly for all permalink structures.
-
-			// We need to remove the date and replace it with 'all'
-
 			$parts = explode( '/', untrailingslashit( $language['url'] ) );
 			array_pop( $parts );
 			$parts[]           = 'all';

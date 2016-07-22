@@ -198,7 +198,7 @@
 				
 				add_action( 'plugins_loaded', array( 'Tribe__Events__Pro__Admin__Settings', 'hook' ) );
 
-				$this->load_wpml_support();
+                Tribe__Events__Pro__Supports__Manager::instance()->load_supports();
 			}
 
 			/**
@@ -1819,21 +1819,5 @@
 
 				return tribe_get_upcoming_recurring_event_id_from_url( $url );
 			}
-
-			/**
-			 * Loads WPML support classes and event listeners.
-			 * 
-			 * @return bool
-			 */
-			private function load_wpml_support() {
-				if ( ! ( class_exists( 'SitePress' ) && defined( 'ICL_PLUGIN_PATH' ) ) ) {
-					return false;
-				}
-
-				Tribe__Events__Pro__Supports__WPML__WPML::instance()->hook();
-
-				return true;
-			}
-			
 		} // end Class
 	}

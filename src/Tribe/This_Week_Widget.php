@@ -111,6 +111,8 @@ class Tribe__Events__Pro__This_Week_Widget extends WP_Widget {
 			$ecp->enable_recurring_info_tooltip();
 		}
 
+		$this->print_jsonld_markup_for( $week_days );
+
 		wp_reset_postdata();
 	}
 
@@ -168,5 +170,19 @@ class Tribe__Events__Pro__This_Week_Widget extends WP_Widget {
 		$instance['operand']             = sanitize_text_field( $new_instance['operand'] );
 
 		return $instance;
+	}
+
+	protected function print_jsonld_markup_for( $week_days ) {
+		$days   = wp_list_pluck( $week_days, 'this_week_events' );
+		$events = array();
+		foreach ( $days as $day ) {
+			$events = array_merge( $events, $day );
+		}
+
+		if ( empty( $events ) ) {
+			return;
+		}
+
+		Tribe__Events__JSON_LD__Event::instance()->markup( $events );
 	}
 }

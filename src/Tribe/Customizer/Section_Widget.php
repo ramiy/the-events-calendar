@@ -92,6 +92,9 @@ final class Tribe__Events__Pro__Customizer__Section_Widget extends Tribe__Events
 				)
 			)
 		);
-	}
 
+		// Introduced to make Selective Refresh have less code duplication
+		$customizer->add_setting_name( $customizer->get_setting_name( 'calendar_header_color', $section ) );
+		$customizer->add_setting_name( $customizer->get_setting_name( 'calendar_datebar_color', $section ) );
+	}
 }

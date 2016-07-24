@@ -54,7 +54,9 @@ class Tribe__Events__Pro__Recurrence__Meta_Builder {
 					continue;
 				}
 
-				if ( ( empty( $recurrence['type'] ) && empty( $recurrence['custom']['type'] ) ) || ( 'exclusions' == $rule_type && ! empty( $recurrence['custom']['type'] ) && 'None' === $recurrence['custom']['type'] ) ) {
+				$has_no_type = empty( $recurrence['type'] ) && empty( $recurrence['custom']['type'] );
+				$is_custom_none_recurrence = 'exclusions' == $rule_type && ! empty( $recurrence['custom']['type'] ) && 'None' === $recurrence['custom']['type'];
+				if ( $has_no_type || $is_custom_none_recurrence ) {
 					unset( $this->data['recurrence'][ $rule_type ][ $key ] );
 					continue;
 				}

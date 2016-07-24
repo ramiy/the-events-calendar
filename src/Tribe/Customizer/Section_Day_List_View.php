@@ -72,7 +72,6 @@ class Tribe__Events__Pro__Customizer__Section_Day_List_View extends Tribe__Event
 			'title'       => esc_html__( 'Day/List View', 'tribe-events-calendar-pro' ),
 			'description' => esc_html__( 'Options selected here will override what was selected in the "General Theme" and "Global Elements" sections', 'tribe-events-calendar-pro' ),
 		);
-
 	}
 
 	/**
@@ -108,7 +107,7 @@ class Tribe__Events__Pro__Customizer__Section_Day_List_View extends Tribe__Event
 			)
 		);
 
+		// Introduced to make Selective Refresh have less code duplication
+		$customizer->add_setting_name( $customizer->get_setting_name( 'price_bg_color', $section ) );
 	}
-
-
 }

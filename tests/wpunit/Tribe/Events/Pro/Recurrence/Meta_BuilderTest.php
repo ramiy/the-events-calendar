@@ -152,7 +152,7 @@ class Meta_BuilderTest extends \Codeception\TestCase\WPTestCase {
 				)
 			)
 		);
-		$utils    = $this->getMock( 'Tribe__Events__Pro__Recurrence__Utils' );
+		$utils    = $this->getMockBuilder( 'Tribe__Events__Pro__Recurrence__Utils' )->getMock();
 		$end_date = 'end_date';
 		$utils->expects( $this->once() )->method( 'datetime_from_format' )->willReturn( $end_date );
 		$utils->expects( $this->once() )->method( 'is_valid' )->willReturn( true );
@@ -182,7 +182,7 @@ class Meta_BuilderTest extends \Codeception\TestCase\WPTestCase {
 				)
 			)
 		);
-		$utils    = $this->getMock( 'Tribe__Events__Pro__Recurrence__Utils' );
+		$utils    = $this->getMockBuilder( 'Tribe__Events__Pro__Recurrence__Utils' )->getMock();
 		$end_date = 'end_date';
 		$utils->expects( $this->once() )->method( 'datetime_from_format' )->willReturn( $end_date );
 		$utils->expects( $this->once() )->method( 'is_valid' )->willReturn( true );
@@ -232,7 +232,7 @@ class Meta_BuilderTest extends \Codeception\TestCase\WPTestCase {
 		foreach ( $custom_types as $t ) {
 			$data['recurrence']['rules'][0]['cusom'][ $t ] = 'foo';
 		}
-		$utils    = $this->getMock( 'Tribe__Events__Pro__Recurrence__Utils' );
+		$utils    = $this->getMockBuilder( 'Tribe__Events__Pro__Recurrence__Utils' )->getMock();
 		$end_date = 'end_date';
 		$utils->expects( $this->once() )->method( 'datetime_from_format' )->willReturn( $end_date );
 		$utils->expects( $this->once() )->method( 'is_valid' )->willReturn( true );
@@ -262,7 +262,7 @@ class Meta_BuilderTest extends \Codeception\TestCase\WPTestCase {
 				)
 			)
 		);
-		$utils    = $this->getMock( 'Tribe__Events__Pro__Recurrence__Utils' );
+		$utils    = $this->getMockBuilder( 'Tribe__Events__Pro__Recurrence__Utils' )->getMock();
 		$end_date = 'end_date';
 		$utils->expects( $this->once() )->method( 'datetime_from_format' )->willReturn( $end_date );
 		$utils->expects( $this->once() )->method( 'is_valid' )->willReturn( true );
@@ -291,7 +291,7 @@ class Meta_BuilderTest extends \Codeception\TestCase\WPTestCase {
 				)
 			)
 		);
-		$utils    = $this->getMock( 'Tribe__Events__Pro__Recurrence__Utils' );
+		$utils    = $this->getMockBuilder( 'Tribe__Events__Pro__Recurrence__Utils' )->getMock();
 		$end_date = 'end_date';
 		$utils->expects( $this->once() )->method( 'datetime_from_format' )->willReturn( $end_date );
 		$utils->expects( $this->once() )->method( 'is_valid' )->willReturn( true );
@@ -320,7 +320,7 @@ class Meta_BuilderTest extends \Codeception\TestCase\WPTestCase {
 						)
 				)
 		);
-		$utils    = $this->getMock( 'Tribe__Events__Pro__Recurrence__Utils' );
+		$utils    = $this->getMockBuilder( 'Tribe__Events__Pro__Recurrence__Utils' )->getMock();
 		$end_date = 'end_date';
 		$utils->expects( $this->once() )->method( 'datetime_from_format' )->willReturn( $end_date );
 		$utils->expects( $this->once() )->method( 'is_valid' )->willReturn( false );

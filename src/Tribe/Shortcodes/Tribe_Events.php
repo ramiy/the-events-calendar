@@ -4,23 +4,29 @@
  */
 class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
+	/**
+	 * The shortcode allows filtering by event categories and by post tags,
+	 * in line with what the calendar widget itself supports.
+	 *
+	 * @var array
+	 */
+	protected $tax_relationships = array(
+		'categories' => Tribe__Events__Main::TAXONOMY,
+		'tags' => 'post_tag',
+	);
+
+
 	public function __construct() {
-		// Ensure the expected CSS is available to style the shortcode output (this will
-		// happen automatically in event views, but not elsewhere)
 		Tribe__Events__Template_Factory::asset_package( 'events-css' );
 	}
 
-	public function do_shortcode() {
-
-		// Start to record the Output
+	public function tribe_events_shortcode() {
+		$args = array(
+			'eventDate' => date( 'Y-m-d' ),
+		);
 		ob_start();
+		tribe_show_month( $args );
 
-		echo '<div>';
-		echo tribe_show_month(array( 'eventDate' => '2016-05-01' ));
-
-		echo '</div>';
-
-		// Save it to a variable
 		$html = ob_get_clean();
 
 		return $html;
@@ -42,4 +48,4 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		return self::$instance;
 	}
 }
-add_shortcode( 'tribe_events', array( 'Tribe__Events__Pro__Shortcodes__Tribe_Events', 'do_shortcode' ) );
+add_shortcode( 'tribe_events', array( 'Tribe__Events__Pro__Shortcodes__Tribe_Events', 'tribe_events_shortcode' ) );

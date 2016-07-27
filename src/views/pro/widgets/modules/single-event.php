@@ -33,8 +33,9 @@ $multiple_organizers = count( $organizer_ids ) > 1;
 				class="list-dayname"><?php echo apply_filters( 'tribe-mini_helper_tribe_events_ajax_list_dayname', date_i18n( 'D', $postDate ), $postDate, $mini_cal_event_atts['class'] ); ?></span>
 		<?php } ?>
 
-		<span
-			class="list-daynumber"><?php echo apply_filters( 'tribe-mini_helper_tribe_events_ajax_list_daynumber', date_i18n( 'd', $postDate ), $postDate, $mini_cal_event_atts['class'] ); ?></span>
+		<span class="list-daynumber"><?php echo apply_filters( 'tribe-mini_helper_tribe_events_ajax_list_daynumber', date_i18n( 'd', $postDate ), $postDate, $mini_cal_event_atts['class'] ); ?></span>
+
+		<span class="list-daymonth"><?php echo apply_filters( 'tribe-mini_helper_tribe_events_ajax_list_daymonth', date_i18n( 'M', $postDate ), $postDate, $mini_cal_event_atts['class'] ); ?></span>
 	</div>
 
 	<div class="list-info">

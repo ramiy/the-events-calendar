@@ -1,11 +1,14 @@
 <?php
 /**
  * Represents individual [tribe_events] shortcodes.
+ *
+ * @todo extend loading of template classes to more than just month view
+ * @todo look at how/what data to pass into those template objects before rendering
  */
 class Tribe__Events__Pro__Shortcodes__Tribe_Events {
-	protected $view;
 	protected $atts;
-	protected $output;
+	protected $template_object;
+	protected $output = '';
 
 
 	public function __construct( $atts ) {
@@ -14,11 +17,55 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		);
 
 		$this->atts = shortcode_atts( $defaults, $atts, 'tribe_events' );
+		$this->load_template_class();
 
 		Tribe__Events__Template_Factory::asset_package( 'events-css' );
+		$this->render_view();
+	}
 
+	/**
+	 * Loads the template class needed to facilitate query setup and anything
+	 * else that is necessary to load and display the requested view.
+	 */
+	protected function load_template_class() {
+		switch ( strtolower( $this->atts[ 'view' ] ) ) {
+			case 'month':
+			default:
+				$template_class = 'Tribe__Events__Template__Month';
+			break;
+		}
+
+		/**
+		 * Provides an opportunity to modify the template class which will be loaded
+		 * prior to rendering the specified view.
+		 *
+		 * @param string $template_class
+		 * @param string $view_name
+		 */
+		$template_class = (string) apply_filters( 'tribe_events_pro_tribe_events_shortcode_template_class', $template_class, $this->atts[ 'view' ] );
+
+		// Sometimes there may be no need to load a special template class
+		if ( empty( $template_class ) ) {
+			return;
+		}
+
+		if ( ! class_exists( $template_class ) ) {
+			_doing_it_wrong(
+				__FUNCTION__,
+				sprintf( __( 'Template class must be the name of a valid class (%s provided)', 'events-pro' ), $template_class ),
+				Tribe__Events__Pro__Main::VERSION
+			);
+		}
+
+		$this->template_object = new $template_class();
+	}
+
+	/**
+	 * Attempts to render the actual view.
+	 */
+	protected function render_view() {
 		ob_start();
-		echo '<div>';
+		echo '<div class="tribe-events">';
 		tribe_get_view( $this->atts['view'] );
 		echo '</div>';
 		$this->output = ob_get_clean();

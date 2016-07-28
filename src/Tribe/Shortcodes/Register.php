@@ -3,7 +3,7 @@
 /**
  * Registers shortcodes handlers for each of the widget wrappers.
  */
-class Tribe__Events__Pro__Shortcodes__Widget_Wrappers {
+class Tribe__Events__Pro__Shortcodes__Register {
 	public function __construct() {
 		add_shortcode( 'tribe_mini_calendar', array( $this, 'mini_calendar' ) );
 		add_shortcode( 'tribe_events_list', array( $this, 'events_list' ) );

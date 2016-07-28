@@ -42,9 +42,9 @@
 			public $embedded_maps;
 
 			/**
-			 * @var Tribe__Events__Pro__Shortcodes__Widget_Wrappers
+			 * @var Tribe__Events__Pro__Shortcodes__Register
 			 */
-			public $widget_wrappers;
+			public $shortcodes;
 
 			const REQUIRED_TEC_VERSION = '4.3dev';
 			const VERSION = '4.3dev';
@@ -409,7 +409,6 @@
 			 * @return void
 			 */
 			public function init() {
-				Tribe__Events__Pro__Shortcodes__Tribe_Events::instance();
 				Tribe__Events__Pro__Mini_Calendar::instance();
 				Tribe__Events__Pro__This_Week::instance();
 				Tribe__Events__Pro__Custom_Meta::init();
@@ -423,7 +422,7 @@
 				$this->queue_processor = new Tribe__Events__Pro__Recurrence__Queue_Processor;
 				$this->queue_realtime = new Tribe__Events__Pro__Recurrence__Queue_Realtime;
 				$this->embedded_maps = new Tribe__Events__Pro__Embedded_Maps;
-				$this->widget_wrappers = new Tribe__Events__Pro__Shortcodes__Widget_Wrappers;
+				$this->shortcodes = new Tribe__Events__Pro__Shortcodes__Register;
 				$this->singular_event_label = tribe_get_event_label_singular();
 				$this->plural_event_label = tribe_get_event_label_plural();
 				$this->singular_event_label_lowercase = tribe_get_event_label_singular_lowercase();

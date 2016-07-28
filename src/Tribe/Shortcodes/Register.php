@@ -10,6 +10,7 @@ class Tribe__Events__Pro__Shortcodes__Register {
 		add_shortcode( 'tribe_featured_venue', array( $this, 'featured_venue' ) );
 		add_shortcode( 'tribe_event_countdown', array( $this, 'event_countdown' ) );
 		add_shortcode( 'tribe_this_week', array( $this, 'this_week' ) );
+		add_shortcode( 'tribe_events', array( $this, 'tribe_events' ) );
 	}
 
 	public function mini_calendar( $atts ) {
@@ -40,5 +41,15 @@ class Tribe__Events__Pro__Shortcodes__Register {
 	public function this_week( $atts ) {
 		$wrapper = new Tribe__Events__Pro__Shortcodes__This_Week( $atts );
 		return $wrapper->output;
+	}
+
+	/**
+	 * Handler for the [tribe_events] shortcode.
+	 *
+	 * @param $atts
+	 */
+	public function tribe_events( $atts ) {
+		$shortcode = new Tribe__Events__Pro__Shortcodes__Tribe_Events( $atts );
+		return $shortcode->output();
 	}
 }

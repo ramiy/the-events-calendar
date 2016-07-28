@@ -1,24 +1,19 @@
 <?php
 /**
- * Implements a shortcode
+ * Represents individual [tribe_events] shortcodes.
  */
 class Tribe__Events__Pro__Shortcodes__Tribe_Events {
+	protected $view;
+	protected $atts;
+	protected $output;
 
-	public $atts;
-	public $view;
-	public $output;
 
+	public function __construct( $atts ) {
+		$defaults = array(
+			'view' => 'month',
+		);
 
-	public function __construct() {
-		add_shortcode( 'tribe_events', array( $this, 'tribe_events_shortcode' ) );
-	}
-
-	public function tribe_events_shortcode( $atts ) {
-//		var_dump( $atts );
-		$this->atts = shortcode_atts( array(
-			'view'       => 'month',
-		), $atts, 'do_shortcode' );
-//		var_dump( $this->atts );
+		$this->atts = shortcode_atts( $defaults, $atts, 'tribe_events' );
 
 		Tribe__Events__Template_Factory::asset_package( 'events-css' );
 
@@ -26,9 +21,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		echo '<div>';
 		tribe_get_view( $this->atts['view'] );
 		echo '</div>';
-		$output = ob_get_clean();
-		return $output;
-
+		$this->output = ob_get_clean();
 	}
 
 	public function month_view() {
@@ -115,20 +108,12 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		$response['html'] .= ob_get_clean();
 	}
 
-
-	public static $instance;
-
 	/**
-	 * Get (and instantiate, if necessary) the instance of the class
+	 * Returns the output of this shortcode.
 	 *
-	 * @static
-	 * @return Tribe__Events__Pro__Shortcodes__Tribe_Events
+	 * @return string
 	 */
-	public static function instance() {
-		if ( ! self::$instance instanceof self ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
+	public function output() {
+		return $this->output;
 	}
 }

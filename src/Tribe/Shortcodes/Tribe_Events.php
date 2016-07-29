@@ -6,153 +6,245 @@
  * @todo look at how/what data to pass into those template objects before rendering
  */
 class Tribe__Events__Pro__Shortcodes__Tribe_Events {
-	protected $atts;
+	/**
+	 * Container for the shortcode attributes.
+	 *
+	 * @var array
+	 */
+	protected $atts = array();
+
+	/**
+	 * Container for the relevant template manager. This may not always be needed
+	 * and so may be empty.
+	 *
+	 * @var object|null
+	 */
 	protected $template_object;
+
+	/**
+	 * @var string
+	 */
 	protected $output = '';
 
+	/**
+	 * The strings that the shortcode considers to be "truthy" in the context of
+	 * various attributes.
+	 *
+	 * @var array
+	 */
+	protected $truthy_values = array();
 
+
+	/**
+	 * Generates output for the [tribe_events] shortcode.
+	 *
+	 * @param $atts
+	 */
 	public function __construct( $atts ) {
+		$this->setup( $atts );
+		$this->prepare();
+		$this->render();
+	}
+
+	/**
+	 * Parse the provided attributes and hook into the shortcode processes.
+	 *
+	 * @param $atts
+	 */
+	protected function setup( $atts ) {
 		$defaults = array(
-			'view' => 'month',
+			'view'     => 'month',
+			'redirect' => '',
+			'date'     => '',
 		);
 
 		$this->atts = shortcode_atts( $defaults, $atts, 'tribe_events' );
-		$this->load_template_class();
 
-		Tribe__Events__Template_Factory::asset_package( 'events-css' );
-		$this->render_view();
+		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_month', array( $this, 'prepare_month' ) );
 	}
 
 	/**
-	 * Loads the template class needed to facilitate query setup and anything
-	 * else that is necessary to load and display the requested view.
+	 * Facilitates preparation of template classes and anything else required to setup
+	 * a given view or support particular attributes that have been set.
 	 */
-	protected function load_template_class() {
-		switch ( strtolower( $this->atts[ 'view' ] ) ) {
-			case 'month':
-			default:
-				$template_class = 'Tribe__Events__Template__Month';
-			break;
-		}
+	protected function prepare() {
+		/**
+		 * Provides an opportunity for template classes to be instantiated and/or
+		 * any other required setup to be performed, for a specific view.
+		 *
+		 * @param Tribe__Events__Pro__Shortcodes__Tribe_Events $shortcode
+		 */
+		do_action( 'tribe_events_pro_tribe_events_shortcode_prepare_' . $this->atts[ 'view' ], $this );
 
 		/**
-		 * Provides an opportunity to modify the template class which will be loaded
-		 * prior to rendering the specified view.
+		 * Provides an opportunity for template classes to be instantiated and/or
+		 * any other required setup to be performed.
 		 *
-		 * @param string $template_class
-		 * @param string $view_name
+		 * @param string $view
+		 * @param Tribe__Events__Pro__Shortcodes__Tribe_Events $shortcode
 		 */
-		$template_class = (string) apply_filters( 'tribe_events_pro_tribe_events_shortcode_template_class', $template_class, $this->atts[ 'view' ] );
+		do_action( 'tribe_events_pro_tribe_events_shortcode_prepare_view', $this->atts[ 'view' ], $this );
+	}
 
-		// Sometimes there may be no need to load a special template class
-		if ( empty( $template_class ) ) {
+	/**
+	 * Prepares month view.
+	 */
+	public function prepare_month() {
+		if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 			return;
 		}
 
-		if ( ! class_exists( $template_class ) ) {
-			_doing_it_wrong(
-				__FUNCTION__,
-				sprintf( __( 'Template class must be the name of a valid class (%s provided)', 'events-pro' ), $template_class ),
-				Tribe__Events__Pro__Main::VERSION
-			);
-		}
+		$template_args = array(
+			'eventDisplay' => 'month',
+			'eventDate'    => $this->get_attribute( 'date', '' ),
+		);
 
-		$this->template_object = new $template_class();
+		$this->default_preparation();
+		$this->template_object = new Tribe__Events__Template__Month( $template_args );
 	}
 
 	/**
-	 * Attempts to render the actual view.
+	 * Ensures the events-css asset package is setup and hooks up the
+	 * default view renderer.
 	 */
-	protected function render_view() {
+	protected function default_preparation() {
+		Tribe__Events__Template_Factory::asset_package( 'events-css' );
+		add_filter( 'tribe_events_pro_tribe_events_shortcode_output', array( $this, 'render_view' ) );
+	}
+
+	/**
+	 * Returns the currently set shortcode attributes.
+	 *
+	 * @return array
+	 */
+	public function get_attributes() {
+		return $this->atts;
+	}
+
+	/**
+	 * Returns the value of the specified shortcode attribute or else returns
+	 * $default if $name is not set.
+	 *
+	 * @param string $name
+	 * @param mixed  $default = null
+	 *
+	 * @return mixed
+	 */
+	public function get_attribute( $name, $default = null ) {
+		return isset( $this->atts[ $name ] ) ? $this->atts[ $name ] : $default;
+	}
+
+	/**
+	 * Tests to see if the specified attribute has a truthy value (typically "on",
+	 * "true", "yes" or "1").
+	 *
+	 * In cases where the attribute is not set, it will return false unless
+	 * $true_by_default is set to true.
+	 *
+	 * @param string $name
+	 * @param bool   $true_by_default = false
+	 *
+	 * @return bool
+	 */
+	public function is_attribute_truthy( $name, $true_by_default = false ) {
+		// If the attribute is not set, return the default
+		if ( ! isset( $this->atts[ $name ] ) ) {
+			return (bool) $true_by_default;
+		}
+
+		$value = strtolower( $this->get_attribute( $name ) );
+		return in_array( $value, $this->get_truthy_values() );
+	}
+
+	/**
+	 * Returns an array of strings that can be regarded as "truthy".
+	 *
+	 * @return array
+	 */
+	protected function get_truthy_values() {
+		if ( empty( $this->truthy_values ) ) {
+			/**
+			 * Allows the set of strings regarded as truthy (in the context of the [tribe_events]
+			 * shortcode attributes) to be altered.
+			 *
+			 * These should generally be lowercase strings for those languages where such a thing
+			 * makes sense.
+			 *
+			 * @param array $truthy_values
+			 */
+			$this->truthy_values = (array) apply_filters( 'tribe_events_pro_tribe_events_shortcode_truthy_values', array(
+				'1',
+				'on',
+				'yes',
+				'true',
+			) );
+		}
+
+		return $this->truthy_values;
+	}
+
+	/**
+	 * Returns the current template class object, if one has been found and loaded.
+	 *
+	 * @return object|null
+	 */
+	public function get_template_object() {
+		return $this->template_object;
+	}
+
+	/**
+	 * Triggers rendering of the currently requested view.
+	 */
+	protected function render() {
+		/**
+		 * Triggers the rendering of the requested view.
+		 *
+		 * @param string $html
+		 * @param string $view
+		 * @param Tribe__Events__Pro__Shortcodes__Tribe_Events $shortcode
+		 */
+		$this->output = (string) apply_filters( 'tribe_events_pro_tribe_events_shortcode_output', '', $this->atts[ 'view' ], $this );
+	}
+
+	/**
+	 * For default supported views, performs rendering and returns the result.
+	 */
+	public function render_view() {
 		ob_start();
-		echo '<div class="tribe-events">';
+
+		echo '<div class="' . $this->get_wrapper_classes() . '">';
 		tribe_get_view( $this->atts['view'] );
 		echo '</div>';
-		$this->output = ob_get_clean();
+		
+		return  ob_get_clean();
 	}
 
-	public function month_view() {
-		tribe_show_month( date( 'Y-m-d' ) );
-	}
-
-	public function list_view() {
-		Tribe__Events__Query::init();
-
-		$tribe_paged = ( ! empty( $_POST['tribe_paged'] ) ) ? intval( $_POST['tribe_paged'] ) : 1;
-		$post_status = array( 'publish' );
-		if ( is_user_logged_in() ) {
-			$post_status[] = 'private';
-		}
-
-		$args = array(
-			'eventDisplay' => 'list',
-			'post_type'    => Tribe__Events__Main::POSTTYPE,
-			'post_status'  => $post_status,
-			'paged'        => $tribe_paged,
+	/**
+	 * Returns a set of (already escaped) CSS class names intended for use in the div
+	 * wrapping the shortcode output.
+	 *
+	 * @return string
+	 */
+	protected function get_wrapper_classes() {
+		$classes = array(
+			'tribe-events-shortcode',
+			esc_attr( $this->atts[ 'view' ] )
 		);
 
-		// check & set display
-		if ( isset( $_POST['tribe_event_display'] ) ) {
-			if ( $_POST['tribe_event_display'] == 'past' ) {
-				$args['eventDisplay'] = 'past';
-				$args['order'] = 'DESC';
-			} elseif ( 'all' == $_POST['tribe_event_display'] ) {
-				$args['eventDisplay'] = 'all';
-			}
+		if ( $this->is_attribute_truthy( 'redirect' ) ) {
+			$classes[] = 'redirect';
 		}
 
-		// check & set event category
-		if ( isset( $_POST['tribe_event_category'] ) ) {
-			$args[ Tribe__Events__Main::TAXONOMY ] = $_POST['tribe_event_category'];
-		}
+		/**
+		 * Sets the CSS classes applied to the [tribe_events] wrapper div.
+		 *
+		 * @param array $classes
+		 * @param Tribe__Events__Pro__Shortcodes__Tribe_Events $shortcode
+		 */
+		$classes = (array) apply_filters( 'tribe_events_pro_tribe_events_shortcode_wrapper_classes', $classes, $this );
 
-		$args = apply_filters( 'tribe_events_listview_ajax_get_event_args', $args, $_POST );
-
-		$query = tribe_get_events( $args, true );
-
-		// $hash is used to detect whether the primary arguments in the query have changed (i.e. due to a filter bar request)
-		// if they have, we want to go back to page 1
-		$hash = $query->query_vars;
-
-		$hash['paged']      = null;
-		$hash['start_date'] = null;
-		$hash['end_date']   = null;
-		$hash_str           = md5( maybe_serialize( $hash ) );
-
-		if ( ! empty( $_POST['hash'] ) && $hash_str !== $_POST['hash'] ) {
-			$tribe_paged   = 1;
-			$args['paged'] = 1;
-			$query         = Tribe__Events__Query::getEvents( $args, true );
-		}
-
-
-		$response = array(
-			'html'        => '',
-			'success'     => true,
-			'max_pages'   => $query->max_num_pages,
-			'hash'        => $hash_str,
-			'tribe_paged' => $tribe_paged,
-			'total_count' => $query->found_posts,
-			'view'        => 'list',
-		);
-
-		global $wp_query, $post, $paged;
-		$wp_query = $query;
-		if ( ! empty( $query->posts ) ) {
-			$post = $query->posts[0];
-		}
-
-		$paged = $tribe_paged;
-
-//		Tribe__Events__Main::instance()->displaying = apply_filters( 'tribe_events_listview_ajax_event_display', 'list', $args );
-//
-//		if ( ! empty( $_POST['tribe_event_display'] ) && $_POST['tribe_event_display'] == 'past' ){
-//			$response['view'] = 'past';
-//		}
-
-		ob_start();
-		tribe_get_view( 'list/content' );
-		$response['html'] .= ob_get_clean();
+		$classes = implode( ' ', array_filter( $classes ) );
+		return esc_attr( $classes );
 	}
 
 	/**

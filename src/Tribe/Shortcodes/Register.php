@@ -47,6 +47,8 @@ class Tribe__Events__Pro__Shortcodes__Register {
 	 * Handler for the [tribe_events] shortcode.
 	 *
 	 * @param $atts
+	 *
+	 * @return string
 	 */
 	public function tribe_events( $atts ) {
 		$shortcode = new Tribe__Events__Pro__Shortcodes__Tribe_Events( $atts );

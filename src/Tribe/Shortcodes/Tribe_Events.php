@@ -228,12 +228,9 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	protected function get_wrapper_classes() {
 		$classes = array(
 			'tribe-events-shortcode',
-			esc_attr( $this->atts[ 'view' ] )
+			esc_attr( $this->atts[ 'view' ] ),
+			$this->is_attribute_truthy( 'redirect', true ) ? 'redirect' : 'no-redirect',
 		);
-
-		if ( $this->is_attribute_truthy( 'redirect' ) ) {
-			$classes[] = 'redirect';
-		}
 
 		/**
 		 * Sets the CSS classes applied to the [tribe_events] wrapper div.

@@ -100,6 +100,12 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		);
 
 		$this->default_preparation();
+
+		wp_enqueue_script( 'jquery' );
+		Tribe__Events__Template_Factory::asset_package( 'calendar-script' );
+		Tribe__Events__Template_Factory::asset_package( 'bootstrap-datepicker' );
+		Tribe__Events__Template_Factory::asset_package( 'ajax-calendar' );
+
 		$this->template_object = new Tribe__Events__Template__Month( $template_args );
 	}
 
@@ -210,13 +216,29 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 * For default supported views, performs rendering and returns the result.
 	 */
 	public function render_view() {
+		/**
+		 * Fires before the embedded view is rendered.
+		 *
+		 * @param Tribe__Events__Pro__Shortcodes__Tribe_Events $shortcode
+		 */
+		do_action( 'tribe_events_pro_tribe_events_shortcode_pre_render', $this );
+
 		ob_start();
 
 		echo '<div class="' . $this->get_wrapper_classes() . '">';
 		tribe_get_view( $this->atts['view'] );
 		echo '</div>';
-		
-		return  ob_get_clean();
+
+		$html = ob_get_clean();
+
+		/**
+		 * Fires after the embedded view is rendered.
+		 *
+		 * @param Tribe__Events__Pro__Shortcodes__Tribe_Events $shortcode
+		 */
+		do_action( 'tribe_events_pro_tribe_events_shortcode_post_render', $this );
+
+		return $html;
 	}
 
 	/**
@@ -228,6 +250,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	protected function get_wrapper_classes() {
 		$classes = array(
 			'tribe-events-shortcode',
+			'tribe-events-view-wrapper',
 			esc_attr( $this->atts[ 'view' ] ),
 			$this->is_attribute_truthy( 'redirect', true ) ? 'redirect' : 'no-redirect',
 		);

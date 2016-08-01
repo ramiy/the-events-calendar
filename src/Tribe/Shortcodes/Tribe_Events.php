@@ -61,6 +61,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		$this->atts = shortcode_atts( $defaults, $atts, 'tribe_events' );
 
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_month', array( $this, 'prepare_month' ) );
+		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_list', array( $this, 'prepare_list' ) );
 	}
 
 	/**
@@ -107,6 +108,29 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		Tribe__Events__Template_Factory::asset_package( 'ajax-calendar' );
 
 		$this->template_object = new Tribe__Events__Template__Month( $template_args );
+	}
+
+	/**
+	 * Prepares list view.
+	 */
+	public function prepare_list() {
+		if ( ! class_exists( 'Tribe__Events__Template__List' ) ) {
+			return;
+		}
+
+		$template_args = array(
+			'eventDisplay' => 'list',
+			'eventDate'    => $this->get_attribute( 'date', '' ),
+		);
+
+		$this->default_preparation();
+
+//		wp_enqueue_script( 'jquery' );
+//		Tribe__Events__Template_Factory::asset_package( 'calendar-script' );
+//		Tribe__Events__Template_Factory::asset_package( 'bootstrap-datepicker' );
+//		Tribe__Events__Template_Factory::asset_package( 'ajax-calendar' );
+
+		$this->template_object = new Tribe__Events__Template__List( $template_args );
 	}
 
 	/**
@@ -210,6 +234,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		 * @param Tribe__Events__Pro__Shortcodes__Tribe_Events $shortcode
 		 */
 		$this->output = (string) apply_filters( 'tribe_events_pro_tribe_events_shortcode_output', '', $this->atts[ 'view' ], $this );
+		var_dump($this->atts[ 'view' ]);
+		var_dump($this->output);
 	}
 
 	/**
@@ -228,7 +254,6 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		echo '<div class="' . $this->get_wrapper_classes() . '">';
 		tribe_get_view( $this->atts['view'] );
 		echo '</div>';
-
 		$html = ob_get_clean();
 
 		/**

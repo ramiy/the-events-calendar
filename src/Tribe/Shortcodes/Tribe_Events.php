@@ -27,6 +27,23 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	protected $output = '';
 
 	/**
+	 * Query arguments required to setup the requested view.
+	 *
+	 * @var array
+	 */
+	protected $query_args = array();
+
+	/**
+	 * Default query arguments generally shared when setting things up for each of our
+	 * supported views.
+	 *
+	 * @var array
+	 */
+	protected $default_args = array(
+		'post_type' => Tribe__Events__Main::POSTTYPE,
+	);
+
+	/**
 	 * The strings that the shortcode considers to be "truthy" in the context of
 	 * various attributes.
 	 *
@@ -61,6 +78,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		$this->atts = shortcode_atts( $defaults, $atts, 'tribe_events' );
 
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_month', array( $this, 'prepare_month' ) );
+		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_list', array( $this, 'prepare_list' ) );
+		add_action( 'tribe_events_pro_tribe_events_shortcode_post_render', array( $this, 'reset_query' ) );
 	}
 
 	/**
@@ -94,19 +113,38 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$template_args = array(
+		$this->set_query( array(
 			'eventDisplay' => 'month',
 			'eventDate'    => $this->get_attribute( 'date', '' ),
-		);
+		) );
 
 		$this->default_preparation();
 
-		wp_enqueue_script( 'jquery' );
 		Tribe__Events__Template_Factory::asset_package( 'calendar-script' );
 		Tribe__Events__Template_Factory::asset_package( 'bootstrap-datepicker' );
 		Tribe__Events__Template_Factory::asset_package( 'ajax-calendar' );
 
-		$this->template_object = new Tribe__Events__Template__Month( $template_args );
+		$this->template_object = new Tribe__Events__Template__Month( $this->query_args );
+	}
+
+	/**
+	 * Prepares list view.
+	 */
+	public function prepare_list() {
+		if ( ! class_exists( 'Tribe__Events__Template__List' ) ) {
+			return;
+		}
+
+		$this->set_query( array(
+			'eventDisplay' => 'list',
+			'eventDate'    => $this->get_attribute( 'date', '' ),
+		) );
+
+		$this->default_preparation();
+
+		Tribe__Events__Template_Factory::asset_package( 'ajax-list' );
+
+		$this->template_object = new Tribe__Events__Template__List( $this->query_args );
 	}
 
 	/**
@@ -114,8 +152,34 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 * default view renderer.
 	 */
 	protected function default_preparation() {
+		global $wp_query;
+
+		// We overwrite the global $wp_query object to facilitate embedding the requested view (the
+		// original will be restored during tribe_events_pro_tribe_events_shortcode_post_render)
+		$wp_query = new WP_Query( $this->query_args );
+
+		// Assets required by all our supported views
+		wp_enqueue_script( 'jquery' );
 		Tribe__Events__Template_Factory::asset_package( 'events-css' );
+
+		// Add the method responsible for rendering each of the default supported views
 		add_filter( 'tribe_events_pro_tribe_events_shortcode_output', array( $this, 'render_view' ) );
+	}
+
+	/**
+	 * Sets the query arguments needed for
+	 * @param array $arguments
+	 */
+	protected function set_query( array $arguments ) {
+		$this->query_args = array_merge( $this->default_args, $arguments );
+	}
+
+	/**
+	 * Once the view has been rendered, restore the origin WP_Query object.
+	 */
+	public function reset_query() {
+		remove_action( 'tribe_events_pro_tribe_events_shortcode_post_render', array( $this, 'reset_query' ) );
+		wp_reset_query();
 	}
 
 	/**

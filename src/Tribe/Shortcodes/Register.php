@@ -46,12 +46,28 @@ class Tribe__Events__Pro__Shortcodes__Register {
 	/**
 	 * Handler for the [tribe_events] shortcode.
 	 *
+	 * Please note that the shortcode should not be used alongside a regular event archive
+	 * view nor should it be used more than once in the same request - or else breakages may
+	 * occur. We try to limit accidental breakages by returning an empty string if we detect
+	 * any of the above scenarios.
+	 *
+	 * This limitation can be lifted once our CSS, JS and template classes are refactored to
+	 * support multiple instances of each view in the same request.
+	 *
 	 * @param $atts
 	 *
 	 * @return string
 	 */
 	public function tribe_events( $atts ) {
+		static $deployed = false;
+
+		if ( tribe_is_event_query() || $deployed ) {
+			return '';
+		}
+
 		$shortcode = new Tribe__Events__Pro__Shortcodes__Tribe_Events( $atts );
+		$deployed = true;
+
 		return $shortcode->output();
 	}
 }

@@ -152,6 +152,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 	/**
 	 * Prepares day view.
+	 *
+	 * @todo troubleshoot total lack of functionality
 	 */
 	public function prepare_day() {
 		if ( ! class_exists( 'Tribe__Events__Template__Day' ) ) {
@@ -172,8 +174,10 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 	/**
 	 * Prepares photo view.
+	 *
+	 * @todo troubleshoot total lack of functionality
 	 */
-	public function prepare_map() {
+	public function prepare_photo() {
 		if ( ! class_exists( 'Tribe__Events__Pro__Templates__Photo' ) ) {
 			return;
 		}

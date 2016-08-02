@@ -232,7 +232,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 * @param array $arguments
 	 */
 	protected function update_query( array $arguments ) {
-		$this->query_args = array_merge( $this->default_args, $this->query_args, $arguments );
+		$this->query_args = array_merge( $this->query_args, $arguments );
 	}
 
 	/**

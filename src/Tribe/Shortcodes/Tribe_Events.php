@@ -193,8 +193,15 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	protected function default_preparation() {
 		global $wp_query;
 
-		// We overwrite the global $wp_query object to facilitate embedding the requested view (the
-		// original will be restored during tribe_events_pro_tribe_events_shortcode_post_render)
+		/**
+		 * We overwrite the global $wp_query object to facilitate embedding the requested view (the
+		 * original will be restored during tribe_events_pro_tribe_events_shortcode_post_render):
+		 * this isn't ideal, but further restructuring of our template classes and event views would
+		 * be needed to avoid it.
+		 *
+		 * @see $this->reset_query()
+		 * @todo revise in a future release
+		 */
 		$wp_query = new WP_Query( $this->query_args );
 
 		// Assets required by all our supported views

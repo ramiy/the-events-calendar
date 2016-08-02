@@ -79,6 +79,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_month', array( $this, 'prepare_month' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_list', array( $this, 'prepare_list' ) );
+		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_day', array( $this, 'prepare_day' ) );
+		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_map', array( $this, 'prepare_map' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_post_render', array( $this, 'reset_query' ) );
 	}
 
@@ -149,6 +151,46 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	}
 
 	/**
+	 * Prepares day view.
+	 */
+	public function prepare_day() {
+		if ( ! class_exists( 'Tribe__Events__Template__Day' ) ) {
+			return;
+		}
+
+		$this->set_query( array(
+			'eventDisplay' => 'day',
+			'eventDate'    => $this->get_attribute( 'date', '' ),
+		) );
+
+		$this->default_preparation();
+
+		Tribe__Events__Template_Factory::asset_package( 'ajax-dayview' );
+
+		$this->template_object = new Tribe__Events__Template__Day( $this->query_args );
+	}
+
+	/**
+	 * Prepares photo view.
+	 */
+	public function prepare_map() {
+		if ( ! class_exists( 'Tribe__Events__Pro__Templates__Photo' ) ) {
+			return;
+		}
+
+		$this->set_query( array(
+			'eventDisplay' => 'photo',
+			'eventDate'    => $this->get_attribute( 'date', '' ),
+		) );
+
+		$this->default_preparation();
+
+		Tribe__Events__Template_Factory::asset_package( 'ajax-photoview' );
+
+		$this->template_object = new Tribe__Events__Pro__Templates__Photo( $this->query_args );
+	}
+
+	/**
 	 * Ensures the base assets required by all default supported views require are enqueued,
 	 * including for the Tribe Events Bar if enabled.
 	 */
@@ -161,15 +203,14 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		// Assets required by all our supported views
 		wp_enqueue_script( 'jquery' );
-		Tribe__Events__Template_Factory::asset_package( 'jquery-placeholder' );
 		Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
 		Tribe__Events__Template_Factory::asset_package( 'bootstrap-datepicker' );
 		Tribe__Events__Template_Factory::asset_package( 'events-css' );
-		Tribe__Events__Template_Factory::asset_package( 'tribe-events-bar' );
 
 		// Tribe Events Bar support
 		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {
 			add_filter( 'tribe-events-bar-should-show', array( $this, 'enable_tribe_bar' ) );
+
 			Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
 			Tribe__Events__Bar::instance()->load_script();
 		}

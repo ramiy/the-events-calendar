@@ -207,6 +207,7 @@ Our Premium Plugins:
 
 * Tweak - Added the "All Events" link on top of all recurring events view
 * Tweak - Made the redirect URL used when a recurring event cannot be found filterable (props: @logoscreative) [64106]
+* Tweak - Deprecated various disused functions that were built around the Meta Factory [39905]
 
 = [4.2.3] 2016-07-20 =
 

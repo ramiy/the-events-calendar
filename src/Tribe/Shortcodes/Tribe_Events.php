@@ -120,8 +120,9 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		$this->default_preparation();
 
-		Tribe__Events__Template_Factory::asset_package( 'calendar-script' );
+		Tribe__Events__Bar::instance()->load_script();
 		Tribe__Events__Template_Factory::asset_package( 'bootstrap-datepicker' );
+		Tribe__Events__Template_Factory::asset_package( 'calendar-script' );
 		Tribe__Events__Template_Factory::asset_package( 'ajax-calendar' );
 
 		$this->template_object = new Tribe__Events__Template__Month( $this->query_args );
@@ -148,8 +149,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	}
 
 	/**
-	 * Ensures the events-css asset package is setup and hooks up the
-	 * default view renderer.
+	 * Ensures the base assets required by all default supported views require are enqueued,
+	 * including for the Tribe Events Bar if enabled.
 	 */
 	protected function default_preparation() {
 		global $wp_query;
@@ -162,8 +163,26 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		wp_enqueue_script( 'jquery' );
 		Tribe__Events__Template_Factory::asset_package( 'events-css' );
 
+		// Tribe Events Bar support
+		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {
+			add_filter( 'tribe-events-bar-should-show', array( $this, 'enable_tribe_bar' ) );
+			Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
+			Tribe__Events__Bar::instance()->load_script();
+		}
+
 		// Add the method responsible for rendering each of the default supported views
 		add_filter( 'tribe_events_pro_tribe_events_shortcode_output', array( $this, 'render_view' ) );
+	}
+
+	/**
+	 * Expects to be called during "tribe-events-bar-should-show" - will unhook itself
+	 * and return true.
+	 *
+	 * @return bool true
+	 */
+	public function enable_tribe_bar() {
+		remove_filter( 'tribe-events-bar-should-show', array( $this, 'enable_tribe_bar' ) );
+		return true;
 	}
 
 	/**

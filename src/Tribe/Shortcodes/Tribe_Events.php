@@ -34,16 +34,6 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	protected $query_args = array();
 
 	/**
-	 * Default query arguments generally shared when setting things up for each of our
-	 * supported views.
-	 *
-	 * @var array
-	 */
-	protected $default_args = array(
-		'post_type' => Tribe__Events__Main::POSTTYPE,
-	);
-
-	/**
 	 * The strings that the shortcode considers to be "truthy" in the context of
 	 * various attributes.
 	 *
@@ -89,6 +79,12 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 * a given view or support particular attributes that have been set.
 	 */
 	protected function prepare() {
+		// Set the base query args
+		$this->update_query( array(
+			'post_type' => Tribe__Events__Main::POSTTYPE,
+			'eventDate' => $this->get_attribute( 'date', '' ),
+		) );
+
 		/**
 		 * Provides an opportunity for template classes to be instantiated and/or
 		 * any other required setup to be performed, for a specific view.
@@ -115,9 +111,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->set_query( array(
+		$this->update_query( array(
 			'eventDisplay' => 'month',
-			'eventDate'    => $this->get_attribute( 'date', '' ),
 		) );
 
 		$this->default_preparation();
@@ -138,9 +133,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->set_query( array(
+		$this->update_query( array(
 			'eventDisplay' => 'list',
-			'eventDate'    => $this->get_attribute( 'date', '' ),
 		) );
 
 		$this->default_preparation();
@@ -160,9 +154,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->set_query( array(
+		$this->update_query( array(
 			'eventDisplay' => 'day',
-			'eventDate'    => $this->get_attribute( 'date', '' ),
 		) );
 
 		$this->default_preparation();
@@ -182,9 +175,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->set_query( array(
+		$this->update_query( array(
 			'eventDisplay' => 'photo',
-			'eventDate'    => $this->get_attribute( 'date', '' ),
 		) );
 
 		$this->default_preparation();
@@ -235,11 +227,12 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	}
 
 	/**
-	 * Sets the query arguments needed for
+	 * Sets the query arguments needed to facilitate a custom request.
+	 *
 	 * @param array $arguments
 	 */
-	protected function set_query( array $arguments ) {
-		$this->query_args = array_merge( $this->default_args, $arguments );
+	protected function update_query( array $arguments ) {
+		$this->query_args = array_merge( $this->default_args, $this->query_args, $arguments );
 	}
 
 	/**

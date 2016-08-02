@@ -161,7 +161,11 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		// Assets required by all our supported views
 		wp_enqueue_script( 'jquery' );
+		Tribe__Events__Template_Factory::asset_package( 'jquery-placeholder' );
+		Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
+		Tribe__Events__Template_Factory::asset_package( 'bootstrap-datepicker' );
 		Tribe__Events__Template_Factory::asset_package( 'events-css' );
+		Tribe__Events__Template_Factory::asset_package( 'tribe-events-bar' );
 
 		// Tribe Events Bar support
 		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {

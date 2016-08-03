@@ -71,6 +71,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_list', array( $this, 'prepare_list' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_day', array( $this, 'prepare_day' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_map', array( $this, 'prepare_map' ) );
+		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_photo', array( $this, 'prepare_photo' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_post_render', array( $this, 'reset_query' ) );
 	}
 
@@ -83,6 +84,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		$this->update_query( array(
 			'post_type' => Tribe__Events__Main::POSTTYPE,
 			'eventDate' => $this->get_attribute( 'date', '' ),
+			'eventDisplay' => $this->get_attribute( 'view', 'month' ),
 		) );
 
 		/**
@@ -111,15 +113,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->update_query( array(
-			'eventDisplay' => 'month',
-		) );
-
 		$this->default_preparation();
 
-		Tribe__Events__Bar::instance()->load_script();
-		Tribe__Events__Template_Factory::asset_package( 'bootstrap-datepicker' );
-		Tribe__Events__Template_Factory::asset_package( 'calendar-script' );
 		Tribe__Events__Template_Factory::asset_package( 'ajax-calendar' );
 
 		$this->template_object = new Tribe__Events__Template__Month( $this->query_args );
@@ -133,12 +128,9 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->update_query( array(
-			'eventDisplay' => 'list',
-		) );
-
 		$this->default_preparation();
 
+		Tribe__Events__Template_Factory::asset_package( 'calendar-script' );
 		Tribe__Events__Template_Factory::asset_package( 'ajax-list' );
 
 		$this->template_object = new Tribe__Events__Template__List( $this->query_args );
@@ -153,10 +145,6 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		if ( ! class_exists( 'Tribe__Events__Template__Day' ) ) {
 			return;
 		}
-
-		$this->update_query( array(
-			'eventDisplay' => 'day',
-		) );
 
 		$this->default_preparation();
 
@@ -175,12 +163,10 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->update_query( array(
-			'eventDisplay' => 'photo',
-		) );
-
 		$this->default_preparation();
 
+		Tribe__Events__Pro__Main::instance()->enqueue_pro_scripts();
+		Tribe__Events__Template_Factory::asset_package( 'events-pro-css' );
 		Tribe__Events__Template_Factory::asset_package( 'ajax-photoview' );
 
 		$this->template_object = new Tribe__Events__Pro__Templates__Photo( $this->query_args );
@@ -206,6 +192,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		// Assets required by all our supported views
 		wp_enqueue_script( 'jquery' );
+		Tribe__Events__Template_Factory::asset_package( 'calendar-script' );
 		Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
 		Tribe__Events__Template_Factory::asset_package( 'bootstrap-datepicker' );
 		Tribe__Events__Template_Factory::asset_package( 'events-css' );

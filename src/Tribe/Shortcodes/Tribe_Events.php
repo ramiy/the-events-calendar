@@ -22,6 +22,11 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	protected $template_object;
 
 	/**
+	 * @var object|null
+	 */
+	protected $view_handler;
+
+	/**
 	 * @var string
 	 */
 	protected $output = '';
@@ -67,6 +72,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		$this->atts = shortcode_atts( $defaults, $atts, 'tribe_events' );
 
+		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare', array( $this, 'prepare_query' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_month', array( $this, 'prepare_month' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_list', array( $this, 'prepare_list' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_day', array( $this, 'prepare_day' ) );
@@ -81,12 +87,12 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 * a given view or support particular attributes that have been set.
 	 */
 	protected function prepare() {
-		// Set the base query args
-		$this->update_query( array(
-			'post_type' => Tribe__Events__Main::POSTTYPE,
-			'eventDate' => $this->get_attribute( 'date', '' ),
-			'eventDisplay' => $this->get_attribute( 'view', 'month' ),
-		) );
+		/**
+		 * Provides an early opportunity for setup work to be performed.
+		 *
+		 * @param Tribe__Events__Pro__Shortcodes__Tribe_Events $shortcode
+		 */
+		do_action( 'tribe_events_pro_tribe_events_shortcode_prepare', $this );
 
 		/**
 		 * Provides an opportunity for template classes to be instantiated and/or
@@ -98,7 +104,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		/**
 		 * Provides an opportunity for template classes to be instantiated and/or
-		 * any other required setup to be performed.
+		 * any other required setup to be performed for views in general.
 		 *
 		 * @param string $view
 		 * @param Tribe__Events__Pro__Shortcodes__Tribe_Events $shortcode
@@ -114,11 +120,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->default_preparation();
-
-		Tribe__Events__Template_Factory::asset_package( 'ajax-calendar' );
-
-		$this->template_object = new Tribe__Events__Template__Month( $this->query_args );
+		$this->view_handler = new Tribe__Events__Pro__Shortcodes__Tribe_Events__Month( $this );
 	}
 
 	/**
@@ -129,7 +131,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->default_preparation();
+		$this->prepare_default();
 
 		Tribe__Events__Template_Factory::asset_package( 'calendar-script' );
 		Tribe__Events__Template_Factory::asset_package( 'ajax-list' );
@@ -148,7 +150,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->default_preparation();
+		$this->prepare_default();
 
 		Tribe__Events__Template_Factory::asset_package( 'ajax-dayview' );
 
@@ -164,11 +166,10 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->default_preparation();
+		$this->prepare_default();
 
 		Tribe__Events__Pro__Main::instance()->enqueue_pro_scripts();
 		Tribe__Events__Pro__Template_Factory::asset_package( 'events-pro-css' );
-
 		Tribe__Events__Pro__Template_Factory::asset_package( 'ajax-weekview' );
 
 		$this->template_object = new Tribe__Events__Pro__Templates__Week( $this->query_args );
@@ -184,7 +185,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->default_preparation();
+		$this->prepare_default();
 
 		Tribe__Events__Pro__Main::instance()->enqueue_pro_scripts();
 		Tribe__Events__Pro__Template_Factory::asset_package( 'events-pro-css' );
@@ -194,10 +195,21 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	}
 
 	/**
+	 * Sets up the basic properties for an event view query.
+	 */
+	public function prepare_query() {
+		$this->update_query( array(
+			'post_type' => Tribe__Events__Main::POSTTYPE,
+			'eventDate' => $this->get_attribute( 'date', $this->get_url_param( 'date' ) ),
+			'eventDisplay' => $this->get_attribute( 'view', 'month' ),
+		) );
+	}
+
+	/**
 	 * Ensures the base assets required by all default supported views require are enqueued,
 	 * including for the Tribe Events Bar if enabled.
 	 */
-	protected function default_preparation() {
+	public function prepare_default() {
 		global $wp_query;
 
 		/**
@@ -246,9 +258,29 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 *
 	 * @param array $arguments
 	 */
-	protected function update_query( array $arguments ) {
+	public function update_query( array $arguments ) {
 		$this->query_args = array_merge( $this->query_args, $arguments );
-//		var_dump($this->query_args);
+	}
+
+	/**
+	 * Returns the currently configured query arguments for the current embedded view.
+	 *
+	 * @return array
+	 */
+	public function get_query_args() {
+		return $this->query_args;
+	}
+
+	/**
+	 * @internal
+	 *
+	 * @param string $param
+	 * @param mixed  $default = null
+	 *
+	 * @return mixed
+	 */
+	public function get_url_param( $param, $default = null ) {
+		return isset( $_GET[ $param] ) ? $_GET[ $param ] : $default;
 	}
 
 	/**
@@ -278,7 +310,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 * @return mixed
 	 */
 	public function get_attribute( $name, $default = null ) {
-		return isset( $this->atts[ $name ] ) ? $this->atts[ $name ] : $default;
+		return ! empty( $this->atts[ $name ] ) ? trim( $this->atts[ $name ] ) : $default;
 	}
 
 	/**
@@ -337,6 +369,30 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 */
 	public function get_template_object() {
 		return $this->template_object;
+	}
+
+	/**
+	 * Sets the template object being used to generate the embedded view.
+	 *
+	 * @param object $template_object
+	 */
+	public function set_template_object( $template_object ) {
+		if ( ! is_object( $template_object ) ) {
+			_doing_it_wrong( __METHOD__, __( '$template_object is expected to be an actual object', 'the-events-calendar' ), '4.3' );
+			return;
+		}
+
+		$this->template_object = $template_object;
+	}
+
+	/**
+	 * Returns the object responsible for handling the current view, if one is needed
+	 * and has been set.
+	 *
+	 * @return null|object
+	 */
+	public function get_view_handler() {
+		return $this->view_handler;
 	}
 
 	/**

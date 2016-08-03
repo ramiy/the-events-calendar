@@ -72,6 +72,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_day', array( $this, 'prepare_day' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_map', array( $this, 'prepare_map' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_photo', array( $this, 'prepare_photo' ) );
+		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_week', array( $this, 'prepare_week' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_post_render', array( $this, 'reset_query' ) );
 	}
 
@@ -134,6 +135,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		Tribe__Events__Template_Factory::asset_package( 'ajax-list' );
 
 		$this->template_object = new Tribe__Events__Template__List( $this->query_args );
+		var_dump($this->query_args);
 	}
 
 	/**
@@ -154,6 +156,25 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	}
 
 	/**
+	 * Prepares week view.
+	 *
+	 */
+	public function prepare_week() {
+		if ( ! class_exists( 'Tribe__Events__Pro__Templates__Week' ) ) {
+			return;
+		}
+
+		$this->default_preparation();
+
+		Tribe__Events__Pro__Main::instance()->enqueue_pro_scripts();
+		Tribe__Events__Pro__Template_Factory::asset_package( 'events-pro-css' );
+
+		Tribe__Events__Pro__Template_Factory::asset_package( 'ajax-weekview' );
+
+		$this->template_object = new Tribe__Events__Pro__Templates__Week( $this->query_args );
+	}
+
+	/**
 	 * Prepares photo view.
 	 *
 	 * @todo troubleshoot total lack of functionality
@@ -166,8 +187,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		$this->default_preparation();
 
 		Tribe__Events__Pro__Main::instance()->enqueue_pro_scripts();
-		Tribe__Events__Template_Factory::asset_package( 'events-pro-css' );
-		Tribe__Events__Template_Factory::asset_package( 'ajax-photoview' );
+		Tribe__Events__Pro__Template_Factory::asset_package( 'events-pro-css' );
+		Tribe__Events__Pro__Template_Factory::asset_package( 'ajax-photoview' );
 
 		$this->template_object = new Tribe__Events__Pro__Templates__Photo( $this->query_args );
 	}
@@ -192,9 +213,9 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		// Assets required by all our supported views
 		wp_enqueue_script( 'jquery' );
+		Tribe__Events__Template_Factory::asset_package( 'bootstrap-datepicker' );
 		Tribe__Events__Template_Factory::asset_package( 'calendar-script' );
 		Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
-		Tribe__Events__Template_Factory::asset_package( 'bootstrap-datepicker' );
 		Tribe__Events__Template_Factory::asset_package( 'events-css' );
 
 		// Tribe Events Bar support

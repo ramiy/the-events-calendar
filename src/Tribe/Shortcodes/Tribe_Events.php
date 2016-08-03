@@ -210,8 +210,6 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		 * @todo revise in a future release
 		 */
 		$wp_query = new WP_Query( $this->query_args );
-		// debugging photo view, data is returned here
-		var_dump($wp_query);
 
 		// Assets required by all our supported views
 		wp_enqueue_script( 'jquery' );
@@ -353,8 +351,6 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		 * @param Tribe__Events__Pro__Shortcodes__Tribe_Events $shortcode
 		 */
 		$this->output = (string) apply_filters( 'tribe_events_pro_tribe_events_shortcode_output', '', $this->atts[ 'view' ], $this );
-		// photo view -- data is NOT returned here
-		var_dump($this->output);
 	}
 
 	/**

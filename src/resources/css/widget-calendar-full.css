@@ -224,25 +224,22 @@
 }
 
 .tribe-mini-calendar-event .list-info {
-	margin: 10px 0;
 	display: inline;
-	line-height: 1;
 	float: left;
+	margin: 10px 0;
 	width: 80%;
 }
 
 .tribe-mini-calendar-event .list-date .list-dayname {
 	background: #fff;
 	color: #666;
+	display: block;
+	font-size: 11px;
+	letter-spacing: .5px;
 	padding: 3px;
-	font-size: 9px;
+	text-align: center;
 	text-transform: uppercase;
 	width: 100%;
-	text-align: center;
-	display: block;
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 }
 
 .tribe-mini-calendar-event .list-date .list-daynumber {
@@ -261,6 +258,7 @@
 	font-size: 12px;
 	line-height: 1.6;
 	text-align: center;
+	text-transform: uppercase;
 	width: 100%;
 }
 

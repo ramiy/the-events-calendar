@@ -366,12 +366,11 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		ob_start();
 
-		echo '<div class="' . $this->get_wrapper_classes() . '">';
+		echo '<div id="tribe-events" class="' . $this->get_wrapper_classes() . '">';
 		tribe_get_view( $this->atts['view'] );
 		echo '</div>';
 
 		$html = ob_get_clean();
-//		var_dump($html);
 
 		/**
 		 * Fires after the embedded view is rendered.

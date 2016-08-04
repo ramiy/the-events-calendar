@@ -185,13 +185,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->prepare_default();
-
-		Tribe__Events__Pro__Main::instance()->enqueue_pro_scripts();
-		Tribe__Events__Pro__Template_Factory::asset_package( 'events-pro-css' );
-		Tribe__Events__Pro__Template_Factory::asset_package( 'ajax-photoview' );
-
-		$this->template_object = new Tribe__Events__Pro__Templates__Photo( $this->query_args );
+		$this->view_handler = new Tribe__Events__Pro__Shortcodes__Tribe_Events__Photo( $this );
 	}
 
 	/**
@@ -222,6 +216,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		 * @todo revise in a future release
 		 */
 		$wp_query = new WP_Query( $this->query_args );
+//		var_dump($wp_query);
 
 		// Assets required by all our supported views
 		wp_enqueue_script( 'jquery' );

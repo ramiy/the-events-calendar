@@ -16,6 +16,7 @@ if ( ! class_exists( 'Tribe__Events__Pro__Templates__Photo' ) ) {
 
 		protected $body_class = 'events-photo';
 		const AJAX_HOOK = 'tribe_photo';
+		public $view_path = 'pro/photo/content';
 
 		/**
 		 * Array of asset packages needed for this template
@@ -129,7 +130,7 @@ if ( ! class_exists( 'Tribe__Events__Pro__Templates__Photo' ) ) {
 
 			ob_start();
 
-			tribe_get_view( 'pro/photo/content' );
+			tribe_get_view( $this->view_path );
 
 			$response['html'] .= ob_get_clean();
 

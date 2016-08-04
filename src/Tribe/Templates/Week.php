@@ -68,6 +68,16 @@ if ( ! class_exists( 'Tribe__Events__Pro__Templates__Week' ) ) {
 		 */
 		const AJAX_HOOK = 'tribe_week';
 
+		/**
+		 * The path to the template file used for the view.
+		 * This value is used in Shortcodes/Tribe_Events.php to
+		 * locate the correct template file for each shortcode
+		 * view.
+		 *
+		 * @var string
+		 */
+		public $view_path = 'pro/week/content';
+
 
 		/**
 		 * __construct()

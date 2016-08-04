@@ -18,6 +18,16 @@ if ( ! class_exists( 'Tribe__Events__Pro__Templates__Map' ) ) {
 		const AJAX_HOOK = 'tribe_geosearch';
 
 		/**
+		 * The path to the template file used for the view.
+		 * This value is used in Shortcodes/Tribe_Events.php to
+		 * locate the correct template file for each shortcode
+		 * view.
+		 *
+		 * @var string
+		 */
+		public $view_path = 'pro/map/content';
+
+		/**
 		 * Set up hooks for map view
 		 *
 		 * @return void

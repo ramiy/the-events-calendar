@@ -65,18 +65,19 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 */
 	protected function setup( $atts ) {
 		$defaults = array(
-			'view'     => 'month',
-			'redirect' => '',
-			'date'     => '',
+			'view'      => 'month',
+			'redirect'  => '',
+			'date'      => '',
+			'tribe-bar' => '',
 		);
 
 		$this->atts = shortcode_atts( $defaults, $atts, 'tribe_events' );
 
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare', array( $this, 'prepare_query' ) );
-		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_month', array( $this, 'prepare_month' ) );
-		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_list', array( $this, 'prepare_list' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_day', array( $this, 'prepare_day' ) );
+		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_list', array( $this, 'prepare_list' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_map', array( $this, 'prepare_map' ) );
+		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_month', array( $this, 'prepare_month' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_photo', array( $this, 'prepare_photo' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_week', array( $this, 'prepare_week' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_post_render', array( $this, 'reset_query' ) );
@@ -113,6 +114,41 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	}
 
 	/**
+	 * Prepares day view.
+	 *
+	 */
+	public function prepare_day() {
+		if ( ! class_exists( 'Tribe__Events__Template__Day' ) ) {
+			return;
+		}
+
+		$this->view_handler = new Tribe__Events__Pro__Shortcodes__Tribe_Events__Day( $this );
+	}
+
+	/**
+	 * Prepares list view.
+	 */
+	public function prepare_list() {
+		if ( ! class_exists( 'Tribe__Events__Template__List' ) ) {
+			return;
+		}
+
+		$this->view_handler = new Tribe__Events__Pro__Shortcodes__Tribe_Events__List( $this );
+	}
+
+	/**
+	 * Prepares map view.
+	 *
+	 */
+	public function prepare_map() {
+		if ( ! class_exists( 'Tribe__Events__Pro__Templates__Map' ) ) {
+			return;
+		}
+
+		$this->view_handler = new Tribe__Events__Pro__Shortcodes__Tribe_Events__Map( $this );
+	}
+
+	/**
 	 * Prepares month view.
 	 */
 	public function prepare_month() {
@@ -124,36 +160,15 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	}
 
 	/**
-	 * Prepares list view.
-	 */
-	public function prepare_list() {
-		if ( ! class_exists( 'Tribe__Events__Template__List' ) ) {
-			return;
-		}
-
-		$this->prepare_default();
-
-		Tribe__Events__Template_Factory::asset_package( 'calendar-script' );
-		Tribe__Events__Template_Factory::asset_package( 'ajax-list' );
-
-		$this->template_object = new Tribe__Events__Template__List( $this->query_args );
-	}
-
-	/**
-	 * Prepares day view.
+	 * Prepares photo view.
 	 *
-	 * @todo troubleshoot total lack of functionality
 	 */
-	public function prepare_day() {
-		if ( ! class_exists( 'Tribe__Events__Template__Day' ) ) {
+	public function prepare_photo() {
+		if ( ! class_exists( 'Tribe__Events__Pro__Templates__Photo' ) ) {
 			return;
 		}
 
-		$this->prepare_default();
-
-		Tribe__Events__Template_Factory::asset_package( 'ajax-dayview' );
-
-		$this->template_object = new Tribe__Events__Template__Day( $this->query_args );
+		$this->view_handler = new Tribe__Events__Pro__Shortcodes__Tribe_Events__Photo( $this );
 	}
 
 	/**
@@ -165,26 +180,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
-		$this->prepare_default();
-
-		Tribe__Events__Pro__Main::instance()->enqueue_pro_scripts();
-		Tribe__Events__Pro__Template_Factory::asset_package( 'events-pro-css' );
-		Tribe__Events__Pro__Template_Factory::asset_package( 'ajax-weekview' );
-
-		$this->template_object = new Tribe__Events__Pro__Templates__Week( $this->query_args );
-	}
-
-	/**
-	 * Prepares photo view.
-	 *
-	 * @todo troubleshoot total lack of functionality
-	 */
-	public function prepare_photo() {
-		if ( ! class_exists( 'Tribe__Events__Pro__Templates__Photo' ) ) {
-			return;
-		}
-
-		$this->view_handler = new Tribe__Events__Pro__Shortcodes__Tribe_Events__Photo( $this );
+		$this->view_handler = new Tribe__Events__Pro__Shortcodes__Tribe_Events__Week( $this );
 	}
 
 	/**
@@ -215,9 +211,9 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		 * @todo revise in a future release
 		 */
 		$wp_query = new WP_Query( $this->query_args );
-		echo '<pre>';
-		var_dump($wp_query);
-		echo '</pre>';
+//		echo '<pre>';
+//		var_dump($wp_query);
+//		echo '</pre>';
 
 		// Assets required by all our supported views
 		wp_enqueue_script( 'jquery' );
@@ -419,7 +415,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		ob_start();
 
 		echo '<div id="tribe-events" class="' . $this->get_wrapper_classes() . '">';
-		tribe_get_view( $this->atts['view'] );
+		tribe_get_view( $this->get_template_object()->view_path );
 		echo '</div>';
 
 		$html = ob_get_clean();

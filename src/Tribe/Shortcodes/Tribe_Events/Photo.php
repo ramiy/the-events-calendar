@@ -23,10 +23,13 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Photo {
 		Tribe__Events__Main::instance()->displaying = 'photo';
 		$this->shortcode->prepare_default();
 		$this->set_current_month();
-		Tribe__Events__Template_Factory::asset_package( 'ajax-photoview' );
+
+
+		Tribe__Events__Pro__Main::instance()->enqueue_pro_scripts();
+		Tribe__Events__Pro__Template_Factory::asset_package( 'events-pro-css' );
+		Tribe__Events__Pro__Template_Factory::asset_package( 'ajax-photoview' );
 
 		$this->shortcode->set_template_object( new Tribe__Events__Pro__Templates__Photo( $this->shortcode->get_query_args() ) );
-		var_dump($this->shortcode);
 
 	}
 

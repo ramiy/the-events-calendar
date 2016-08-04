@@ -137,7 +137,6 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		Tribe__Events__Template_Factory::asset_package( 'ajax-list' );
 
 		$this->template_object = new Tribe__Events__Template__List( $this->query_args );
-		var_dump($this->query_args);
 	}
 
 	/**
@@ -216,7 +215,9 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		 * @todo revise in a future release
 		 */
 		$wp_query = new WP_Query( $this->query_args );
-//		var_dump($wp_query);
+		echo '<pre>';
+		var_dump($wp_query);
+		echo '</pre>';
 
 		// Assets required by all our supported views
 		wp_enqueue_script( 'jquery' );

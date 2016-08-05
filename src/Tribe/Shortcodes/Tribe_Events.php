@@ -225,7 +225,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		// Tribe Events Bar support
 		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {
-			add_filter( 'tribe-events-bar-should-show', array( $this, 'enable_tribe_bar' ) );
+			add_filter( 'tribe-events-bar-should-show', '__return_true' );
+			remove_filter( 'tribe_get_template_part_path_modules/bar.php', '__return_false' );
 
 			Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
 			Tribe__Events__Bar::instance()->load_script();
@@ -242,10 +243,10 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 *
 	 * @return bool true
 	 */
-	public function enable_tribe_bar() {
-		remove_filter( 'tribe-events-bar-should-show', array( $this, 'enable_tribe_bar' ) );
-		return true;
-	}
+//	public function enable_tribe_bar() {
+//		remove_filter( 'tribe-events-bar-should-show', array( $this, 'enable_tribe_bar' ) );
+//		return true;
+//	}
 
 	/**
 	 * Sets the query arguments needed to facilitate a custom request.
@@ -454,7 +455,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			esc_attr( $view ),
 			esc_attr( $category ),
 			$this->is_attribute_truthy( 'redirect', true ) ? 'redirect' : 'no-redirect',
-			$this->is_attribute_truthy( 'tribe-bar', true ) ? 'tribe-bar' : 'tribe-bar-disabled',
+			$this->is_attribute_truthy( 'tribe-bar', true ) ? 'tribe-bar' : 'tribe-bar-hidden',
 		);
 
 		/**

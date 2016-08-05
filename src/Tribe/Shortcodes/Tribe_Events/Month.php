@@ -15,6 +15,20 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Month {
 		add_filter( 'tribe_get_previous_month_link', array( $this, 'prev_month_url' ) );
 	}
 
+	function tribe_events_shortcode_header_attributes() {
+		$attrs = array();
+
+		if ( function_exists( 'wp_get_document_title' ) ) {
+			$attrs['data-title'] = wp_get_document_title();
+		} else {
+			$attrs['data-title'] = wp_title( '|', false, 'right' );
+		}
+
+		$attrs['data-view']    = 'month';
+		$attrs['data-date']    = date( 'Y-m', strtotime( tribe_get_month_view_date() ) );
+		$attrs['data-baseurl'] = get_permalink();
+	}
+
 	protected function setup() {
 		Tribe__Events__Main::instance()->displaying = 'month';
 		$this->set_current_month();

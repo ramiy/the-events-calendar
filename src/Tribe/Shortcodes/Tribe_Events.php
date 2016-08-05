@@ -191,9 +191,10 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 */
 	public function prepare_query() {
 		$this->update_query( array(
-			'post_type' => Tribe__Events__Main::POSTTYPE,
-			'eventDate' => $this->get_attribute( 'date', $this->get_url_param( 'date' ) ),
-			'eventDisplay' => $this->get_attribute( 'view', 'month' ),
+			'post_type'         => Tribe__Events__Main::POSTTYPE,
+			'eventDate'         => $this->get_attribute( 'date', $this->get_url_param( 'date' ) ),
+			'eventDisplay'      => $this->get_attribute( 'view', 'month' ),
+			'tribe_events_cat'  => $this->atts[ 'category' ],
 		) );
 	}
 
@@ -214,9 +215,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		 * @todo revise in a future release
 		 */
 		$wp_query = new WP_Query( $this->query_args );
-//		echo '<pre>';
-//		var_dump($wp_query);
-//		echo '</pre>';
+		var_dump($this->query_args);
 
 		// Assets required by all our supported views
 		wp_enqueue_script( 'jquery' );
@@ -444,7 +443,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		$classes = array(
 			'tribe-events-shortcode',
 			'tribe-events-view-wrapper',
-			esc_attr( $this->atts[ 'view' ] ),
+			'view-' . esc_attr( $this->atts[ 'view' ] ),
+			'category-' . esc_attr( $this->atts[ 'category' ] ),
 			$this->is_attribute_truthy( 'redirect', true ) ? 'redirect' : 'no-redirect',
 			$this->is_attribute_truthy( 'tribe-bar', true ) ? 'tribe-bar' : 'tribe-bar-disabled',
 		);

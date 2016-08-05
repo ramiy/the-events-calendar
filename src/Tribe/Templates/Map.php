@@ -25,7 +25,7 @@ if ( ! class_exists( 'Tribe__Events__Pro__Templates__Map' ) ) {
 		 *
 		 * @var string
 		 */
-		public $view_path = 'pro/map';
+		public $view_path = 'pro/map/content';
 
 		/**
 		 * Set up hooks for map view

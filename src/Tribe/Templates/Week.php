@@ -76,7 +76,7 @@ if ( ! class_exists( 'Tribe__Events__Pro__Templates__Week' ) ) {
 		 *
 		 * @var string
 		 */
-		public $view_path = 'pro/week';
+		public $view_path = 'pro/week/content';
 
 
 		/**

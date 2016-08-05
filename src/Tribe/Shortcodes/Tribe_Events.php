@@ -68,7 +68,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			'view'      => 'month',
 			'redirect'  => '',
 			'date'      => '',
-			'tribe-bar' => '',
+			'tribe-bar' => 'true',
 		);
 
 		$this->atts = shortcode_atts( $defaults, $atts, 'tribe_events' );
@@ -228,6 +228,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 			Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
 			Tribe__Events__Bar::instance()->load_script();
+			tribe_get_template_part( 'modules/bar' );
 		}
 
 		// Add the method responsible for rendering each of the default supported views
@@ -442,6 +443,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			'tribe-events-view-wrapper',
 			esc_attr( $this->atts[ 'view' ] ),
 			$this->is_attribute_truthy( 'redirect', true ) ? 'redirect' : 'no-redirect',
+			$this->is_attribute_truthy( 'tribe-bar', true ) ? 'tribe-bar' : 'tribe-bar-disabled',
 		);
 
 		/**

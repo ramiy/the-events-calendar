@@ -24,13 +24,11 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Map {
 		$this->shortcode->prepare_default();
 		$this->set_current_month();
 
-
 		Tribe__Events__Pro__Main::instance()->enqueue_pro_scripts();
 		Tribe__Events__Pro__Template_Factory::asset_package( 'events-pro-css' );
-		Tribe__Events__Pro__Template_Factory::asset_package( 'ajax-mapview' );
+		Tribe__Events__Pro__Template_Factory::asset_package( 'ajax-maps' );
 
 		$this->shortcode->set_template_object( new Tribe__Events__Pro__Templates__Map( $this->shortcode->get_query_args() ) );
-
 	}
 
 	protected function set_current_month() {

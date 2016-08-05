@@ -145,6 +145,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			return;
 		}
 
+		tribe_get_template_part( 'pro/map/gmap-container' );
+
 		$this->view_handler = new Tribe__Events__Pro__Shortcodes__Tribe_Events__Map( $this );
 	}
 

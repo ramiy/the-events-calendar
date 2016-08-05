@@ -215,7 +215,6 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		 * @todo revise in a future release
 		 */
 		$wp_query = new WP_Query( $this->query_args );
-		var_dump($this->query_args);
 
 		// Assets required by all our supported views
 		wp_enqueue_script( 'jquery' );
@@ -440,11 +439,20 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 * @return string
 	 */
 	protected function get_wrapper_classes() {
+		$category = '';
+		$view = '';
+		if ( isset( $this->atts[ 'view' ] ) ) {
+			$view = 'view-' . esc_attr( $this->atts[ 'view' ] );
+		}
+
+		if ( isset( $this->atts[ 'category' ] ) ) {
+			$category = 'category-' . $this->atts[ 'category' ];
+		}
 		$classes = array(
 			'tribe-events-shortcode',
 			'tribe-events-view-wrapper',
-			'view-' . esc_attr( $this->atts[ 'view' ] ),
-			'category-' . esc_attr( $this->atts[ 'category' ] ),
+			esc_attr( $view ),
+			esc_attr( $category ),
 			$this->is_attribute_truthy( 'redirect', true ) ? 'redirect' : 'no-redirect',
 			$this->is_attribute_truthy( 'tribe-bar', true ) ? 'tribe-bar' : 'tribe-bar-disabled',
 		);

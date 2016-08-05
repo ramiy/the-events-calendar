@@ -65,10 +65,11 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 */
 	protected function setup( $atts ) {
 		$defaults = array(
-			'view'      => 'month',
-			'redirect'  => '',
+			'category'  => '',
 			'date'      => '',
+			'redirect'  => '',
 			'tribe-bar' => 'true',
+			'view'      => 'month',
 		);
 
 		$this->atts = shortcode_atts( $defaults, $atts, 'tribe_events' );

@@ -225,12 +225,17 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		// Tribe Events Bar support
 		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {
-			add_filter( 'tribe-events-bar-should-show', '__return_true' );
-			remove_filter( 'tribe_get_template_part_path_modules/bar.php', '__return_false' );
+			add_filter( 'tribe-events-bar-should-show', array( $this, 'enable_tribe_bar' ) );
+
+			remove_action( 'tribe_events_bar_before_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_before' ) );
+			remove_action( 'tribe_events_bar_after_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_after' ) );
 
 			Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
 			Tribe__Events__Bar::instance()->load_script();
 			tribe_get_template_part( 'modules/bar' );
+
+			add_action( 'tribe_events_bar_before_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_before' ) );
+			add_action( 'tribe_events_bar_after_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_after' ) );
 		}
 
 		// Add the method responsible for rendering each of the default supported views
@@ -243,10 +248,10 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 *
 	 * @return bool true
 	 */
-//	public function enable_tribe_bar() {
-//		remove_filter( 'tribe-events-bar-should-show', array( $this, 'enable_tribe_bar' ) );
-//		return true;
-//	}
+	public function enable_tribe_bar() {
+		remove_filter( 'tribe-events-bar-should-show', array( $this, 'enable_tribe_bar' ) );
+		return true;
+	}
 
 	/**
 	 * Sets the query arguments needed to facilitate a custom request.

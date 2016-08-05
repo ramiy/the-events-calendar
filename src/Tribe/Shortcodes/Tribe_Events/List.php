@@ -11,12 +11,6 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__List {
 	public function __construct( Tribe__Events__Pro__Shortcodes__Tribe_Events $shortcode ) {
 		$this->shortcode = $shortcode;
 		$this->setup();
-		$this->hooks();
-	}
-
-	protected function hooks() {
-		add_filter( 'tribe_get_next_month_link', array( $this, 'next_month_url' ) );
-		add_filter( 'tribe_get_previous_month_link', array( $this, 'prev_month_url' ) );
 	}
 
 	protected function setup() {
@@ -50,31 +44,5 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__List {
 		$this->shortcode->update_query( array(
 			'eventDate' => $this->date,
 		) );
-	}
-
-	/**
-	 * Returns the next month pagination URL for use in embedded month views.
-	 *
-	 * Can be overridden by adding a further filter on "tribe_get_next_month_link" with
-	 * a priority greater than 10.
-	 *
-	 * @return string
-	 */
-	public function next_month_url() {
-		$next_month = Tribe__Events__Main::instance()->nextMonth( $this->date );
-		return add_query_arg( 'date', $next_month, get_home_url( null, $GLOBALS[ 'wp' ]->request ) );
-	}
-
-	/**
-	 * Returns the previous month pagination URL for use in embedded month views.
-	 *
-	 * Can be overridden by adding a further filter on "tribe_get_previous_month_link" with
-	 * a priority greater than 10.
-	 *
-	 * @return string
-	 */
-	public function prev_month_url() {
-		$prev_month = Tribe__Events__Main::instance()->previousMonth( $this->date );
-		return add_query_arg( 'date', $prev_month, get_home_url( null, $GLOBALS[ 'wp' ]->request ) );
 	}
 }

@@ -13,20 +13,20 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Month {
 	protected function hooks() {
 		add_filter( 'tribe_get_next_month_link', array( $this, 'next_month_url' ) );
 		add_filter( 'tribe_get_previous_month_link', array( $this, 'prev_month_url' ) );
+		add_filter( 'tribe_events_header_attributes', array( $this, 'header_attributes' ) );
 	}
 
-	function tribe_events_shortcode_header_attributes() {
-		$attrs = array();
+	/**
+	 * Add header attributes for the shortcode month view
+	 *
+	 * @return string
+	 **/
+	public function header_attributes( $attrs ) {
 
-		if ( function_exists( 'wp_get_document_title' ) ) {
-			$attrs['data-title'] = wp_get_document_title();
-		} else {
-			$attrs['data-title'] = wp_title( '|', false, 'right' );
-		}
-
-		$attrs['data-view']    = 'month';
-		$attrs['data-date']    = date( 'Y-m', strtotime( tribe_get_month_view_date() ) );
+		$attrs['data-source']    = 'shortcode-month';
 		$attrs['data-baseurl'] = get_permalink();
+
+		return $attrs;
 	}
 
 	protected function setup() {
@@ -68,8 +68,9 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Month {
 	 * @return string
 	 */
 	public function next_month_url() {
+		$path = $_SERVER['REQUEST_URI'];
 		$next_month = Tribe__Events__Main::instance()->nextMonth( $this->date );
-		return add_query_arg( 'date', $next_month, get_home_url( null, $GLOBALS[ 'wp' ]->request ) );
+		return add_query_arg( 'date', $next_month, $path );
 	}
 
 	/**

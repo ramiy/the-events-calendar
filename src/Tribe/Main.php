@@ -36,6 +36,9 @@
 			/** @var Tribe__Events__Pro__Recurrence__Queue_Realtime */
 			public $queue_realtime;
 
+			/** @var Tribe__Events__Pro__Recurrence__Aggregator */
+			public $aggregator;
+
 			/**
 			 * @var Tribe__Events__Pro__Embedded_Maps
 			 */
@@ -421,6 +424,7 @@
 				$this->single_event_overrides = new Tribe__Events__Pro__Recurrence__Single_Event_Overrides;
 				$this->queue_processor = new Tribe__Events__Pro__Recurrence__Queue_Processor;
 				$this->queue_realtime = new Tribe__Events__Pro__Recurrence__Queue_Realtime;
+				$this->aggregator = new Tribe__Events__Pro__Recurrence__Aggregator;
 				$this->embedded_maps = new Tribe__Events__Pro__Embedded_Maps;
 				$this->widget_wrappers = new Tribe__Events__Pro__Shortcodes__Widget_Wrappers;
 				$this->singular_event_label = tribe_get_event_label_singular();
@@ -472,7 +476,7 @@
 						break;
 
 				}
-				
+
 				/**
 				 * Provides an opportunity to modify the redirection URL prior to the actual redirection.
 				 *

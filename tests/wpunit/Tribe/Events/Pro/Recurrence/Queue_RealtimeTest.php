@@ -135,7 +135,7 @@ class Queue_RealtimeTest extends \Codeception\TestCase\WPTestCase {
 		$_POST['check'] = 'foo';
 		$event_id       = $this->factory->post->create( array( 'post_type' => \Tribe__Events__Main::POSTTYPE ) );
 		$_POST['event'] = $event_id;
-		$ajax           = $this->getMock( 'Tribe__Events__Ajax__Operations' );
+		$ajax           = $this->getMockBuilder( 'Tribe__Events__Ajax__Operations' )->getMock();
 
 		$sut = new \Tribe__Events__Pro__Recurrence__Queue_Realtime( null, $ajax );
 
@@ -154,7 +154,7 @@ class Queue_RealtimeTest extends \Codeception\TestCase\WPTestCase {
 	public function it_should_process_batch_if_valid_nonce_and_not_empty_queue() {
 		$event_id       = $this->factory->post->create( array( 'post_type' => \Tribe__Events__Main::POSTTYPE ) );
 		$_POST['event'] = $event_id;
-		$ajax           = $this->getMock( 'Tribe__Events__Ajax__Operations' );
+		$ajax           = $this->getMockBuilder( 'Tribe__Events__Ajax__Operations' )->getMock();
 		$queue          = $this->make_queue();
 		$processor      = $this->getMockBuilder( 'Tribe__Events__Pro__Recurrence__Queue_Processor' )
 		                       ->disableOriginalConstructor()
@@ -177,7 +177,7 @@ class Queue_RealtimeTest extends \Codeception\TestCase\WPTestCase {
 	public function it_should_exit_done_if_queue_done() {
 		$event_id       = $this->factory->post->create( array( 'post_type' => \Tribe__Events__Main::POSTTYPE ) );
 		$_POST['event'] = $event_id;
-		$ajax           = $this->getMock( 'Tribe__Events__Ajax__Operations' );
+		$ajax           = $this->getMockBuilder( 'Tribe__Events__Ajax__Operations' )->getMock();
 		$queue          = $this->make_queue();
 		$processor      = $this->getMockBuilder( 'Tribe__Events__Pro__Recurrence__Queue_Processor' )
 		                       ->disableOriginalConstructor()

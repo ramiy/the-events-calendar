@@ -41,7 +41,7 @@ class Tribe__Events__Pro__Updates__Recurrence_Meta_To_Child_Post_Converter_Test 
 		));
 
 		require_once( Tribe__Events__Pro__Main::instance()->pluginPath . '/src/Tribe/Updater.php' );
-		$updater = new Tribe__Events__Pro__UPdater( '3.5' );
+		$updater = new Tribe__Events__Pro__Updater( '3.5' );
 		$updater->do_updates();
 
 		$this->assertCount( 1, get_post_meta($event_id, '_EventStartDate', false) );

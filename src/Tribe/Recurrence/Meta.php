@@ -450,6 +450,11 @@ class Tribe__Events__Pro__Recurrence__Meta {
 			return;
 		}
 
+		// do not update recurrence meta on preview
+		if ( isset( $data['wp-preview'] ) && $data['wp-preview'] === 'dopreview' ) {
+			return;
+		}
+
 		$meta_builder    = new Tribe__Events__Pro__Recurrence__Meta_Builder( $event_id, $data );
 		$recurrence_meta = $meta_builder->build_meta();
 

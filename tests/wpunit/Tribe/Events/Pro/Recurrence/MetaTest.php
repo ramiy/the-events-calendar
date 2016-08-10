@@ -99,6 +99,18 @@ class MetaTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	/**
+	 * @test
+	 * it should not add recurrence meta to event when previewing
+	 */
+	public function it_should_not_add_recurrence_meta_to_event_when_previewing() {
+		$event = $this->factory()->post->create_and_get( [ 'post_type' => Main::POSTTYPE ] );
+
+		$data = array_merge( (array) $event, [ 'recurrence' => true, 'wp-preview' => 'dopreview' ] );
+
+		$this->assertFalse( Meta::updateRecurrenceMeta( $event->ID, $data ) );
+	}
+
+	/**
 	 * @return Meta
 	 */
 	private function make_instance() {

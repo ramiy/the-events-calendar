@@ -225,6 +225,11 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		// Tribe Events Bar support
 		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {
+			add_filter( 'tribe_get_option', array( $this, 'filter_tribe_disable_bar' ), 10, 2 );
+
+			// make sure the filters have been initialized
+			$filters = tribe_events_get_filters();
+
 			add_filter( 'tribe-events-bar-should-show', array( $this, 'enable_tribe_bar' ) );
 
 			remove_action( 'tribe_events_bar_before_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_before' ) );
@@ -236,10 +241,28 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 			add_action( 'tribe_events_bar_before_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_before' ) );
 			add_action( 'tribe_events_bar_after_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_after' ) );
+
+			remove_filter( 'tribe_get_option', array( $this, 'filter_tribe_disable_bar' ), 10, 2 );
 		}
 
 		// Add the method responsible for rendering each of the default supported views
 		add_filter( 'tribe_events_pro_tribe_events_shortcode_output', array( $this, 'render_view' ) );
+	}
+
+	/**
+	 * Filters the tribeDisableTribeBar value to make sure tribe bar filters initialized
+	 *
+	 * @param string $value Option value
+	 * @param string $option_name Option name
+	 *
+	 * @return boolean
+	 */
+	public function filter_tribe_disable_bar( $value, $option_name ) {
+		if ( 'tribeDisableTribeBar' !== $option_name ) {
+			return $value;
+		}
+
+		return false;
 	}
 
 	/**

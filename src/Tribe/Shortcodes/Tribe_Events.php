@@ -422,6 +422,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		ob_start();
 
+		$this->get_template_object()->add_input_hash();
+
 		echo '<div id="tribe-events" class="' . $this->get_wrapper_classes() . '">';
 		tribe_get_view( $this->get_template_object()->view_path );
 		echo '</div>';

@@ -7,42 +7,60 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Tribe__Events__Pro__Shortcodes__Tribe_Events__List {
 	protected $shortcode;
 	protected $date = '';
+	protected $template;
 
 	public function __construct( Tribe__Events__Pro__Shortcodes__Tribe_Events $shortcode ) {
 		$this->shortcode = $shortcode;
 		$this->setup();
+		$this->hooks();
+	}
+
+	protected function hooks() {
+		add_action( 'tribe_events_pro_tribe_events_shortcode_pre_render', function() {
+			add_filter( 'tribe_events_force_ugly_link', '__return_true' );
+			add_filter( 'tribe_events_ugly_link_baseurl', array( $this, 'filter_baseurl' ) );
+			add_filter( 'tribe_events_header_attributes', array( $this, 'header_attributes' ) );
+		} );
+
+		add_action( 'tribe_events_pro_tribe_events_shortcode_post_render', function() {
+			remove_filter( 'tribe_events_force_ugly_link', '__return_true' );
+			remove_filter( 'tribe_events_ugly_link_baseurl', array( $this, 'filter_baseurl' ) );
+			remove_filter( 'tribe_events_header_attributes', array( $this, 'header_attributes' ) );
+		} );
+	}
+
+	/**
+	 * Add header attributes for the shortcode month view
+	 *
+	 * @return string
+	 **/
+	public function header_attributes( $attrs ) {
+
+		$attrs['data-source']    = 'shortcode-list';
+		$attrs['data-baseurl'] = get_permalink();
+
+		return $attrs;
 	}
 
 	protected function setup() {
 		Tribe__Events__Main::instance()->displaying = 'list';
 		$this->shortcode->prepare_default();
-		$this->set_current_month();
 
-		Tribe__Events__Pro__Template_Factory::asset_package( 'ajax-listview' );
+		Tribe__Events__Template_Factory::asset_package( 'ajax-list' );
 
-		$this->shortcode->set_template_object( new Tribe__Events__Template__List( $this->shortcode->get_query_args() ) );
+		$this->template = new Tribe__Events__Template__List( $this->shortcode->get_query_args() );
 
+		$this->shortcode->set_template_object( $this->template );
 	}
 
-	protected function set_current_month() {
-		$default = date_i18n( 'Y-m-d' );
-		$this->date = $this->shortcode->get_url_param( 'date' );
-
-		if ( empty( $this->date ) ) {
-			$this->date = $this->shortcode->get_attribute( 'date', $default );
-		}
-
-		// Expand "yyyy-mm" dates to "yyyy-mm-dd" format
-		if ( preg_match( '/^[0-9]{4}-[0-9]{2}$/', $this->date ) ) {
-			$this->date .= '-01';
-		}
-		// If we're not left with a "yyyy-mm-dd" date, override with the today's date
-		elseif ( ! preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $this->date ) ) {
-			$this->date = $default;
-		}
-
-		$this->shortcode->update_query( array(
-			'eventDate' => $this->date,
-		) );
+	/**
+	 * Filters the baseurl of ugly links
+	 *
+	 * @param string $url URL to filter
+	 *
+	 * @return string
+	 */
+	public function filter_baseurl( $url ) {
+		return trailingslashit( get_home_url( null, $GLOBALS['wp']->request ) );
 	}
 }

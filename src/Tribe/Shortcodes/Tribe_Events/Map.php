@@ -15,14 +15,35 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Map {
 	}
 
 	protected function hooks() {
-		add_filter( 'tribe_get_next_month_link', array( $this, 'next_month_url' ) );
-		add_filter( 'tribe_get_previous_month_link', array( $this, 'prev_month_url' ) );
+		add_action( 'tribe_events_pro_tribe_events_shortcode_pre_render', function() {
+			add_filter( 'tribe_events_force_ugly_link', '__return_true' );
+			add_filter( 'tribe_events_ugly_link_baseurl', array( $this, 'filter_baseurl' ) );
+			add_filter( 'tribe_events_header_attributes', array( $this, 'header_attributes' ) );
+		} );
+
+		add_action( 'tribe_events_pro_tribe_events_shortcode_post_render', function() {
+			remove_filter( 'tribe_events_force_ugly_link', '__return_true' );
+			remove_filter( 'tribe_events_ugly_link_baseurl', array( $this, 'filter_baseurl' ) );
+			remove_filter( 'tribe_events_header_attributes', array( $this, 'header_attributes' ) );
+		} );
+	}
+
+	/**
+	 * Add header attributes for the shortcode month view
+	 *
+	 * @return string
+	 **/
+	public function header_attributes( $attrs ) {
+
+		$attrs['data-source']    = 'shortcode-map';
+		$attrs['data-baseurl'] = get_permalink();
+
+		return $attrs;
 	}
 
 	protected function setup() {
 		Tribe__Events__Main::instance()->displaying = 'map';
 		$this->shortcode->prepare_default();
-		$this->set_current_month();
 
 		Tribe__Events__Pro__Main::instance()->enqueue_pro_scripts();
 		Tribe__Events__Pro__Template_Factory::asset_package( 'events-pro-css' );
@@ -31,51 +52,14 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Map {
 		$this->shortcode->set_template_object( new Tribe__Events__Pro__Templates__Map( $this->shortcode->get_query_args() ) );
 	}
 
-	protected function set_current_month() {
-		$default = date_i18n( 'Y-m-d' );
-		$this->date = $this->shortcode->get_url_param( 'date' );
-
-		if ( empty( $this->date ) ) {
-			$this->date = $this->shortcode->get_attribute( 'date', $default );
-		}
-
-		// Expand "yyyy-mm" dates to "yyyy-mm-dd" format
-		if ( preg_match( '/^[0-9]{4}-[0-9]{2}$/', $this->date ) ) {
-			$this->date .= '-01';
-		}
-		// If we're not left with a "yyyy-mm-dd" date, override with the today's date
-		elseif ( ! preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $this->date ) ) {
-			$this->date = $default;
-		}
-
-		$this->shortcode->update_query( array(
-			'eventDate' => $this->date,
-		) );
-	}
-
 	/**
-	 * Returns the next month pagination URL for use in embedded month views.
+	 * Filters the baseurl of ugly links
 	 *
-	 * Can be overridden by adding a further filter on "tribe_get_next_month_link" with
-	 * a priority greater than 10.
+	 * @param string $url URL to filter
 	 *
 	 * @return string
 	 */
-	public function next_month_url() {
-		$next_month = Tribe__Events__Main::instance()->nextMonth( $this->date );
-		return add_query_arg( 'date', $next_month, get_home_url( null, $GLOBALS[ 'wp' ]->request ) );
-	}
-
-	/**
-	 * Returns the previous month pagination URL for use in embedded month views.
-	 *
-	 * Can be overridden by adding a further filter on "tribe_get_previous_month_link" with
-	 * a priority greater than 10.
-	 *
-	 * @return string
-	 */
-	public function prev_month_url() {
-		$prev_month = Tribe__Events__Main::instance()->previousMonth( $this->date );
-		return add_query_arg( 'date', $prev_month, get_home_url( null, $GLOBALS[ 'wp' ]->request ) );
+	public function filter_baseurl( $url ) {
+		return trailingslashit( get_home_url( null, $GLOBALS['wp']->request ) );
 	}
 }

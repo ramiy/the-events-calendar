@@ -303,7 +303,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 * @return mixed
 	 */
 	public function get_url_param( $param, $default = null ) {
-		return isset( $_GET[ $param] ) ? $_GET[ $param ] : $default;
+		return isset( $_GET[ $param ] ) ? $_GET[ $param ] : $default;
 	}
 
 	/**

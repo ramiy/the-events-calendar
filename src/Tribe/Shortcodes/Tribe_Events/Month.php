@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 class Tribe__Events__Pro__Shortcodes__Tribe_Events__Month {
 	protected $shortcode;
 	protected $date = '';
@@ -23,8 +27,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Month {
 	 **/
 	public function header_attributes( $attrs ) {
 
-		$attrs['data-source']    = 'shortcode-month';
-		$attrs['data-baseurl'] = get_permalink();
+		$attrs['data-source']   = 'shortcode-month';
+		$attrs['data-baseurl']  = get_permalink();
 
 		return $attrs;
 	}

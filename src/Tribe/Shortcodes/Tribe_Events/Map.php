@@ -15,17 +15,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Map {
 	}
 
 	protected function hooks() {
-		add_action( 'tribe_events_pro_tribe_events_shortcode_pre_render', function() {
-			add_filter( 'tribe_events_force_ugly_link', '__return_true' );
-			add_filter( 'tribe_events_ugly_link_baseurl', array( $this, 'filter_baseurl' ) );
-			add_filter( 'tribe_events_header_attributes', array( $this, 'header_attributes' ) );
-		} );
-
-		add_action( 'tribe_events_pro_tribe_events_shortcode_post_render', function() {
-			remove_filter( 'tribe_events_force_ugly_link', '__return_true' );
-			remove_filter( 'tribe_events_ugly_link_baseurl', array( $this, 'filter_baseurl' ) );
-			remove_filter( 'tribe_events_header_attributes', array( $this, 'header_attributes' ) );
-		} );
+		add_action( 'tribe_events_pro_tribe_events_shortcode_pre_render', array( $this, 'shortcode_pre_render' ) );
+		add_action( 'tribe_events_pro_tribe_events_shortcode_post_render', array( $this, 'shortcode_post_render' ) );
 	}
 
 	/**
@@ -35,8 +26,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Map {
 	 **/
 	public function header_attributes( $attrs ) {
 
-		$attrs['data-source']    = 'shortcode-map';
-		$attrs['data-baseurl'] = get_permalink();
+		$attrs['data-source']   = 'shortcode-map';
+		$attrs['data-baseurl']  = get_permalink();
 
 		return $attrs;
 	}
@@ -61,5 +52,17 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Map {
 	 */
 	public function filter_baseurl( $url ) {
 		return trailingslashit( get_home_url( null, $GLOBALS['wp']->request ) );
+	}
+
+	public function shortcode_pre_render() {
+		add_filter( 'tribe_events_force_ugly_link', '__return_true' );
+		add_filter( 'tribe_events_ugly_link_baseurl', array( $this, 'filter_baseurl' ) );
+		add_filter( 'tribe_events_header_attributes', array( $this, 'header_attributes' ) );
+	}
+
+	public function shortcode_post_render() {
+		remove_filter( 'tribe_events_force_ugly_link', '__return_true' );
+		remove_filter( 'tribe_events_ugly_link_baseurl', array( $this, 'filter_baseurl' ) );
+		remove_filter( 'tribe_events_header_attributes', array( $this, 'header_attributes' ) );
 	}
 }

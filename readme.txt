@@ -203,7 +203,7 @@ Our Premium Plugins:
 
 == Changelog ==
 
-= [4.2.4] unreleased =
+= [4.2.4] 2016-08-17 =
 
 Fix - PHP notice when importing events from iCal importer [64747]
 

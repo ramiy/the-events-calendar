@@ -203,6 +203,10 @@ Our Premium Plugins:
 
 == Changelog ==
 
+= [4.2.4] unreleased =
+
+Fix - PHP notice when importing events from iCal importer [64747]
+
 = [4.2.3] 2016-07-20 =
 
 * Fix - Change myremove to jQuery Grep to improve compatibility with Black Studio TinyMCE Widget (Thank you @digisavvy for reporting this in the support Forums)

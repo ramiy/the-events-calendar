@@ -1803,7 +1803,13 @@
 					return $post_id;
 				}
 
-				return tribe_get_upcoming_recurring_event_id_from_url( $url );
+				$recurring_event_id = tribe_get_upcoming_recurring_event_id_from_url( $url );
+				if ( $recurring_event_id ) {
+					return $recurring_event_id;
+				}
+
+				// we weren't able to find something better, so return the original value
+				return $post_id;
 			}
 		} // end Class
 	}

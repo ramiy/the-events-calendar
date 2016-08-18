@@ -4,8 +4,8 @@ Contributors: ModernTribe, barry.hughes, bordoni, borkweb, brianjessee, brook-tr
 Tags: events, calendar, event, venue, organizer, dates, date, google maps, conference, workshop, concert, meeting, seminar, summit, class, modern tribe, tribe, widget, pro
 Donate link: http://m.tri.be/29
 Requires at least: 3.9
-Tested up to: 4.5.3
-Stable tag: 4.2.3
+Tested up to: 4.6
+Stable tag: 4.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -209,6 +209,10 @@ Our Premium Plugins:
 * Tweak - Added the "All Events" link on top of all recurring events view
 * Tweak - Made the redirect URL used when a recurring event cannot be found filterable (props: @logoscreative) [64106]
 * Tweak - Deprecated various disused functions that were built around the Meta Factory [39905]
+
+= [4.2.4] 2016-08-17 =
+
+* Fix - PHP notice when importing events from iCal importer [64747]
 
 = [4.2.3] 2016-07-20 =
 

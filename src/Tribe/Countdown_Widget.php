@@ -165,7 +165,26 @@ if ( ! class_exists( 'Tribe__Events__Pro__Countdown_Widget' ) ) {
 				$ret = $this->generate_countdown_output( $seconds, $instance['complete'], $hourformat, $event );
 			}
 
-			$this->print_jsonld_markup_for( $event );
+			$jsonld_enable = isset( $jsonld_enable ) ? $jsonld_enable : true;
+
+			/**
+			 * Filters whether JSON LD information should be printed to the page or not for this widget type.
+			 *
+			 * @param bool $jsonld_enable Whether JSON-LD should be printed to the page or not; default `true`.
+			 */
+			$jsonld_enable = apply_filters( 'tribe_events_' . $this->id_base . '_jsonld_enabled', $jsonld_enable );
+
+
+			/**
+			 * Filters whether JSON LD information should be printed to the page for any widget type.
+			 *
+			 * @param bool $jsonld_enable Whether JSON-LD should be printed to the page or not; default `true`.
+			 */
+			$jsonld_enable = apply_filters( 'tribe_events_widget_jsonld_enabled', $jsonld_enable );
+
+			if ( $jsonld_enable ) {
+				$this->print_jsonld_markup_for( $event );
+			}
 
 			return $ret;
 		}

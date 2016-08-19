@@ -46,6 +46,12 @@ if ( ! class_exists( 'Tribe__Events__Pro__Countdown_Widget' ) ) {
 			$instance['event_ID'] = $instance['event'] = absint( $new_instance['event'] );
 			$instance['event_date'] = $event_data[1];
 
+			if ( isset( $new_instance['jsonld_enable'] ) && $new_instance['jsonld_enable'] == true ) {
+				$instance['jsonld_enable'] = '1';
+			} else {
+				$instance['jsonld_enable'] = '0';
+			}
+
 			return $instance;
 		}
 

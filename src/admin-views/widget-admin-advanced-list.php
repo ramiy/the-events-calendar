@@ -145,5 +145,5 @@ if ( empty( $instance['filters'] ) ) {
 	<?php $jsonld_enable = ( isset( $instance['jsonld_enable'] ) && $instance['jsonld_enable'] ) || false === $this->updated; ?>
 	<input class="checkbox" type="checkbox" value="1" <?php checked( $jsonld_enable, '1' ); ?>
 	       id="<?php echo esc_attr( $this->get_field_id( 'jsonld_enabled' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'jsonld_enable' ) ); ?>"/>
-	<label for="<?php echo esc_attr( $this->get_field_id( 'jsonld_enabled' ) ); ?>"><?php esc_html_e( 'Generate JSON-LD data', 'the-events-calendar' ); ?></label>
+	<label for="<?php echo esc_attr( $this->get_field_id( 'jsonld_enabled' ) ); ?>"><?php esc_html_e( 'Generate JSON-LD data', 'the-events-calendar-pro' ); ?></label>
 </p>

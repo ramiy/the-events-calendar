@@ -78,7 +78,26 @@ if ( ! class_exists( 'Tribe__Events__Pro__Venue_Widget' ) ) {
 				$ecp->enable_recurring_info_tooltip();
 			}
 
-			$this->print_jsonld_markup_for( $events );
+			$jsonld_enable = isset( $instance['jsonld_enable'] ) ? $instance['jsonld_enable'] : true;
+
+			/**
+			 * Filters whether JSON LD information should be printed to the page or not for this widget type.
+			 *
+			 * @param bool $jsonld_enable Whether JSON-LD should be printed to the page or not; default `true`.
+			 */
+			$jsonld_enable = apply_filters( 'tribe_events_' . $this->id_base . '_jsonld_enabled', $jsonld_enable );
+
+
+			/**
+			 * Filters whether JSON LD information should be printed to the page for any widget type.
+			 *
+			 * @param bool $jsonld_enable Whether JSON-LD should be printed to the page or not; default `true`.
+			 */
+			$jsonld_enable = apply_filters( 'tribe_events_widget_jsonld_enabled', $jsonld_enable );
+
+			if ( $jsonld_enable ) {
+				$this->print_jsonld_markup_for( $events );
+			}
 
 			wp_reset_postdata();
 		}
@@ -108,6 +127,12 @@ if ( ! class_exists( 'Tribe__Events__Pro__Venue_Widget' ) ) {
 			$instance['venue_ID']      = $new_instance['venue_ID'];
 			$instance['count']         = $new_instance['count'];
 			$instance['hide_if_empty'] = $new_instance['hide_if_empty'];
+
+			if ( isset( $new_instance['jsonld_enable'] ) && $new_instance['jsonld_enable'] == true ) {
+				$instance['jsonld_enable'] = '1';
+			} else {
+				$instance['jsonld_enable'] = '0';
+			}
 
 			return $instance;
 		}

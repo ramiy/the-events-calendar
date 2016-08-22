@@ -98,12 +98,8 @@ if ( ! class_exists( 'Tribe__Events__Pro__Templates__Single_Venue' ) ) {
 		 * @return void
 		 **/
 		public function setup_upcoming_events() {
-
 			// include the list view class for upcoming events
 			tribe_initialize_view( 'list' );
-			tribe_set_the_meta_visibility( 'tribe_event_venue_name', false );
-			tribe_set_the_meta_visibility( 'tribe_event_venue_address', false );
-
 		}
 
 		/**

@@ -16,6 +16,7 @@
  *
  * @package TribeEventsCalendarPro
  *
+ * @version 4.3
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,16 +46,34 @@ $venue_id = get_the_ID();
 			</div><!-- .tribe-events-map-wrap -->
 		<?php endif; ?>
 
-		<div class="tribe-events-event-meta">
+		<span class="tribe-events-event-meta">
 
 			<?php if ( tribe_show_google_map_link() && tribe_address_exists() ) : ?>
 				<!-- Google Map Link -->
-				<?php echo tribe_get_meta( 'tribe_event_venue_gmap_link' ); ?>
+				<?php echo tribe_get_map_link_html(); ?>
 			<?php endif; ?>
 
 			<!-- Venue Meta -->
 			<?php do_action( 'tribe_events_single_venue_before_the_meta' ) ?>
-			<?php echo tribe_get_meta_group( 'tribe_event_venue' ) ?>
+
+			<address class="venue-address">
+
+				<address class="tribe-events-address">
+					<span class="location">
+						<?php echo tribe_get_full_address(); ?>
+					</span>
+				</address>
+
+				<span class="tel">
+					<?php echo tribe_get_phone(); ?>
+				</span>
+
+				<span class="url">
+					<?php echo tribe_get_venue_link(); ?>
+				</span>
+
+			</address>
+
 			<?php do_action( 'tribe_events_single_venue_after_the_meta' ) ?>
 
 		</div><!-- .tribe-events-event-meta -->

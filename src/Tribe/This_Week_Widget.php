@@ -189,9 +189,9 @@ class Tribe__Events__Pro__This_Week_Widget extends WP_Widget {
 		$instance['operand']             = sanitize_text_field( $new_instance['operand'] );
 
 		if ( isset( $new_instance['jsonld_enable'] ) && $new_instance['jsonld_enable'] == true ) {
-			$instance['jsonld_enable'] = '1';
+			$instance['jsonld_enable'] = 1;
 		} else {
-			$instance['jsonld_enable'] = '0';
+			$instance['jsonld_enable'] = 0;
 		}
 
 		return $instance;

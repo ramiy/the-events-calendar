@@ -72,9 +72,9 @@ class Tribe__Events__Pro__Mini_Calendar_Widget extends WP_Widget {
 		$instance['filters'] = maybe_unserialize( $new_instance['filters'] );
 
 		if ( isset( $new_instance['jsonld_enable'] ) && $new_instance['jsonld_enable'] == true ) {
-			$instance['jsonld_enable'] = '1';
+			$instance['jsonld_enable'] = 1;
 		} else {
-			$instance['jsonld_enable'] = '0';
+			$instance['jsonld_enable'] = 0;
 		}
 
 		return $instance;

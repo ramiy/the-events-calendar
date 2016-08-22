@@ -129,9 +129,9 @@ if ( ! class_exists( 'Tribe__Events__Pro__Venue_Widget' ) ) {
 			$instance['hide_if_empty'] = $new_instance['hide_if_empty'];
 
 			if ( isset( $new_instance['jsonld_enable'] ) && $new_instance['jsonld_enable'] == true ) {
-				$instance['jsonld_enable'] = '1';
+				$instance['jsonld_enable'] = 1;
 			} else {
-				$instance['jsonld_enable'] = '0';
+				$instance['jsonld_enable'] = 0;
 			}
 
 			return $instance;

@@ -23,8 +23,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
-$venue_id = get_the_ID();
-
+$venue_id     = get_the_ID();
+$full_address = tribe_get_full_address();
+$telephone    = tribe_get_phone();
+$website_link = tribe_get_venue_website_link();
 ?>
 <?php while ( have_posts() ) : the_post(); ?>
 <div class="tribe-events-venue">
@@ -58,19 +60,25 @@ $venue_id = get_the_ID();
 
 			<address class="venue-address">
 
+				<?php if ( $full_address ) : ?>
 				<address class="tribe-events-address">
 					<span class="location">
-						<?php echo tribe_get_full_address(); ?>
+						<?php echo $full_address; ?>
 					</span>
 				</address>
+				<?php endif; ?>
 
-				<span class="tel">
-					<?php echo tribe_get_phone(); ?>
-				</span>
+				<?php if ( $telephone ): ?>
+					<span class="tel">
+						<?php echo $telephone; ?>
+					</span>
+				<?php endif; ?>
 
-				<span class="url">
-					<?php echo tribe_get_venue_website_link(); ?>
-				</span>
+				<?php if ( $website_link ): ?>
+					<span class="url">
+						<?php echo $website_link; ?>
+					</span>
+				<?php endif; ?>
 
 			</address>
 

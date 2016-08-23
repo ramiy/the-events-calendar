@@ -69,7 +69,7 @@ $venue_id = get_the_ID();
 				</span>
 
 				<span class="url">
-					<?php echo tribe_get_venue_link(); ?>
+					<?php echo tribe_get_venue_website_link(); ?>
 				</span>
 
 			</address>

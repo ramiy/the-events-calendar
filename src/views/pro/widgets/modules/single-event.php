@@ -26,11 +26,7 @@ $multiple_organizers = count( $organizer_ids ) > 1;
 
 	<div class="list-date">
 		<?php if ( isset( $instance[ 'tribe_is_list_widget' ] ) && date( 'm', $post_date ) != date( 'm', current_time( 'timestamp' ) ) ) { ?>
-			<span
-				class="list-dayname"><?php echo apply_filters( 'tribe-mini_helper_tribe_events_ajax_list_dayname', date_i18n( 'M', $post_date ), $post_date, $mini_cal_event_atts['class'] ); ?></span>
-		<?php } else { ?>
-			<span
-				class="list-dayname"><?php echo apply_filters( 'tribe-mini_helper_tribe_events_ajax_list_dayname', date_i18n( 'D', $post_date ), $post_date, $mini_cal_event_atts['class'] ); ?></span>
+			<span class="list-dayname"><?php echo apply_filters( 'tribe-mini_helper_tribe_events_ajax_list_dayname', date_i18n( 'D', $post_date ), $post_date, $mini_cal_event_atts['class'] ); ?></span>
 		<?php } ?>
 
 		<span class="list-daynumber"><?php echo apply_filters( 'tribe-mini_helper_tribe_events_ajax_list_daynumber', date_i18n( 'd', $post_date ), $post_date, $mini_cal_event_atts['class'] ); ?></span>

@@ -52,17 +52,15 @@ class Admin_NoticesTest extends \Codeception\TestCase\WPTestCase {
 		$sut->display_created_recurrences_notice();
 	}
 
-	    /**
-	         * display_editing_all_recurrences_page should print notice
-	         */
-	        public function test_display_editing_all_recurrences_page_should_print_notice()
-	        {
-		        $notice = $this->prophesize( 'Tribe__Events__Admin__Notices__Notice_Interface' );
-		        $notice->render( Argument::any(), 'updated' )->shouldBeCalled();
+	/**
+	 * display_editing_all_recurrences_page should print notice
+	 */
+	public function test_display_editing_all_recurrences_page_should_print_notice() {
+		$notice = $this->prophesize( 'Tribe__Events__Admin__Notices__Notice_Interface' );
+		$notice->render( Argument::any(), 'updated' )->shouldBeCalled();
 
-		        $sut = new Admin_Notices( $notice->reveal() );
+		$sut = new Admin_Notices( $notice->reveal() );
 
-		        $sut->display_editing_all_recurrences_notice();
-	        }
-
+		$sut->display_editing_all_recurrences_notice();
+	}
 }

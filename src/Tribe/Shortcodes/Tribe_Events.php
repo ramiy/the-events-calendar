@@ -69,10 +69,11 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			'date'      => '',
 			'redirect'  => '',
 			'tribe-bar' => 'true',
-			'view'      => 'month',
+			'view'      => '',
 		);
 
 		$this->atts = shortcode_atts( $defaults, $atts, 'tribe_events' );
+		$this->set_view_attribute();
 
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare', array( $this, 'prepare_query' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_day', array( $this, 'prepare_day' ) );
@@ -82,6 +83,43 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_photo', array( $this, 'prepare_photo' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_week', array( $this, 'prepare_week' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_post_render', array( $this, 'reset_query' ) );
+	}
+
+	/**
+	 * Sets the view attribute.
+	 *
+	 * In priority order, will use one of the following to set the view attribute:
+	 *
+	 *     1) The value of "eventDisplay" in the URL query, if set and if valid
+	 *     2) The value of the "view" attribute provided to the shortcode, if set and if valid
+	 *     3) The first view that is available
+	 *     4) Month view
+	 */
+	protected function set_view_attribute() {
+		$valid_views = wp_list_pluck( tribe_events_get_views(), 'displaying' );
+		$url_view    = $this->get_url_param( 'eventDisplay' );
+		$view_attr   = $this->get_attribute( 'view', 'month' );
+
+		// Look first of all at the URL query for a valid view
+		if ( in_array( $url_view, $valid_views ) ) {
+			$this->atts['view'] = $url_view;
+			return;
+		}
+
+		// Else fallback on the view attribute supplied to the shortcode
+		if ( in_array( $view_attr, $valid_views ) ) {
+			$this->atts['view'] = $view_attr;
+			return;
+		}
+
+		// Otherwise, use the first view that *is* available
+		if ( ! empty( $valid_views ) ) {
+			$this->atts['view'] = current( $valid_views );
+			return;
+		}
+
+		// If all else fails, we'll try to use month view even if not currently activated
+		$this->atts['view'] = 'month';
 	}
 
 	/**
@@ -193,7 +231,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		$this->update_query( array(
 			'post_type'         => Tribe__Events__Main::POSTTYPE,
 			'eventDate'         => $this->get_attribute( 'date', $this->get_url_param( 'date' ) ),
-			'eventDisplay'      => $this->get_attribute( 'view', 'month' ),
+			'eventDisplay'      => $this->get_attribute( 'view' ),
 			'tribe_events_cat'  => $this->atts[ 'category' ],
 		) );
 	}
@@ -242,7 +280,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			add_action( 'tribe_events_bar_before_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_before' ) );
 			add_action( 'tribe_events_bar_after_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_after' ) );
 
-			remove_filter( 'tribe_get_option', array( $this, 'filter_tribe_disable_bar' ), 10, 2 );
+			remove_filter( 'tribe_get_option', array( $this, 'filter_tribe_disable_bar' ) );
 		}
 
 		// Add the method responsible for rendering each of the default supported views

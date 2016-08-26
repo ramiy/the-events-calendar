@@ -36,15 +36,18 @@
 			/** @var Tribe__Events__Pro__Recurrence__Queue_Realtime */
 			public $queue_realtime;
 
+			/** @var Tribe__Events__Pro__Recurrence__Aggregator */
+			public $aggregator;
+
 			/**
 			 * @var Tribe__Events__Pro__Embedded_Maps
 			 */
 			public $embedded_maps;
 
 			/**
-			 * @var Tribe__Events__Pro__Shortcodes__Widget_Wrappers
+			 * @var Tribe__Events__Pro__Shortcodes__Register
 			 */
-			public $widget_wrappers;
+			public $shortcodes;
 
 			const REQUIRED_TEC_VERSION = '4.3dev';
 			const VERSION = '4.3dev';
@@ -423,8 +426,9 @@
 				$this->single_event_overrides = new Tribe__Events__Pro__Recurrence__Single_Event_Overrides;
 				$this->queue_processor = new Tribe__Events__Pro__Recurrence__Queue_Processor;
 				$this->queue_realtime = new Tribe__Events__Pro__Recurrence__Queue_Realtime;
+				$this->aggregator = new Tribe__Events__Pro__Recurrence__Aggregator;
 				$this->embedded_maps = new Tribe__Events__Pro__Embedded_Maps;
-				$this->widget_wrappers = new Tribe__Events__Pro__Shortcodes__Widget_Wrappers;
+				$this->shortcodes = new Tribe__Events__Pro__Shortcodes__Register;
 				$this->singular_event_label = tribe_get_event_label_singular();
 				$this->plural_event_label = tribe_get_event_label_plural();
 				$this->singular_event_label_lowercase = tribe_get_event_label_singular_lowercase();
@@ -474,6 +478,13 @@
 						break;
 
 				}
+
+				/**
+				 * Provides an opportunity to modify the redirection URL prior to the actual redirection.
+				 *
+				 * @param string $current_url
+				 */
+				$current_url = apply_filters( 'tribe_events_pro_recurrence_redirect_url', $current_url );
 
 				if ( ! empty( $current_url ) ) {
 					// redirect user with 301
@@ -1818,7 +1829,13 @@
 					return $post_id;
 				}
 
-				return tribe_get_upcoming_recurring_event_id_from_url( $url );
+				$recurring_event_id = tribe_get_upcoming_recurring_event_id_from_url( $url );
+				if ( $recurring_event_id ) {
+					return $recurring_event_id;
+				}
+
+				// we weren't able to find something better, so return the original value
+				return $post_id;
 			}
 		} // end Class
 	}

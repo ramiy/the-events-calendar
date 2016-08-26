@@ -16,14 +16,17 @@
  *
  * @package TribeEventsCalendarPro
  *
+ * @version 4.3
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
-$venue_id = get_the_ID();
-
+$venue_id     = get_the_ID();
+$full_address = tribe_get_full_address();
+$telephone    = tribe_get_phone();
+$website_link = tribe_get_venue_website_link();
 ?>
 <?php while ( have_posts() ) : the_post(); ?>
 <div class="tribe-events-venue">
@@ -45,16 +48,40 @@ $venue_id = get_the_ID();
 			</div><!-- .tribe-events-map-wrap -->
 		<?php endif; ?>
 
-		<div class="tribe-events-event-meta">
+		<span class="tribe-events-event-meta">
 
 			<?php if ( tribe_show_google_map_link() && tribe_address_exists() ) : ?>
 				<!-- Google Map Link -->
-				<?php echo tribe_get_meta( 'tribe_event_venue_gmap_link' ); ?>
+				<?php echo tribe_get_map_link_html(); ?>
 			<?php endif; ?>
 
 			<!-- Venue Meta -->
 			<?php do_action( 'tribe_events_single_venue_before_the_meta' ) ?>
-			<?php echo tribe_get_meta_group( 'tribe_event_venue' ) ?>
+
+			<address class="venue-address">
+
+				<?php if ( $full_address ) : ?>
+				<address class="tribe-events-address">
+					<span class="location">
+						<?php echo $full_address; ?>
+					</span>
+				</address>
+				<?php endif; ?>
+
+				<?php if ( $telephone ): ?>
+					<span class="tel">
+						<?php echo $telephone; ?>
+					</span>
+				<?php endif; ?>
+
+				<?php if ( $website_link ): ?>
+					<span class="url">
+						<?php echo $website_link; ?>
+					</span>
+				<?php endif; ?>
+
+			</address>
+
 			<?php do_action( 'tribe_events_single_venue_after_the_meta' ) ?>
 
 		</div><!-- .tribe-events-event-meta -->

@@ -80,7 +80,8 @@ class Tribe__Events__Pro__Integrations__WPML__Filters {
 	}
 
 	public function filter_wpml_post_parse_query_event( WP_Query $query ) {
-		if ( $this->is_all_event_query( $query ) && ! empty( $query->get( 'tribe_name_before_wpml_parse_query', '' ) ) ) {
+		$name_before_wpml_parse_query = $query->get( 'tribe_name_before_wpml_parse_query', '' );
+		if ( $this->is_all_event_query( $query ) && ! empty( $name_before_wpml_parse_query ) ) {
 			$query->set( 'name', $query->get( 'tribe_name_before_wpml_parse_query' ) );
 		}
 

@@ -514,8 +514,10 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 * @return array
 	 */
 	public function modify_view_urls( array $views ) {
+		$embed_url = get_home_url( null, $GLOBALS['wp']->request );
+
 		foreach ( $views as &$view_data ) {
-			$view_data['url'] = add_query_arg( 'eventDisplay', $view_data['displaying'], get_permalink() );
+			$view_data[ 'url' ] = add_query_arg( 'eventDisplay', $view_data[ 'displaying' ], $embed_url );
 		}
 
 		return $views;

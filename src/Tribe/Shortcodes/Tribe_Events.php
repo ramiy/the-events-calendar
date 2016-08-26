@@ -237,8 +237,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	}
 
 	/**
-	 * Ensures the base assets required by all default supported views require are enqueued,
-	 * including for the Tribe Events Bar if enabled.
+	 * Take care of common setup needs including enqueing various assets required by the default views.
 	 */
 	public function prepare_default() {
 		global $wp_query;
@@ -265,8 +264,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {
 			add_filter( 'tribe_get_option', array( $this, 'filter_tribe_disable_bar' ), 10, 2 );
 
-			// make sure the filters have been initialized
-			$filters = tribe_events_get_filters();
+			// Make sure the filters have been initialized
+			tribe_events_get_filters();
 
 			add_filter( 'tribe-events-bar-should-show', array( $this, 'enable_tribe_bar' ) );
 
@@ -274,8 +273,6 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			remove_action( 'tribe_events_bar_after_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_after' ) );
 
 			Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
-			Tribe__Events__Bar::instance()->load_script();
-			tribe_get_template_part( 'modules/bar' );
 
 			add_action( 'tribe_events_bar_before_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_before' ) );
 			add_action( 'tribe_events_bar_after_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_after' ) );
@@ -285,6 +282,9 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 		// Add the method responsible for rendering each of the default supported views
 		add_filter( 'tribe_events_pro_tribe_events_shortcode_output', array( $this, 'render_view' ) );
+
+		// View selector URLs will need to be adjusted (so that the user is not taken to /events/new-view/)
+		add_filter( 'tribe-events-bar-views', array( $this, 'modify_view_urls' ), 100 );
 	}
 
 	/**
@@ -486,6 +486,13 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		$this->get_template_object()->add_input_hash();
 
 		echo '<div id="tribe-events" class="' . $this->get_wrapper_classes() . '">';
+
+		// Include the tribe bar HTML if required
+		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {
+			Tribe__Events__Bar::instance()->load_script();
+			tribe_get_template_part( 'modules/bar' );
+		}
+
 		tribe_get_view( $this->get_template_object()->view_path );
 		echo '</div>';
 
@@ -499,6 +506,19 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		do_action( 'tribe_events_pro_tribe_events_shortcode_post_render', $this );
 
 		return $html;
+	}
+
+	/**
+	 * @param array $views
+	 *
+	 * @return array
+	 */
+	public function modify_view_urls( array $views ) {
+		foreach ( $views as &$view_data ) {
+			$view_data['url'] = add_query_arg( 'eventDisplay', $view_data['displaying'], get_permalink() );
+		}
+
+		return $views;
 	}
 
 	/**

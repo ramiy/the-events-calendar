@@ -69,10 +69,11 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			'date'      => '',
 			'redirect'  => '',
 			'tribe-bar' => 'true',
-			'view'      => 'month',
+			'view'      => '',
 		);
 
 		$this->atts = shortcode_atts( $defaults, $atts, 'tribe_events' );
+		$this->set_view_attribute();
 
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare', array( $this, 'prepare_query' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_day', array( $this, 'prepare_day' ) );
@@ -82,6 +83,43 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_photo', array( $this, 'prepare_photo' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_prepare_week', array( $this, 'prepare_week' ) );
 		add_action( 'tribe_events_pro_tribe_events_shortcode_post_render', array( $this, 'reset_query' ) );
+	}
+
+	/**
+	 * Sets the view attribute.
+	 *
+	 * In priority order, will use one of the following to set the view attribute:
+	 *
+	 *     1) The value of "eventDisplay" in the URL query, if set and if valid
+	 *     2) The value of the "view" attribute provided to the shortcode, if set and if valid
+	 *     3) The first view that is available
+	 *     4) Month view
+	 */
+	protected function set_view_attribute() {
+		$valid_views = wp_list_pluck( tribe_events_get_views(), 'displaying' );
+		$url_view    = $this->get_url_param( 'eventDisplay' );
+		$view_attr   = $this->get_attribute( 'view', 'month' );
+
+		// Look first of all at the URL query for a valid view
+		if ( in_array( $url_view, $valid_views ) ) {
+			$this->atts['view'] = $url_view;
+			return;
+		}
+
+		// Else fallback on the view attribute supplied to the shortcode
+		if ( in_array( $view_attr, $valid_views ) ) {
+			$this->atts['view'] = $view_attr;
+			return;
+		}
+
+		// Otherwise, use the first view that *is* available
+		if ( ! empty( $valid_views ) ) {
+			$this->atts['view'] = current( $valid_views );
+			return;
+		}
+
+		// If all else fails, we'll try to use month view even if not currently activated
+		$this->atts['view'] = 'month';
 	}
 
 	/**
@@ -193,14 +231,13 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		$this->update_query( array(
 			'post_type'         => Tribe__Events__Main::POSTTYPE,
 			'eventDate'         => $this->get_attribute( 'date', $this->get_url_param( 'date' ) ),
-			'eventDisplay'      => $this->get_attribute( 'view', 'month' ),
+			'eventDisplay'      => $this->get_attribute( 'view' ),
 			'tribe_events_cat'  => $this->atts[ 'category' ],
 		) );
 	}
 
 	/**
-	 * Ensures the base assets required by all default supported views require are enqueued,
-	 * including for the Tribe Events Bar if enabled.
+	 * Take care of common setup needs including enqueing various assets required by the default views.
 	 */
 	public function prepare_default() {
 		global $wp_query;
@@ -227,8 +264,8 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {
 			add_filter( 'tribe_get_option', array( $this, 'filter_tribe_disable_bar' ), 10, 2 );
 
-			// make sure the filters have been initialized
-			$filters = tribe_events_get_filters();
+			// Make sure the filters have been initialized
+			tribe_events_get_filters();
 
 			add_filter( 'tribe-events-bar-should-show', array( $this, 'enable_tribe_bar' ) );
 
@@ -236,17 +273,18 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			remove_action( 'tribe_events_bar_after_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_after' ) );
 
 			Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
-			Tribe__Events__Bar::instance()->load_script();
-			tribe_get_template_part( 'modules/bar' );
 
 			add_action( 'tribe_events_bar_before_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_before' ) );
 			add_action( 'tribe_events_bar_after_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_after' ) );
 
-			remove_filter( 'tribe_get_option', array( $this, 'filter_tribe_disable_bar' ), 10, 2 );
+			remove_filter( 'tribe_get_option', array( $this, 'filter_tribe_disable_bar' ) );
 		}
 
 		// Add the method responsible for rendering each of the default supported views
 		add_filter( 'tribe_events_pro_tribe_events_shortcode_output', array( $this, 'render_view' ) );
+
+		// View selector URLs will need to be adjusted (so that the user is not taken to /events/new-view/)
+		add_filter( 'tribe-events-bar-views', array( $this, 'modify_view_urls' ), 100 );
 	}
 
 	/**
@@ -448,6 +486,13 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		$this->get_template_object()->add_input_hash();
 
 		echo '<div id="tribe-events" class="' . $this->get_wrapper_classes() . '">';
+
+		// Include the tribe bar HTML if required
+		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {
+			Tribe__Events__Bar::instance()->load_script();
+			tribe_get_template_part( 'modules/bar' );
+		}
+
 		tribe_get_view( $this->get_template_object()->view_path );
 		echo '</div>';
 
@@ -461,6 +506,21 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		do_action( 'tribe_events_pro_tribe_events_shortcode_post_render', $this );
 
 		return $html;
+	}
+
+	/**
+	 * @param array $views
+	 *
+	 * @return array
+	 */
+	public function modify_view_urls( array $views ) {
+		$embed_url = get_home_url( null, $GLOBALS['wp']->request );
+
+		foreach ( $views as &$view_data ) {
+			$view_data['url'] = add_query_arg( 'eventDisplay', $view_data[ 'displaying' ], $embed_url );
+		}
+
+		return $views;
 	}
 
 	/**

@@ -6,7 +6,7 @@ class Tribe__Events__Pro__Recurrence__Children_Events {
 	/**
 	 * @var array
 	 */
-	protected static $to_delete = array();
+	protected $to_delete = array();
 
 	/**
 	 * @var Tribe__Cache
@@ -127,13 +127,13 @@ class Tribe__Events__Pro__Recurrence__Children_Events {
 	 * @param int $post_id
 	 */
 	public function permanently_delete_all( $post_id ) {
-		self::$to_delete[] = $post_id;
+		$this->to_delete[] = $post_id;
 		add_action( 'shutdown', array( $this, 'delete_on_shutdown' ) );
 		add_filter( 'pre_delete_post', array( $this, 'prevent_deletion' ), 10, 2 );
 	}
 
 	public function delete_on_shutdown() {
-		foreach ( self::$to_delete as $id ) {
+		foreach ( $this->to_delete as $id ) {
 			$children = $this->get_ids( $id );
 			foreach ( $children as $child_id ) {
 				wp_delete_post( $child_id, true );
@@ -143,7 +143,7 @@ class Tribe__Events__Pro__Recurrence__Children_Events {
 	}
 
 	public function prevent_deletion( $delete, $post ) {
-		if ( in_array( $post->ID, self::$to_delete ) ) {
+		if ( in_array( $post->ID, $this->to_delete ) ) {
 			return true;
 		}
 

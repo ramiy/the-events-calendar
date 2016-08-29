@@ -20,12 +20,6 @@ class Tribe__Events__Pro__Recurrence__Meta {
 	 */
 	protected static $children;
 
-	/**
-	 * @var int The post ID of the children post currently being deleted
-	 */
-	protected static $deleting_children_ids = array();
-
-
 	public static function init() {
 		add_action( 'tribe_events_update_meta', array(
 			__CLASS__,
@@ -333,40 +327,13 @@ class Tribe__Events__Pro__Recurrence__Meta {
 		if ( tribe_is_recurring_event( $post_id ) ) {
 			$parent = wp_get_post_parent_id( $post_id );
 			if ( empty( $parent ) ) {
-				self::$deleting_children_ids = self::children()->get_ids( $post_id );
 				self::children()->permanently_delete_all( $post_id );
-				add_filter( 'user_has_cap', array( __CLASS__, 'maybe_prevent_die' ), 9, 3 );
 			} else {
 				$recurrence_meta = get_post_meta( $parent, '_EventRecurrence', true );
 				$recurrence_meta = self::add_date_exclusion_to_recurrence( $recurrence_meta, get_post_meta( $post_id, '_EventStartDate', true ) );
 				update_post_meta( $parent, '_EventRecurrence', $recurrence_meta );
 			}
 		}
-	}
-
-	/**
-	 * Uses the `user_has_cap` filter as a trigger to conditionally prevent the `wp_die` function from
-	 * terminating execution.
-	 *
-	 * This is a workaround to prevent the check made on `current_user_can( 'delete_post', $id )`
-	 * in the `wp-admin/edit.php` file to kill the execution.
-	 * Due to a non fixed order of post deletions if a parent recurring event is deleted before its
-	 * children events this will trigger the children deletion and the check on the user permissions
-	 * to delete and no more existing post will fail.
-	 *
-	 * @param array $allcaps
-	 * @param array $caps
-	 * @param array $args
-	 *
-	 * @return mixed
-	 */
-	public static function maybe_prevent_die( array $allcaps, array $caps, array $args ) {
-		$checking_for_maybe_deleted_child_event = ! empty( $args[2] ) && in_array( $args[2], self::$deleting_children_ids );
-		if ( $checking_for_maybe_deleted_child_event ) {
-			add_filter( 'wp_die_handler', '__return_false' );
-		}
-
-		return $allcaps;
 	}
 
 	/**
@@ -1609,4 +1576,5 @@ class Tribe__Events__Pro__Recurrence__Meta {
 
 		return self::$children;
 	}
+
 }

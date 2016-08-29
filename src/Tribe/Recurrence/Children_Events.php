@@ -4,9 +4,19 @@
 class Tribe__Events__Pro__Recurrence__Children_Events {
 
 	/**
+	 * @var array
+	 */
+	protected static $to_delete = array();
+
+	/**
 	 * @var Tribe__Cache
 	 */
 	protected $cache;
+
+	/**
+	 * @var array
+	 */
+	protected $maybe_zombie_children = array();
 
 	/**
 	 * Tribe__Events__Pro__Recurrence__Children_Events constructor.
@@ -117,10 +127,26 @@ class Tribe__Events__Pro__Recurrence__Children_Events {
 	 * @param int $post_id
 	 */
 	public function permanently_delete_all( $post_id ) {
-		$children =$this->get_ids( $post_id );
-		foreach ( $children as $child_id ) {
-			wp_delete_post( $child_id, true );
+		self::$to_delete[] = $post_id;
+		add_action( 'shutdown', array( $this, 'delete_on_shutdown' ) );
+		add_filter( 'pre_delete_post', array( $this, 'prevent_deletion' ), 10, 2 );
+	}
+
+	public function delete_on_shutdown() {
+		foreach ( self::$to_delete as $id ) {
+			$children = $this->get_ids( $id );
+			foreach ( $children as $child_id ) {
+				wp_delete_post( $child_id, true );
+			}
+			wp_delete_post( $id );
 		}
 	}
 
+	public function prevent_deletion( $delete, $post ) {
+		if ( in_array( $post->ID, self::$to_delete ) ) {
+			return true;
+		}
+
+		return $delete;
+	}
 }

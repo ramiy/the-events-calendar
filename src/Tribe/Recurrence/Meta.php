@@ -360,7 +360,7 @@ class Tribe__Events__Pro__Recurrence__Meta {
 	 *
 	 * @return mixed
 	 */
-	public static function maybe_prevent_die( array $allcaps, array  $caps, array $args ) {
+	public static function maybe_prevent_die( array $allcaps, array $caps, array $args ) {
 		$checking_for_maybe_deleted_child_event = ! empty( $args[2] ) && in_array( $args[2], self::$deleting_children_ids );
 		if ( $checking_for_maybe_deleted_child_event ) {
 			add_filter( 'wp_die_handler', '__return_false' );

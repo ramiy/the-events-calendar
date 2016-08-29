@@ -81,7 +81,7 @@ class Tribe__Events__Pro__Recurrence__Exclusions {
 		$almost_one_day = 86399;
 
 		foreach ( $exclusion_dates as $exclusion ) {
-			$start                  = strtotime( 'midnight', $exclusion['timestamp'] ) + $timezone_slip;
+			$start                  = strtotime( 'midnight', $exclusion['timestamp'] );
 			$exclusion_timestamps[] = array(
 				'start' => $start,
 				'end'   => $start + $almost_one_day,

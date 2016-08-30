@@ -132,6 +132,15 @@ class Tribe__Events__Pro__Recurrence__Children_Events {
 		add_filter( 'pre_delete_post', array( $this, 'prevent_deletion' ), 10, 2 );
 	}
 
+	/**
+	 * Deletes events that are parent to a group of recurring event instances
+	 * and the recurrence instances with it.
+	 *
+	 * This is to force the deletion order so that children events might be deleted
+	 * before the parent event but the parent event will be never deleted before its
+	 * children triggering the cascade deletion that would cause later attempts to
+	 * delete one of the children to fail and with a permission error.
+	 */
 	public function delete_on_shutdown() {
 		foreach ( $this->to_delete as $id ) {
 			$children = $this->get_ids( $id );
@@ -142,6 +151,17 @@ class Tribe__Events__Pro__Recurrence__Children_Events {
 		}
 	}
 
+	/**
+	 * Filters the `pre_delete_post` hook to stop WordPress from deleting
+	 * parent events in a recurrence series before children recurring events.
+	 *
+	 * @param bool $delete Whether the post should be deleted or not.
+	 * @param WP_Post $post The post object that should be deleted.
+	 *
+	 * @return bool The original value if the post is not among the ones
+	 *              that should be deleted on `shutdown` hook, `true`
+	 *              otherwise.
+	 */
 	public function prevent_deletion( $delete, $post ) {
 		if ( in_array( $post->ID, $this->to_delete ) ) {
 			return true;

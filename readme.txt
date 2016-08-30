@@ -205,7 +205,7 @@ Our Premium Plugins:
 
 = [4.2.5] TDB =
 
-* Fix - Fixed an issue that would misplace recurrence exclusions when using UTC based timezones [61652]
+* Fix - Fixed an issue that would misplace recurrence exclusions when using UTC based timezones [61652] (A big thank you to @Ryan for getting this report to us via the support forums.)
 * Fix - Fixed recurring events misplacement or missing creation when using more than one recurrence pattern [64753]
 
 = [4.2.4] 2016-08-17 =

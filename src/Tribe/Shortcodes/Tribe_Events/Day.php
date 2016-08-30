@@ -30,19 +30,6 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Day {
 	}
 
 	/**
-	 * Add header attributes for the shortcode month view
-	 *
-	 * @return string
-	 **/
-	public function header_attributes( $attrs ) {
-
-		$attrs['data-source']   = 'shortcode-list';
-		$attrs['data-baseurl']  = get_permalink();
-
-		return $attrs;
-	}
-
-	/**
 	 * Filters the baseurl of ugly links
 	 *
 	 * @param string $url URL to filter

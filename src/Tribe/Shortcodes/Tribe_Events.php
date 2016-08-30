@@ -259,6 +259,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		Tribe__Events__Template_Factory::asset_package( 'calendar-script' );
 		Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
 		Tribe__Events__Template_Factory::asset_package( 'events-css' );
+		Tribe__Events__Pro__Template_Factory::asset_package( 'events-pro-css' );
 
 		// Tribe Events Bar support
 		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {

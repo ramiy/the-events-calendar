@@ -17,20 +17,6 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Month {
 	protected function hooks() {
 		add_filter( 'tribe_get_next_month_link', array( $this, 'next_month_url' ) );
 		add_filter( 'tribe_get_previous_month_link', array( $this, 'prev_month_url' ) );
-		add_filter( 'tribe_events_header_attributes', array( $this, 'header_attributes' ) );
-	}
-
-	/**
-	 * Add header attributes for the shortcode month view
-	 *
-	 * @return string
-	 **/
-	public function header_attributes( $attrs ) {
-
-		$attrs['data-source']   = 'shortcode-month';
-		$attrs['data-baseurl']  = get_permalink();
-
-		return $attrs;
 	}
 
 	protected function setup() {

@@ -19,19 +19,6 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Map {
 		add_action( 'tribe_events_pro_tribe_events_shortcode_post_render', array( $this, 'shortcode_post_render' ) );
 	}
 
-	/**
-	 * Add header attributes for the shortcode month view
-	 *
-	 * @return string
-	 **/
-	public function header_attributes( $attrs ) {
-
-		$attrs['data-source']   = 'shortcode-map';
-		$attrs['data-baseurl']  = get_permalink();
-
-		return $attrs;
-	}
-
 	protected function setup() {
 		Tribe__Events__Main::instance()->displaying = 'map';
 		$this->shortcode->prepare_default();

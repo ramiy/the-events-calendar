@@ -205,10 +205,12 @@ Our Premium Plugins:
 
 = [4.2.5] TDB =
 
+* Fix - Fixed an issue that would misplace recurrence exclusions when using UTC based timezones [61652]
+* Fix - Fixed recurring events misplacement or missing creation when using more than one recurrence pattern [64753]
 
 = [4.2.4] 2016-08-17 =
 
-Fix - PHP notice when importing events from iCal importer [64747]
+* Fix - PHP notice when importing events from iCal importer [64747]
 
 = [4.2.3] 2016-07-20 =
 

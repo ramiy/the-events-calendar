@@ -239,9 +239,7 @@ class Tribe__Events__Pro__Recurrence__Meta {
 			}
 			if ( $is_first_in_series ) {
 				if ( ! empty( $actions['trash'] ) ) {
-					$actions['trash'] = "<a class='submitdelete' title='" . esc_attr( __( 'Move all events in this series to the Trash',
-							'tribe-events-calendar-pro' ) ) . "' href='" . esc_url( get_delete_post_link( $post->ID ) ) . "'>" . esc_html__( 'Trash Series',
-							'tribe-events-calendar-pro' ) . '</a>';
+					$actions['trash'] = "<a class='submitdelete' title='" . esc_attr( __( 'Move all events in this series to the Trash', 'tribe-events-calendar-pro' ) ) . "' href='" . esc_url( get_delete_post_link( $post->ID ) ) . "'>" . esc_html__( 'Trash Series', 'tribe-events-calendar-pro' ) . '</a>';
 				}
 				if ( ! empty( $actions['delete'] ) ) {
 					$actions['delete'] = "<a class='submitdelete' title='" . esc_attr( __( 'Delete all events in this series permanently',
@@ -461,7 +459,8 @@ class Tribe__Events__Pro__Recurrence__Meta {
 							"SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND ( comment_approved = '1' OR ( comment_author = %s AND comment_author_email = %s AND comment_approved = '0' ) ) ORDER BY comment_date_gmt",
 							$event->post_parent,
 							wp_specialchars_decode( $comment_author, ENT_QUOTES ),
-							$comment_author_email )
+							$comment_author_email
+						)
 					);
 				}
 			}
@@ -768,7 +767,8 @@ class Tribe__Events__Pro__Recurrence__Meta {
 			) {
 				$valid    = false;
 				$errorMsg = __( 'Monthly custom recurrences cannot have a dash set as the day to occur on.', 'tribe-events-calendar-pro' );
-			} elseif ( 'Yearly' === $recurrence_meta['custom']['type']
+			} elseif (
+					'Yearly' === $recurrence_meta['custom']['type']
 			           && (
 							empty( $recurrence_meta['custom']['year']['month-day'] )
 							|| '-' === $recurrence_meta['custom']['year']['month-day']
@@ -789,7 +789,8 @@ class Tribe__Events__Pro__Recurrence__Meta {
 	/**
 	 * Fetches child event IDs
 	 *
-	 * @param int   $post_id Post ID
+	 * @param int
+	 * $post_id Post ID
 	 * @param array $args    Array of arguments for get_posts
 	 *
 	 * @deprecated 4.0.1
@@ -1428,105 +1429,105 @@ class Tribe__Events__Pro__Recurrence__Meta {
 			case 'custom-monthly-never-same-time-numeric':
 			case 'custom-monthly-on-same-time':
 			case 'custom-monthly-never-same-time':
-			$text = sprintf(
-				$text,
-				$interval,
-				$month_day_description,
-				$num_days,
-				$num_hours,
-				$formatted_end
-			);
+				$text = sprintf(
+					$text,
+					$interval,
+					$month_day_description,
+					$num_days,
+					$num_hours,
+					$formatted_end
+				);
 				break;
 			case 'custom-monthly-after-same-time-numeric':
 			case 'custom-monthly-after-same-time':
-			$text = sprintf(
-				$text,
-				$interval,
-				$month_day_description,
-				$num_days,
-				$num_hours,
-				$rule['end-count']
-			);
+				$text = sprintf(
+					$text,
+					$interval,
+					$month_day_description,
+					$num_days,
+					$num_hours,
+					$rule['end-count']
+				);
 				break;
 			case 'custom-monthly-on-diff-time-numeric':
 			case 'custom-monthly-never-diff-time-numeric':
 			case 'custom-monthly-on-diff-time':
 			case 'custom-monthly-never-diff-time':
-			$text = sprintf(
-				$text,
-				$interval,
-				$month_day_description,
-				$formatted_start,
-				$new_num_days,
-				$new_num_hours,
-				$formatted_end
-			);
+				$text = sprintf(
+					$text,
+					$interval,
+					$month_day_description,
+					$formatted_start,
+					$new_num_days,
+					$new_num_hours,
+					$formatted_end
+				);
 				break;
 			case 'custom-monthly-after-diff-time-numeric':
 			case 'custom-monthly-after-diff-time':
-			$text = sprintf(
-				$text,
-				$interval,
-				$month_day_description,
-				$formatted_start,
-				$new_num_days,
-				$new_num_hours,
-				$rule['end-count']
-			);
+				$text = sprintf(
+					$text,
+					$interval,
+					$month_day_description,
+					$formatted_start,
+					$new_num_days,
+					$new_num_hours,
+					$rule['end-count']
+				);
 				break;
 			case 'custom-yearly-on-same-time-unfiltered':
 			case 'custom-yearly-never-same-time-unfiltered':
 			case 'custom-yearly-on-same-time':
 			case 'custom-yearly-never-same-time':
-			$text = sprintf(
-				$text,
-				$interval,
-				$months,
-				$month_day_description,
-				$num_days,
-				$num_hours,
-				$formatted_end
-			);
+				$text = sprintf(
+					$text,
+					$interval,
+					$months,
+					$month_day_description,
+					$num_days,
+					$num_hours,
+					$formatted_end
+				);
 				break;
 			case 'custom-yearly-after-same-time-unfiltered':
 			case 'custom-yearly-after-same-time':
-			$text = sprintf(
-				$text,
-				$interval,
-				$months,
-				$month_day_description,
-				$num_days,
-				$num_hours,
-				$rule['end-count']
-			);
+				$text = sprintf(
+					$text,
+					$interval,
+					$months,
+					$month_day_description,
+					$num_days,
+					$num_hours,
+					$rule['end-count']
+				);
 				break;
 			case 'custom-yearly-on-diff-time-unfiltered':
 			case 'custom-yearly-never-diff-time-unfiltered':
 			case 'custom-yearly-on-diff-time':
 			case 'custom-yearly-never-diff-time':
-			$text = sprintf(
-				$text,
-				$interval,
-				$months,
-				$month_day_description,
-				$formatted_start,
-				$new_num_days,
-				$new_num_hours,
-				$formatted_end
-			);
+				$text = sprintf(
+					$text,
+					$interval,
+					$months,
+					$month_day_description,
+					$formatted_start,
+					$new_num_days,
+					$new_num_hours,
+					$formatted_end
+				);
 				break;
 			case 'custom-yearly-after-diff-time-unfiltered':
 			case 'custom-yearly-after-diff-time':
-			$text = sprintf(
-				$text,
-				$interval,
-				$months,
-				$month_day_description,
-				$formatted_start,
-				$new_num_days,
-				$new_num_hours,
-				$rule['end-count']
-			);
+				$text = sprintf(
+					$text,
+					$interval,
+					$months,
+					$month_day_description,
+					$formatted_start,
+					$new_num_days,
+					$new_num_hours,
+					$rule['end-count']
+				);
 				break;
 		}
 

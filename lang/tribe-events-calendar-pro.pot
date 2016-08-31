@@ -1,16 +1,18 @@
 # Copyright (C) 2016 Modern Tribe
 # This file is distributed under the same license as the The Events Calendar PRO package.
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: The Events Calendar PRO 4.2.5\n"
 "Report-Msgid-Bugs-To: http://m.tri.be/191x\n"
-"POT-Creation-Date: 2016-08-30 19:53:33+00:00\n"
+"POT-Creation-Date: 2016-08-31 08:35-0400\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "PO-Revision-Date: 2016-08-30 19:53\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"X-Generator: Poedit 1.8.8\n"
 
 #: events-calendar-pro.php:80 src/Tribe/Customizer/Main.php:371
 msgid "The Events Calendar"
@@ -468,7 +470,6 @@ msgid "Venue updated. <a href=\"%s\">View venue</a>"
 msgstr ""
 
 #. translators: %s: date and time of the revision
-
 #: src/Tribe/Main.php:1333
 msgid "Venue published. <a href=\"%s\">View venue</a>"
 msgstr ""
@@ -482,7 +483,6 @@ msgid "Venue scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%
 msgstr ""
 
 #. translators: Publish box date format, see http://php.net/date
-
 #: src/Tribe/Main.php:1338 src/Tribe/Main.php:1348
 msgid "M j, Y @ G:i"
 msgstr ""
@@ -1920,6 +1920,7 @@ msgstr ""
 #: src/views/pro/widgets/venue-widget.php:62
 msgid "View all %1$s at this %2$s"
 msgstr ""
+
 #. Plugin Name of the plugin/theme
 msgid "The Events Calendar PRO"
 msgstr ""

@@ -2,6 +2,6 @@
 
 # suite for WordPress unit tests.
 # Load WordPress and unit test classes that rely on it.
-class_name: WpunitTester
+class_name: IntegrationTester
 modules:
-    enabled: [WPLoader, \Helper\Wpunit]
+    enabled: [WPLoader, \Helper\Integration]

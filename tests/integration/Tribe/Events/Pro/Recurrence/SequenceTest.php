@@ -82,7 +82,7 @@ class SequenceTest extends \Codeception\TestCase\WPTestCase {
 
 		$sut = $this->make_instance();
 
-		$sequence = $sut->get_sorted_sequence_array();
+		$sequence = $sut->get_sorted_sequence_array( false );
 
 		$this->assertEquals( [
 			[ 'timestamp' => strtotime( '2016-07-13 15:00:00' ) ],
@@ -99,7 +99,7 @@ class SequenceTest extends \Codeception\TestCase\WPTestCase {
 	 */
 	public function it_should_return_a_sequence_number_for_each_sequence_entry() {
 		$this->parent_event_id = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE ] );
-		
+
 		$this->sequence = [
 			[ 'timestamp' => strtotime( '2016-07-17 15:00:00' ) ],
 			[ 'timestamp' => strtotime( '2016-07-15 15:00:00' ) ],
@@ -112,7 +112,7 @@ class SequenceTest extends \Codeception\TestCase\WPTestCase {
 
 		$sut = $this->make_instance();
 
-		$sequence = $sut->get_sorted_sequence();
+		$sequence = $sut->get_sorted_sequence( false );
 
 		$this->assertEquals( [
 			[ 'timestamp' => strtotime( '2016-07-13 15:00:00' ), 'sequence' => 1 ],
@@ -122,6 +122,38 @@ class SequenceTest extends \Codeception\TestCase\WPTestCase {
 			[ 'timestamp' => strtotime( '2016-07-15 16:00:00' ), 'sequence' => 2 ],
 			[ 'timestamp' => strtotime( '2016-07-17 15:00:00' ), 'sequence' => 1 ],
 			[ 'timestamp' => strtotime( '2016-07-18 15:00:00' ), 'sequence' => 1 ],
+		], $sequence );
+	}
+
+	/**
+	 * @test
+	 * it should set the original sequence index on each element
+	 */
+	public function it_should_set_the_original_sequence_index_on_each_element() {
+		$this->parent_event_id = $this->factory()->post->create( [ 'post_type' => Main::POSTTYPE ] );
+
+		$this->sequence = [
+			[ 'timestamp' => strtotime( '2016-07-17 15:00:00' ) ],
+			[ 'timestamp' => strtotime( '2016-07-15 15:00:00' ) ],
+			[ 'timestamp' => strtotime( '2016-07-13 17:00:00' ) ],
+			[ 'timestamp' => strtotime( '2016-07-13 16:00:00' ) ],
+			[ 'timestamp' => strtotime( '2016-07-15 16:00:00' ) ],
+			[ 'timestamp' => strtotime( '2016-07-18 15:00:00' ) ],
+			[ 'timestamp' => strtotime( '2016-07-13 15:00:00' ) ],
+		];
+
+		$sut = $this->make_instance();
+
+		$sequence = $sut->get_sorted_sequence( true );
+
+		$this->assertEquals( [
+			[ 'timestamp' => strtotime( '2016-07-13 15:00:00' ), 'sequence' => 1, 'original_index' => 6 ],
+			[ 'timestamp' => strtotime( '2016-07-13 16:00:00' ), 'sequence' => 2, 'original_index' => 3 ],
+			[ 'timestamp' => strtotime( '2016-07-13 17:00:00' ), 'sequence' => 3, 'original_index' => 2 ],
+			[ 'timestamp' => strtotime( '2016-07-15 15:00:00' ), 'sequence' => 1, 'original_index' => 1 ],
+			[ 'timestamp' => strtotime( '2016-07-15 16:00:00' ), 'sequence' => 2, 'original_index' => 4 ],
+			[ 'timestamp' => strtotime( '2016-07-17 15:00:00' ), 'sequence' => 1, 'original_index' => 0 ],
+			[ 'timestamp' => strtotime( '2016-07-18 15:00:00' ), 'sequence' => 1, 'original_index' => 5 ],
 		], $sequence );
 	}
 

@@ -5,7 +5,7 @@ Tags: events, calendar, event, venue, organizer, dates, date, google maps, confe
 Donate link: http://m.tri.be/29
 Requires at least: 3.9
 Tested up to: 4.6
-Stable tag: 4.2.4
+Stable tag: 4.3dev
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -212,7 +212,7 @@ Our Premium Plugins:
 
 = [4.2.4] 2016-08-17 =
 
-* Fix - PHP notice when importing events from iCal importer [64747]
+Fix - PHP notice when importing events from iCal importer [64747]
 
 = [4.2.3] 2016-07-20 =
 

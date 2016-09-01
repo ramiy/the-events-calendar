@@ -201,6 +201,7 @@
 				
 				add_action( 'plugins_loaded', array( 'Tribe__Events__Pro__Admin__Settings', 'hook' ) );
 
+				// Start the integrations manager
 				Tribe__Events__Pro__Integrations__Manager::instance()->load_integrations();
 			}
 

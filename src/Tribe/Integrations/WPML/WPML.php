@@ -7,7 +7,7 @@
  * A facade class to wrap and customize access to WPML API through adapters.
  * Any call should be forwarded to specialized adapter classes.
  */
-class Tribe__Events__Pro__Integrations__WPML__WPML {
+class Tribe__Events__Pro__Integrations__WPML__WPML extends Tribe__Events__Integrations__WPML__WPML {
 
 	/**
 	 * The key WPML will store the current post language code while saving in the $_POST global.
@@ -20,10 +20,11 @@ class Tribe__Events__Pro__Integrations__WPML__WPML {
 	 * @var Tribe__Events__Pro__Integrations__WPML__WPML
 	 */
 	protected static $instance;
+
 	/**
 	 * @var Tribe__Events__Pro__Integrations__WPML__API__Translations
 	 */
-	private $translations;
+	protected $translations;
 
 	/**
 	 * The class singleton constructor.
@@ -44,7 +45,8 @@ class Tribe__Events__Pro__Integrations__WPML__WPML {
 	 * @param Tribe__Events__Pro__Integrations__WPML__API__Translations|null $translations
 	 */
 	public function __construct( Tribe__Events__Pro__Integrations__WPML__API__Translations $translations = null ) {
-		$this->translations = $translations ? $translations : new Tribe__Events__Pro__Integrations__WPML__API__Translations();
+		$this->translations = $translations ? $translations :
+			new Tribe__Events__Pro__Integrations__WPML__API__Translations();
 	}
 
 	/**
@@ -76,7 +78,8 @@ class Tribe__Events__Pro__Integrations__WPML__WPML {
 	 * @param int    $event_id              The event post ID.
 	 * @param string $language_code         The WPML language code to insert, e.g. 'en'.
 	 * @param  int   $trid                  A translation group identifier.
-	 *                                      On a website with 4 languages 4 different posts will share the same `trid` value.
+	 *                                      On a website with 4 languages 4 different posts will share the same `trid`
+	 *                                      value.
 	 * @param bool   $overwrite_if_existing Whether the translation line should owerwrite an existing one or not.
 	 *                                      By default the translation entry will not be overwritten.
 	 *
@@ -84,21 +87,20 @@ class Tribe__Events__Pro__Integrations__WPML__WPML {
 	 * @return array
 	 */
 	public function insert_event_translation_for_language_code( $event_id, $language_code, $trid, $overwrite_if_existing = false ) {
-		return $this->translations->insert_event_translation_for_language_code( $event_id, $language_code, $trid, $overwrite_if_existing );
-	}
-
-	public function hook() {
-		// the WPML API is not included by default
-		require_once ICL_PLUGIN_PATH . '/inc/wpml-api.php';
-
-		$this->hook_actions();
-		$this->hook_filters();
+		return $this->translations->insert_event_translation_for_language_code( $event_id, $language_code, $trid,
+			$overwrite_if_existing );
 	}
 
 	protected function hook_actions() {
+		$defaults = Tribe__Events__Pro__Integrations__WPML__Defaults::instance();
 		$listener = Tribe__Events__Pro__Integrations__WPML__Event_Listener::instance();
 
-		add_action( 'tribe_events_pro_recurring_event_instance_inserted', array( $listener, 'handle_recurring_event_creation' ), 10, 2 );
+		if ( ! $defaults->has_set_defaults() ) {
+			add_action( 'icl_save_settings', array( $defaults, 'set_defaults' ) );
+		}
+
+		add_action( 'tribe_events_pro_recurring_event_instance_inserted',
+			array( $listener, 'handle_recurring_event_creation' ), 10, 2 );
 	}
 
 	protected function hook_filters() {

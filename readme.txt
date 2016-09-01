@@ -5,7 +5,7 @@ Tags: events, calendar, event, venue, organizer, dates, date, google maps, confe
 Donate link: http://m.tri.be/29
 Requires at least: 3.9
 Tested up to: 4.6
-Stable tag: 4.2.4
+Stable tag: 4.3dev
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -202,6 +202,13 @@ Our Premium Plugins:
 * <a href="http://m.tri.be/fa" target="_blank">The Events Calendar: Filter Bar</a>
 
 == Changelog ==
+
+= [4.3] unreleased =
+
+* Feature - Added the [tribe_events] shortcode to allow for the rendering of event views anywhere shortcodes are allowed! [44800]
+* Tweak - Added the "All Events" link on top of all recurring events view
+* Tweak - Made the redirect URL used when a recurring event cannot be found filterable (props: @logoscreative) [64106]
+* Tweak - Deprecated various disused functions that were built around the Meta Factory [39905]
 
 = [4.2.4] 2016-08-17 =
 

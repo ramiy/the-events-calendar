@@ -51,8 +51,6 @@
 
 			const REQUIRED_TEC_VERSION = '4.3dev';
 			const VERSION = '4.3dev';
-			const REQUIRED_TEC_VERSION = '4.2.2';
-			const VERSION = '4.2.5';
 
 
 			private function __construct() {

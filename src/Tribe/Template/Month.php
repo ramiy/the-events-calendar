@@ -46,10 +46,9 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 		private $events_per_day;
 
 		/**
-		 * Grid day events
 		 * @var array
 		 */
-		private $event_ids_by_day;
+		private $events_by_day = array();
 
 		/**
 		 * Array of days of the month
@@ -562,16 +561,9 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 			return $beginnings_and_ends[ $date ][ $key ];
 		}
 
-		/**
-		 * Breaks the possible collection of events down by grid date
-		 *
-		 * @param string $date Y-m-d formatted date to retrieve events for
-		 *
-		 * @return array
-		 */
-		private function get_event_ids_by_day( $date ) {
-			if ( ! $this->event_ids_by_day ) {
-				$this->event_ids_by_day = array();
+		private function get_events_by_day( $date, $ids_only = false ) {
+			if ( ! $this->events_by_day ) {
+				$this->events_by_day = array();
 
 				// Let's loop over all of the events in the month and assign them to days
 				foreach ( $this->events_in_month as $event ) {
@@ -588,11 +580,8 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 					$start = date( 'Y-m-d', $event_start );
 					$end = date( 'Y-m-d', $event_end );
 
-					$beginning_of_start           = $this->get_cutoff_details( $start, 'beginning' );
 					$beginning_of_start_timestamp = $this->get_cutoff_details( $start, 'beginning_timestamp' );
-					$end_of_start                 = $this->get_cutoff_details( $start, 'end' );
 					$end_of_start_timestamp       = $this->get_cutoff_details( $start, 'end_timestamp' );
-					$beginning_of_end             = $this->get_cutoff_details( $end, 'beginning' );
 					$beginning_of_end_timestamp   = $this->get_cutoff_details( $end, 'beginning_timestamp' );
 
 					// if the start of the event is earlier than the beginning of the day, consider the event
@@ -644,36 +633,40 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 						// add the event to each day until the event end
 						$new_start = $start;
 						for ( $i = 0; $i <= $diff_in_days; $i++ ) {
-							if ( ! isset( $this->event_ids_by_day[ $new_start ] ) ) {
-								$this->event_ids_by_day[ $new_start ] = array();
+							if ( ! isset( $this->events_by_day[ $new_start ] ) ) {
+								$this->events_by_day[ $new_start ] = array();
 							}
 
-							$this->event_ids_by_day[ $new_start ][] = $event->ID;
+							$this->events_by_day[ $new_start ][] = $event;
 
 							$new_start = date( 'Y-m-d', strtotime( '+1 day', strtotime( $new_start ) ) );
 						}
 					} else {
 						// nope. The event is a single day event. Add it to the array
-						if ( ! isset( $this->event_ids_by_day[ $start ] ) ) {
-							$this->event_ids_by_day[ $start ] = array();
+						if ( ! isset( $this->events_by_day[ $start ] ) ) {
+							$this->events_by_day[ $start ] = array();
 						}
 
-						$this->event_ids_by_day[ $start ][] = $event->ID;
+						$this->events_by_day[ $start ][] = $event;
 					}
 				}
 
 				// Now that we've built our event_ids_by_day, let's array_unique and sort
-				foreach ( $this->event_ids_by_day as &$day ) {
-					$day = array_unique( $day );
+				foreach ( $this->events_by_day as &$day ) {
+					$day = array_unique( $day, SORT_REGULAR );
 					sort( $day );
 				}
 			}
 
-			if ( empty( $this->event_ids_by_day[ $date ] ) ) {
+			if ( empty( $this->events_by_day[ $date ] ) ) {
 				return array();
 			}
 
-			return $this->event_ids_by_day[ $date ];
+			if ( $ids_only ) {
+				return wp_list_pluck( $this->events_by_day, 'ID' );
+			}
+
+			return $this->events_by_day[ $date ];
 		}
 
 		/**
@@ -684,54 +677,58 @@ if ( ! class_exists( 'Tribe__Events__Template__Month' ) ) {
 		 * @return WP_Query
 		 */
 		private function get_daily_events( $date ) {
+			$container      = new WP_Query;
+			$events_on_date = $this->get_events_by_day( $date );
+			$events_list    = array();
 
-			$beginning_of_day           = $this->get_cutoff_details( $date, 'beginning' );
-			$beginning_of_day_timestamp = $this->get_cutoff_details( $date, 'beginning_timestamp' );
-
-			$end_of_day           = $this->get_cutoff_details( $date, 'end' );
-			$end_of_day_timestamp = $this->get_cutoff_details( $date, 'end_timestamp' );
-
-			$event_ids_on_date = $this->get_event_ids_by_day( $date );
-
-			// post__in doesn't work when it's empty, so just don't run the query if there are no IDs
-			if ( empty( $event_ids_on_date ) ) {
-				return new WP_Query();
+			if ( empty( $events_on_date ) ) {
+				return $container;
 			}
 
-			// this  will skip updating term and meta caches - those were already
-			// updated in $this->set_events_in_month()
-			// expected order of events: sticky events, ongoing multi day events, all day events, then by start time
-			$args   = wp_parse_args(
-				array(
-					'eventDisplay'           => 'month',
-					'posts_per_page'         => $this->events_per_day,
-					'post__in'               => $event_ids_on_date,
-					'start_date'             => $beginning_of_day,
-					'end_date'               => $end_of_day,
-					'update_post_term_cache' => false,
-					'update_post_meta_cache' => false,
-					'no_found_rows'          => false,
-					'do_not_inject_date'     => true,
-					'meta_key'               => '_EventStartDate',
-					'orderby'                => array(
-						'menu_order' => 'ASC',
-						'meta_value' => 'ASC',
-					),
-				), $this->args
-			);
+			foreach ( $events_on_date as $src_event ) {
+				$event_post = get_post( $src_event->ID );
+				$event_post->EventStartDate = $src_event->EventStartDate;
+				$event_post->EventEndDate = $src_event->EventEndDate;
 
-			/**
-			  * Filter Daily Events Query Arguments.
-			  *
-			  * @param array $args an array of daily events query.
-			  *
-			  */
-			 $args = apply_filters( 'tribe_events_month_daily_events_query_args', $args );
+				$events_list[] = $event_post;
 
-			// we don't need this join since we already checked it
-			unset ( $args[ Tribe__Events__Main::TAXONOMY ] );
+				if ( count( $events_list ) >= $this->events_per_day ) {
+					break;
+				}
+			}
 
-			return tribe_get_events( $args, true );
+			// Now sort by menu order (for stickiness) and start time
+			usort( $events_list, array( $this, 'order_events' ) );
+
+			// Populate our container query object
+			$container->found_posts = count( $events_on_date );
+			$container->post_count  = count( $events_list );
+			$container->posts       = $events_list;
+			$container->post        = current( $events_list );
+
+			return $container;
+		}
+
+		private function order_events( $event_a, $event_b ) {
+			// Lower menu order means higher placement
+			if ( $event_a->menu_order < $event_b->menu_order ) {
+				return 1;
+			}
+
+			// Higher menu order means lower placement
+			if ( $event_a->menu_order > $event_b->menu_order ) {
+				return -1;
+			}
+
+			if ( $event_a->EventStartDate < $event_b->EventStartDate ) {
+				return 1;
+			}
+
+			if ( $event_b->EventStartDate > $event_b->EventStartDate ) {
+				return -1;
+			}
+
+			return 0;
 		}
 
 		/**

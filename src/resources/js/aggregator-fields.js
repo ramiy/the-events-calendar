@@ -125,7 +125,7 @@ tribe_aggregator.fields = {
 				$( '.tribe-ea-tab-new .tribe-ea-dropdown:not([id$="tribe-ea-field-origin"])' ).select2( 'val', '' ).change();
 
 				// reset all the inputs to default values
-				$( '.tribe-ea-tab-new .tribe-ea-form input' ).val( function() { return this.defaultValue; } ).change();
+				$( '.tribe-ea-tab-new .tribe-ea-form input:not([id$="tribe-ea-field-origin"])' ).val( function() { return this.defaultValue; } ).change();
 
 				if ( 'redirect' === $( this ).val() ) {
 					window.open( 'https://theeventscalendar.com/wordpress-event-aggregator/?utm_source=importoptions&utm_medium=plugin-tec&utm_campaign=in-app','_blank' );

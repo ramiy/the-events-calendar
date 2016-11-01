@@ -18,6 +18,14 @@ class Tribe__Events__Views {
 		'is_single' => false,
 	);
 
+	/**
+	 * Registers a view.
+	 *
+	 * @param string        $slug
+	 * @param string        $title
+	 * @param string|object $implementation
+	 * @param array         $properties
+	 */
 	public function register( $slug, $title, $implementation, array $properties = array() ) {
 		$view = array_merge( $properties, $this->default_properties );
 
@@ -31,22 +39,57 @@ class Tribe__Events__Views {
 		$this->registered_views[ $slug ] = $view;
 	}
 
+	/**
+	 * Returns a list of currently registered views.
+	 *
+	 * @return array
+	 */
 	public function get_registered_views() {
 		return $this->registered_views;
 	}
 
+	/**
+	 * Returns the definition (an array of properties) for the specified view, or
+	 * boolean false if it has not been registered.
+	 *
+	 * @param string $slug
+	 *
+	 * @return bool|array
+	 */
 	public function get_registered_view( $slug ) {
 		return isset( $this->registered_views[ $slug ] ) ? $this->registered_views[ $slug ] : false;
 	}
-	
+
+	/**
+	 * Indicates if the specified view has been registered.
+	 *
+	 * @param string $slug
+	 *
+	 * @return bool
+	 */
 	public function is_registered( $slug ) {
 		return isset( $this->registered_views[ $slug ] );
 	}
 
+	/**
+	 * Indicates if the specified view has been enabled (it must also have been
+	 * registered for this to be true).
+	 *
+	 * @param string $slug
+	 *
+	 * @return bool
+	 */
 	public function is_enabled( $slug ) {
 		return in_array( $slug, tribe_get_option( 'tribeEnableViews' ) );
 	}
 
+	/**
+	 * Attempts to enable the specified view.
+	 *
+	 * @param string $slug
+	 *
+	 * @return bool
+	 */
 	public function enable( $slug ) {
 		if ( ! $this->is_registered( $slug ) ) {
 			return false;
@@ -62,6 +105,11 @@ class Tribe__Events__Views {
 		return tribe_update_option( 'tribeEnableViews', $views );
 	}
 
+	/**
+	 * Returns a list of the currently enabled views.
+	 *
+	 * @return array
+	 */
 	public function get_enabled_views() {
 		$enabled_views = array();
 

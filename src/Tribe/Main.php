@@ -251,6 +251,7 @@ if ( ! class_exists( 'Tribe__Events__Main' ) ) {
 				$this->addHooks();
 				$this->maybe_load_tickets_framework();
 				$this->loadLibraries();
+				$this->init_views();
 			} else {
 				// Either PHP or WordPress version is inadequate so we simply return an error.
 				add_action( 'admin_head', array( $this, 'notSupportedError' ) );
@@ -320,6 +321,27 @@ if ( ! class_exists( 'Tribe__Events__Main' ) ) {
 			if ( ! defined( 'TRIBE_DISABLE_DEPRECATED_TAGS' ) ) {
 				require_once $this->plugin_path . 'src/functions/template-tags/deprecated.php';
 			}
+		}
+
+		/**
+		 * Instantiate the view manager and register the core views.
+		 */
+		protected function init_views() {
+			$views = new Tribe__Events__Views;
+			tribe_singleton( 'tec.views', $views );
+			tribe_singleton( 'tec.views.extra_rewrite_rules', new Tribe__Events__Views__Extra_Rewrite_Rules );
+
+			$views->register( 'month', _x( 'Month', 'view title', 'the-events-calendar' ), 'Tribe__Events__Views__Month', array(
+				'rewrite_slug' => $this->monthSlug,
+			) );
+
+			$views->register( 'list', _x( 'List', 'view title', 'the-events-calendar' ), 'TODO', array(
+				'rewrite_slug' => $this->listSlug,
+			) );
+
+			$views->register( 'day', _x( 'Day', 'view title', 'the-events-calendar' ), 'TODO', array(
+				'rewrite_slug' => $this->daySlug,
+			) );
 		}
 
 		/**
@@ -2378,27 +2400,13 @@ if ( ! class_exists( 'Tribe__Events__Main' ) ) {
 		 * This can be useful is for instance a view added by another plugin (such as PRO) is
 		 * stored as the default but can no longer be generated due to the plugin being deactivated.
 		 *
+		 * @deprecated 4.4
+		 *
 		 * @return string
 		 */
 		public function default_view() {
-			// Compare the stored default view option to the list of available views
-			$default         = Tribe__Settings_Manager::instance()->get_option( 'viewOption', 'month' );
-			$available_views = (array) apply_filters( 'tribe-events-bar-views', array(), false );
-
-			foreach ( $available_views as $view ) {
-				if ( $default === $view['displaying'] ) {
-					return $default;
-				}
-			}
-
-			// If the stored option is no longer available, pick the first available one instead
-			$first_view = array_shift( $available_views );
-			$view       = $first_view['displaying'];
-
-			// Update the saved option
-			Tribe__Settings_Manager::instance()->set_option( 'viewOption', $view );
-
-			return $view;
+			_deprecated_function( __METHOD__, '4.4', 'Tribe__Events__Views::get_default_view()' );
+			return tribe( 'tec.views' )->get_default_view();
 		}
 
 		protected function setup_l10n_strings() {

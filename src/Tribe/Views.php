@@ -37,6 +37,17 @@ class Tribe__Events__Views {
 		}
 
 		$this->registered_views[ $slug ] = $view;
+
+		/**
+		 * Fires immediately after a view has been registered.
+		 *
+		 * Listening for this event may be useful in cases where you wish to
+		 * overwrite a view with a custom implementation.
+		 *
+		 * @param string $slug
+		 * @param array  $properties
+		 */
+		do_action( 'tribe_events_view_registered', $slug, $properties );
 	}
 
 	/**
